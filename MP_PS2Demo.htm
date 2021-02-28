@@ -35,79 +35,8 @@
     </style>
 
 
-	<script src="js/message.js"/>
-    <script>
-		function onPlayBtnPressed() {
-			var loaderStep2 = document.getElementById("loaderStep2")
-
-
-			loaderStep2.style.visibility = "hidden";
-
-			var loaderStep3 = document.getElementById("loaderStep3")
-
-
-			loaderStep3.style.visibility = "hidden";
-
-
-			var eleBanner = document.getElementById("iframe_1")
-
-
-			eleBanner.style.visibility = "visible";
-
-
-		}
-
-		function sendToMainPage(obj) {
-			let origin = "*"
-			let myIframe = document.getElementById("iframe_1");
-			myIframe.contentWindow.postMessage(JSON.stringify(obj), origin);
-		}
-
-		function switchTo(val) {
-			console.log("=== Registered switchTo action, Value is: ", val);
-
-			let descriptor = {
-				Teleport: val
-			};
-			//emitUIInteraction(descriptor);
-
-
-			var obj =
-				{
-					cmd: "sendToUe4",
-					value: descriptor,
-
-				}
-
-
-			sendToMainPage(obj)
-
-		}
-		let isFullScreen = false
-		function goToFullScreen() {
-			var cmd = isFullScreen ? "Off" : "On";
-			isFullScreen = !isFullScreen;
-			console.log("=== Registered full screen action, Value is: ", cmd);
-			let descriptor = {
-				FullScreen: cmd
-			};
-			//emitUIInteraction(descriptor);
-			var obj =
-				{
-					cmd: "sendToUe4",
-					value: descriptor,
-
-				}
-
-			sendToMainPage(obj)
-
-
-		}
-
-
-    </script>
-
-
+    <script type="text/javascript" src="js/message.js"></script>
+    <script type="text/javascript" src="js/eventHandler.js"></script>
 </head>
 
 <body>

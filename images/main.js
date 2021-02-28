@@ -1,31 +1,26 @@
-var TIMEOUT_SECONDS = 
-5 * 60
-//10
-;
-	function startTimer(display) {
-		var timer = TIMEOUT_SECONDS, minutes, seconds;
-		setInterval(function () {
-			minutes = parseInt(timer / 60, 10);
-			seconds = parseInt(timer % 60, 10);
+const TIMEOUT_SECONDS = 5 * 60;
 
-			seconds = seconds < 10 ? "0" + seconds : seconds;
+function startTimer(display) {
+	var timer = TIMEOUT_SECONDS, minutes, seconds;
+	setInterval(function () {
+		minutes = parseInt(timer / 60, 10);
+		seconds = parseInt(timer % 60, 10);
 
-			document.querySelector('#timer').textContent = minutes + ":" + seconds;
+		seconds = seconds < 10 ? "0" + seconds : seconds;
 
-			if (--timer < 0) {
-				window.location.href = "./images/session-expired.htm"
-			}
-		}, 1000);
-	}
+		document.querySelector('#timer').textContent = minutes + ":" + seconds;
 
-
+		if (--timer < 0) {
+			window.location.href = "./images/session-expired.htm"
+		}
+	}, 1000);
+}
 
 
 (function ($) {
 	"use strict";
 
-	function showPortaitBanner() 
-	{
+	function showPortaitBanner() {
 		var eleBanner = document.getElementById("portrait-banner")
 		if (!eleBanner) {
 			eleBanner = document.createElement("div");
@@ -37,8 +32,7 @@ var TIMEOUT_SECONDS =
 		document.body.appendChild(eleBanner);
 	}
 
-	function orientationChange() 
-	{
+	function orientationChange() {
 		// console.log(window.innerWidth + ' X ' + window.innerHeight);
 		if (window.innerWidth > window.innerHeight) {
 			console.log('landscape');
@@ -70,13 +64,12 @@ var TIMEOUT_SECONDS =
 
 	//window.addEventListener('orientationchange', orientationChange, true);
 	//window.addEventListener('resize', orientationChange, true);
-	
-	
-startTimer()
-	
 
-	$(document).ready(function () 
-	{
+
+	startTimer()
+
+
+	$(document).ready(function () {
 		orientationChange();
 		//startTimer();
 
@@ -93,28 +86,28 @@ startTimer()
 				$('.button-left').removeClass('close-btn').addClass('open-btn');
 
 				$("span.nav-label").animate(
-					{ width: 0, opacity: 0, paddingRight: 0 },
+					{width: 0, opacity: 0, paddingRight: 0},
 					500
 				);
 
 				// timer label
 				$("span.time-label").animate(
-					{ width: 0, opacity: 0, paddingRight: 0 },
+					{width: 0, opacity: 0, paddingRight: 0},
 					500
 				);
-			
+
 			} else {
 
 				$('.button-left').removeClass('open-btn').addClass('close-btn');
 
 				$("span.nav-label").animate(
-					{ width: "160px", opacity: 1, paddingRight: "25px" },
+					{width: "160px", opacity: 1, paddingRight: "25px"},
 					500
 				);
 
 				// timer label
 				$("span.time-label").animate(
-					{ width: "113px", opacity: 1, paddingRight: 0 },
+					{width: "113px", opacity: 1, paddingRight: 0},
 					500
 				);
 			}
