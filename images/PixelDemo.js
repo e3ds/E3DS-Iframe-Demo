@@ -2,87 +2,87 @@
 
 
 function toggleSidebar() {
-    var sidebar = document.getElementById('sidebar');
-    sidebar.classList.toggle('active');
+	var sidebar = document.getElementById('sidebar');
+	sidebar.classList.toggle('active');
 }
 
 function setVisualization(id) {
-    let descriptor = {
-        Visualization: id
-    };
-    emitUIInteraction(descriptor);
-    console.log(descriptor);
+	let descriptor = {
+		Visualization: id
+	};
+	emitUIInteraction(descriptor);
+	console.log(descriptor);
 }
 
 function setBandwidthCap(cap) {
-    capBpsCmd = 'Encoder.MaxBitrate ' + cap;
-    let descriptor = {
-        Console: capBpsCmd
-    }
-    capStr = cap != 0 ? cap : 'Unlimited';
-    document.getElementById('bandwidthCapDropdown').innerHTML = 'Bandwidth Cap (' + capStr + ' Mbps)&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;';
-    emitUIInteraction(descriptor);
-    console.log(descriptor);
+	capBpsCmd = 'Encoder.MaxBitrate ' + cap;
+	let descriptor = {
+		Console: capBpsCmd
+	}
+	capStr = cap != 0 ? cap : 'Unlimited';
+	document.getElementById('bandwidthCapDropdown').innerHTML = 'Bandwidth Cap (' + capStr + ' Mbps)&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;';
+	emitUIInteraction(descriptor);
+	console.log(descriptor);
 }
 
 function setFramerateCap(cap) {
-    capFpsCmd = 't.maxFPS ' + cap;
-    let descriptor = {
-        Console: capFpsCmd
-    }
-    capStr = cap != 0 ? cap : 'Unlimited';
-    document.getElementById('framerateCapDropdown').innerHTML = 'Framerate Cap (' + capStr + ' fps)&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;';
-    emitUIInteraction(descriptor);
-    console.log(descriptor);
+	capFpsCmd = 't.maxFPS ' + cap;
+	let descriptor = {
+		Console: capFpsCmd
+	}
+	capStr = cap != 0 ? cap : 'Unlimited';
+	document.getElementById('framerateCapDropdown').innerHTML = 'Framerate Cap (' + capStr + ' fps)&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;';
+	emitUIInteraction(descriptor);
+	console.log(descriptor);
 }
 
 function zoom() {
-    let descriptor = {
-        zoom: 1
-    };
-    emitUIInteraction(descriptor);
-    console.log(descriptor);
+	let descriptor = {
+		zoom: 1
+	};
+	emitUIInteraction(descriptor);
+	console.log(descriptor);
 }
 
 function onCharacterButton(category, item) {
-    let descriptor = {
-        Category: category,
-        Item: item
-    };
-    emitUIInteraction(descriptor);
-    console.log(descriptor);
+	let descriptor = {
+		Category: category,
+		Item: item
+	};
+	emitUIInteraction(descriptor);
+	console.log(descriptor);
 }
 
 function onConfigButton(category, item) {
-    let descriptor = {
-        Category: category,
-        Item: item
-    };
-    emitUIInteraction(descriptor);
-    console.log(descriptor);
+	let descriptor = {
+		Category: category,
+		Item: item
+	};
+	emitUIInteraction(descriptor);
+	console.log(descriptor);
 }
 
 function setRes(width, height) {
-    let descriptor = {
-        Console: 'r.' + 'setres ' + width + 'x' + height + 'w'
-    };
-    emitUIInteraction(descriptor);
-    console.log(descriptor);
+	let descriptor = {
+		Console: 'r.' + 'setres ' + width + 'x' + height + 'w'
+	};
+	emitUIInteraction(descriptor);
+	console.log(descriptor);
 }
 
 function onConfigurationOne() {
-    let descriptor = {
+	let descriptor = {
 		Category: 0,
 		Item: 3
 	};
-    emitUIInteraction(descriptor);
-    console.log(descriptor);
+	emitUIInteraction(descriptor);
+	console.log(descriptor);
 }
 
 function onConfigurationTwo() {
 	let descriptor = {
-	    Category: 1,
-	    Item: 4
+		Category: 1,
+		Item: 4
 	};
 	emitUIInteraction(descriptor);
 }
@@ -101,97 +101,88 @@ var grabStyle = 'cursor: grab; cursor: -moz-grab; cursor: -webkit-grab';   // We
 var isFullscreen = false;
 
 function onParagonLoad() {
-	
-	  console.log("onParagonLoad 11111111111");
-	 
-	  toggleSidebar()
-	  
+
+	console.log("onParagonLoad 11111111111");
+
+	toggleSidebar()
+
 	styleAdditional = grabStyle;
 	inputOptions.controlScheme = ControlSchemeType.HoveringMouse;
 	inputOptions.fakeMouseWithTouches = true;
 	styleWidth = 700;
 	styleHeight = 394;
 
-	if (document.addEventListener)
-	{
-	    document.addEventListener('webkitfullscreenchange', onFullscreenChange, false);
-	    document.addEventListener('mozfullscreenchange', onFullscreenChange, false);
-	    document.addEventListener('fullscreenchange', onFullscreenChange, false);
-	    document.addEventListener('MSFullscreenChange', onFullscreenChange, false);
+	if (document.addEventListener) {
+		document.addEventListener('webkitfullscreenchange', onFullscreenChange, false);
+		document.addEventListener('mozfullscreenchange', onFullscreenChange, false);
+		document.addEventListener('fullscreenchange', onFullscreenChange, false);
+		document.addEventListener('MSFullscreenChange', onFullscreenChange, false);
 	}
 
 	let fullscreenCheck = document.getElementById('ck-fullscreen');
-	if(fullscreenCheck)
-	{
-		fullscreenCheck.onclick = function()
-									{
-										if (!isFullscreen) 
-										{
-											enterFullscreen();
-										} 
-										else 
-										{
-											exitFullscreen();
-										}
-									};
+	if (fullscreenCheck) {
+		fullscreenCheck.onclick = function () {
+			if (!isFullscreen) {
+				enterFullscreen();
+			} else {
+				exitFullscreen();
+			}
+		};
 	}
-	
-	
-										
-										
+
 
 	// When the data channel is connected we want to ask UE4 if 4K is supported.
-	onDataChannelConnected = function() { emitUIInteraction("4K"); };
+	onDataChannelConnected = function () {
+		emitUIInteraction("4K");
+	};
 	addResponseEventListener("handle_responses", myHandleResponseFunction);
 }
 
-function onFullscreenChange(data)
-{
-	var fullscreenDiv    = document.getElementById("player");
-	isFullscreen = (document.webkitIsFullScreen 
-		|| document.mozFullScreen 
-		|| (document.msFullscreenElement && document.msFullscreenElement !== null) 
+function onFullscreenChange(data) {
+	var fullscreenDiv = document.getElementById("player");
+	isFullscreen = (document.webkitIsFullScreen
+		|| document.mozFullScreen
+		|| (document.msFullscreenElement && document.msFullscreenElement !== null)
 		|| (document.fullscreenElement && document.fullscreenElement !== null)
 		|| (fullscreenDiv && fullscreenDiv.classList.contains("fullscreen")));
 
 	let fullscreenImg = document.getElementById('fullscreen-img');
-	if(fullscreenImg){
+	if (fullscreenImg) {
 		fullscreenImg.src = isFullscreen ? '/PixelDemo/images/MinimiseToFullscreen.png' : '/PixelDemo/images/MaximiseToFullscreen.png'
 		fullscreenImg.alt = isFullscreen ? 'Shrink to normal size' : 'Maximise to Fullscreen'
 	}
 }
 
-function enterFullscreen()
-{
-	var fullscreenDiv    = document.getElementById("player");
-	var textDivs    = document.getElementsByClassName("text");
-	var headerDiv    = document.getElementById("header-tbl");
-	var fullscreenFunc   = fullscreenDiv.requestFullscreen;
+function enterFullscreen() {
+	var fullscreenDiv = document.getElementById("player");
+	var textDivs = document.getElementsByClassName("text");
+	var headerDiv = document.getElementById("header-tbl");
+	var fullscreenFunc = fullscreenDiv.requestFullscreen;
 
 	if (!fullscreenFunc) {
-	  ['mozRequestFullScreen',
-	   'msRequestFullscreen',
-	   'webkitRequestFullScreen'].forEach(function (req) {
-	     fullscreenFunc = fullscreenFunc || fullscreenDiv[req];
-	   });
+		['mozRequestFullScreen',
+			'msRequestFullscreen',
+			'webkitRequestFullScreen'].forEach(function (req) {
+			fullscreenFunc = fullscreenFunc || fullscreenDiv[req];
+		});
 	}
 
-	if(fullscreenFunc){
+	if (fullscreenFunc) {
 		fullscreenFunc.call(fullscreenDiv);
 	} else {
 		//No Fullscreen api so maximise video to window size
-		if(fullscreenDiv){
+		if (fullscreenDiv) {
 			fullscreenDiv.classList.add("fullscreen");
 			fullscreenDiv.classList.remove("fixed-size");
 		}
 
-		if(textDivs){
-			for(let i=0; i<textDivs.length; i++){
+		if (textDivs) {
+			for (let i = 0; i < textDivs.length; i++) {
 				textDivs[i].style.display = "none";
 			}
 		}
 
-		if(headerDiv)
+		if (headerDiv)
 			headerDiv.style.display = "none";
 
 		onFullscreenChange({});
@@ -199,38 +190,37 @@ function enterFullscreen()
 	}
 }
 
-function exitFullscreen()
-{
-	var fullscreenDiv    = document.getElementById("player");
-	var textDivs    = document.getElementsByClassName("text");
-	var headerDiv    = document.getElementById("header-tbl");
-	var exitFullscreenFunc   = document.exitFullscreen;
+function exitFullscreen() {
+	var fullscreenDiv = document.getElementById("player");
+	var textDivs = document.getElementsByClassName("text");
+	var headerDiv = document.getElementById("header-tbl");
+	var exitFullscreenFunc = document.exitFullscreen;
 
 	if (!exitFullscreenFunc) {
-	  ['mozCancelFullScreen',
-	   'msExitFullscreen',
-	   'webkitExitFullscreen'].forEach(function (req) {
-	     exitFullscreenFunc = exitFullscreenFunc || document[req];
-	   });
+		['mozCancelFullScreen',
+			'msExitFullscreen',
+			'webkitExitFullscreen'].forEach(function (req) {
+			exitFullscreenFunc = exitFullscreenFunc || document[req];
+		});
 	}
 
-	if(exitFullscreenFunc) {
+	if (exitFullscreenFunc) {
 		exitFullscreenFunc.call(document);
 	} else {
 		//No Fullscreen api so shrink video back from max window size
-		if(fullscreenDiv){
+		if (fullscreenDiv) {
 			fullscreenDiv.classList.remove("fullscreen");
 			fullscreenDiv.classList.add("fixed-size");
 			fullscreenDiv.style.left = "";
 		}
 
-		if(textDivs){
-			for(let i=0; i<textDivs.length; i++){
+		if (textDivs) {
+			for (let i = 0; i < textDivs.length; i++) {
 				textDivs[i].style.display = "block";
 			}
 		}
 
-		if(headerDiv)
+		if (headerDiv)
 			headerDiv.style.display = "table";
 
 		onFullscreenChange({});
@@ -238,45 +228,44 @@ function exitFullscreen()
 	}
 }
 
-function onInPageFullscreen(){
+function onInPageFullscreen() {
 	var playerElement = document.getElementById('player');
 	let videoElement = playerElement.getElementsByTagName("VIDEO");
-	document.documentElement.style.position = isFullscreen ?  "fixed" : "";
-	document.body.style.position =  isFullscreen ?  "fixed" : "";
+	document.documentElement.style.position = isFullscreen ? "fixed" : "";
+	document.body.style.position = isFullscreen ? "fixed" : "";
 
-	if(isFullscreen){
+	if (isFullscreen) {
 		let windowAspectRatio = window.innerHeight / window.innerWidth;
 		let playerAspectRatio = playerElement.clientHeight / playerElement.clientWidth;
 		// We want to keep the video ratio correct for the video stream
-	    let videoAspectRatio = videoElement.videoHeight / videoElement.videoWidth;
+		let videoAspectRatio = videoElement.videoHeight / videoElement.videoWidth;
 
-	    if(isNaN(videoAspectRatio)){
-	    	//Video is not initialised yet so set playerElement to size of window
-	    	styleWidth = window.innerWidth;
-	    	styleHeight = window.innerHeight;
-	    	styleTop = 0;
-	        styleLeft = Math.floor((window.innerWidth - styleWidth) * 0.5);
-	        //Video is now 100% of the playerElement so set the playerElement style
-	        playerElement.style.width= styleWidth + "px";
-	        playerElement.style.height= styleHeight + "px";
-	    } else if (windowAspectRatio < playerAspectRatio) {
-	        styleWidth = Math.floor(window.innerHeight / videoAspectRatio);
-	        styleHeight = window.innerHeight;
-	        styleTop = 0;
-	        styleLeft = Math.floor((window.innerWidth - styleWidth) * 0.5);
-	        //Video is now 100% of the playerElement so set the playerElement style
-	        playerElement.style.width= styleWidth + "px";
-	        playerElement.style.height= styleHeight + "px";
-	    }
-	    else {
-	        styleWidth = window.innerWidth;
-	        styleHeight = Math.floor(window.innerWidth * videoAspectRatio);
-	        styleTop = Math.floor((window.innerHeight - styleHeight) * 0.5);
-	        styleLeft = 0;
-	        //Video is now 100% of the playerElement so set the playerElement style
-	        playerElement.style.width= styleWidth + "px";
-	        playerElement.style.height= styleHeight + "px";
-	    }
+		if (isNaN(videoAspectRatio)) {
+			//Video is not initialised yet so set playerElement to size of window
+			styleWidth = window.innerWidth;
+			styleHeight = window.innerHeight;
+			styleTop = 0;
+			styleLeft = Math.floor((window.innerWidth - styleWidth) * 0.5);
+			//Video is now 100% of the playerElement so set the playerElement style
+			playerElement.style.width = styleWidth + "px";
+			playerElement.style.height = styleHeight + "px";
+		} else if (windowAspectRatio < playerAspectRatio) {
+			styleWidth = Math.floor(window.innerHeight / videoAspectRatio);
+			styleHeight = window.innerHeight;
+			styleTop = 0;
+			styleLeft = Math.floor((window.innerWidth - styleWidth) * 0.5);
+			//Video is now 100% of the playerElement so set the playerElement style
+			playerElement.style.width = styleWidth + "px";
+			playerElement.style.height = styleHeight + "px";
+		} else {
+			styleWidth = window.innerWidth;
+			styleHeight = Math.floor(window.innerWidth * videoAspectRatio);
+			styleTop = Math.floor((window.innerHeight - styleHeight) * 0.5);
+			styleLeft = 0;
+			//Video is now 100% of the playerElement so set the playerElement style
+			playerElement.style.width = styleWidth + "px";
+			playerElement.style.height = styleHeight + "px";
+		}
 
 	} else {
 		playerElement.style.height = "";

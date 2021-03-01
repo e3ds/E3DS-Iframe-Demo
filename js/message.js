@@ -14,7 +14,7 @@ function HandleResponseFromUE4(jsonObj)//process whatever u want to do with your
 }
 
 
-//eagle3dstreaming's Server   to Iframne communication
+//eagle3dstreaming's Server   to Iframe communication
 const eventHandler = (event) => {
 	console.log('Message From SS -- > Iframe  ', event.data);
 

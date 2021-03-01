@@ -53,6 +53,7 @@ var editTextButton = undefined;
 var hiddenInput = undefined;
 
 var t0 = Date.now();
+
 function log(str) {
 	console.log(`${Math.floor(Date.now() - t0)}: ` + str);
 }
@@ -96,7 +97,7 @@ function setupHtmlEvents() {
 				};
 				// TODO: The descriptor should be sent as is to a generic handler on the UE side
 				// but for now we're just sending it as separate console commands
-				//emitUIInteraction(initialDescriptor); 
+				//emitUIInteraction(initialDescriptor);
 				sendQualityConsoleCommands(initialDescriptor);
 				console.log(initialDescriptor);
 
@@ -156,7 +157,7 @@ function setupHtmlEvents() {
 	if (kickButton) {
 		kickButton.onclick = function (event) {
 			console.log(`-> SS: kick`);
-			ws.send(JSON.stringify({ type: 'kick' }));
+			ws.send(JSON.stringify({type: 'kick'}));
 		};
 	}
 }
@@ -247,8 +248,8 @@ function showConnectOverlay() {
 	startText.innerHTML = 'Click to start';
 
 	//setOverlay('clickableState', startText, event => {
-		connect();
-		startAfkWarningTimer();
+	connect();
+	startAfkWarningTimer();
 	//});
 }
 
@@ -266,13 +267,12 @@ function showPlayOverlay() {
 	img.alt = 'Start Streaming';
 	// setOverlay('clickableState', img, event => {
 	setOverlayCustom('clickableState', img, event => {
-			if (webRtcPlayerObj)
-		{	
+		if (webRtcPlayerObj) {
 			webRtcPlayerObj.video.play();
 			hideLoader() // from main.js
-			// Enable Navigation Menu after click on Play button			
+			// Enable Navigation Menu after click on Play button
 			//document.getElementById('sidebar').style.display = "block";
-			
+
 			// startTimer(); method from main.js
 			startTimer();
 			//console.log("Console Msg");
@@ -386,7 +386,7 @@ const ToClientMessageType = {
 };
 
 function setupWebRtcPlayer(htmlElement, config) {
-	webRtcPlayerObj = new webRtcPlayer({ peerConnectionOptions: config.peerConnectionOptions });
+	webRtcPlayerObj = new webRtcPlayer({peerConnectionOptions: config.peerConnectionOptions});
 	htmlElement.appendChild(webRtcPlayerObj.video);
 	htmlElement.appendChild(freezeFrameOverlay);
 
@@ -401,7 +401,7 @@ function setupWebRtcPlayer(htmlElement, config) {
 	webRtcPlayerObj.onWebRtcCandidate = function (candidate) {
 		if (ws && ws.readyState === WS_OPEN_STATE) {
 			console.log(`-> SS: iceCandidate\n${JSON.stringify(candidate, undefined, 4)}`);
-			ws.send(JSON.stringify({ type: 'iceCandidate', candidate: candidate }));
+			ws.send(JSON.stringify({type: 'iceCandidate', candidate: candidate}));
 		}
 	};
 
@@ -438,19 +438,19 @@ function setupWebRtcPlayer(htmlElement, config) {
 	}
 
 	webRtcPlayerObj.onDataChannelMessage = function (data) {
-		
+
 		console.log("data:")
 		console.log(data)
-		
-		
+
+
 		var view = new Uint8Array(data);
 		console.log("---------webRtcPlayerObj.onDataChannelMessage view:")
 		console.log(view)
 		console.log(JSON.stringify(view));
 		console.log(view[0])
 		console.log(JSON.stringify(view[0]));
-		
-		
+
+
 		if (freezeFrame.receiving) {
 			let jpeg = new Uint8Array(freezeFrame.jpeg.length + view.length);
 			jpeg.set(freezeFrame.jpeg, 0);
@@ -500,9 +500,9 @@ function setupWebRtcPlayer(htmlElement, config) {
 			}
 		} else if (view[0] === ToClientMessageType.UnfreezeFrame) {
 			invalidateFreezeFrameOverlay();
-					} else {
+		} else {
 			console.error(`unrecognised data received, packet ID ${view[0]}`);
-	}
+		}
 	};
 
 	registerInputs(webRtcPlayerObj.video);
@@ -523,8 +523,11 @@ function onWebRtcAnswer(webRTCData) {
 	let nextPrintDuration = printInterval;
 
 	webRtcPlayerObj.onAggregatedStats = (aggregatedStats) => {
-		let numberFormat = new Intl.NumberFormat(window.navigator.language, { maximumFractionDigits: 0 });
-		let timeFormat = new Intl.NumberFormat(window.navigator.language, { maximumFractionDigits: 0, minimumIntegerDigits: 2 });
+		let numberFormat = new Intl.NumberFormat(window.navigator.language, {maximumFractionDigits: 0});
+		let timeFormat = new Intl.NumberFormat(window.navigator.language, {
+			maximumFractionDigits: 0,
+			minimumIntegerDigits: 2
+		});
 		let statsText = '';
 
 		// Calculate duration of run
@@ -555,7 +558,7 @@ function onWebRtcAnswer(webRTCData) {
 		statsText += `Video Resolution: ${
 			aggregatedStats.hasOwnProperty('frameWidth') && aggregatedStats.frameWidth && aggregatedStats.hasOwnProperty('frameHeight') && aggregatedStats.frameHeight ?
 				aggregatedStats.frameWidth + 'x' + aggregatedStats.frameHeight : 'N/A'
-			}</br>`;
+		}</br>`;
 		statsText += `Received (${receivedBytesMeasurement}): ${numberFormat.format(receivedBytes)}</br>`;
 		statsText += `Frames Decoded: ${aggregatedStats.hasOwnProperty('framesDecoded') ? numberFormat.format(aggregatedStats.framesDecoded) : 'N/A'}</br>`;
 		statsText += `Packets Lost: ${aggregatedStats.hasOwnProperty('packetsLost') ? numberFormat.format(aggregatedStats.packetsLost) : 'N/A'}</br>`;
@@ -574,7 +577,7 @@ function onWebRtcAnswer(webRTCData) {
 				if ((aggregatedStats.timestamp - aggregatedStats.timestampStart) > nextPrintDuration) {
 					if (ws && ws.readyState === WS_OPEN_STATE) {
 						console.log(`-> SS: stats\n${JSON.stringify(aggregatedStats)}`);
-						ws.send(JSON.stringify({ type: 'stats', data: aggregatedStats }));
+						ws.send(JSON.stringify({type: 'stats', data: aggregatedStats}));
 					}
 					nextPrintDuration += printInterval;
 				}
@@ -598,7 +601,7 @@ var styleHeight;
 var styleTop;
 var styleLeft;
 var styleCursor = 'default';
-var styleAdditional = 'cursor: default'; 
+var styleAdditional = 'cursor: default';
 
 const ControlSchemeType = {
 	// A mouse can lock inside the WebRTC player so the user can simply move the
@@ -691,15 +694,18 @@ function setupFreezeFrameOverlay() {
 	freezeFrameOverlay.style.position = 'absolute';
 	freezeFrameOverlay.style.zIndex = '30';
 }
+
 function showFreezeFrameOverlay() {
 	if (freezeFrame.valid) {
 		freezeFrameOverlay.style.display = 'block';
 	}
 }
+
 function invalidateFreezeFrameOverlay() {
 	freezeFrameOverlay.style.display = 'none';
 	freezeFrame.valid = false;
 }
+
 function resizeFreezeFrameOverlay() {
 	if (freezeFrame.width !== 0 && freezeFrame.height !== 0) {
 		let displayWidth = 0;
@@ -781,8 +787,7 @@ function updateVideoStreamSize() {
 		emitUIInteraction(descriptor);
 		console.log(descriptor);
 		lastTimeResized = new Date().getTime();
-	}
-	else {
+	} else {
 		console.log('Resizing too often - skipping');
 		clearTimeout(resizeTimeout);
 		resizeTimeout = setTimeout(updateVideoStreamSize, 1000);
@@ -792,6 +797,7 @@ function updateVideoStreamSize() {
 // Fix for bug in iOS where windowsize is not correct at instance or orientation change
 // https://github.com/dimsemenov/PhotoSwipe/issues/1315
 var _orientationChangeTimeout;
+
 function onOrientationChange(event) {
 	clearTimeout(_orientationChangeTimeout);
 	_orientationChangeTimeout = setTimeout(function () {
@@ -1467,7 +1473,7 @@ function registerKeyboardEvents() {
 		// Backspace is not considered a keypress in JavaScript but we need it
 		// to be so characters may be deleted in a UE4 text entry field.
 		if (e.keyCode === SpecialKeyCodes.BackSpace) {
-			document.onkeypress({ charCode: SpecialKeyCodes.BackSpace });
+			document.onkeypress({charCode: SpecialKeyCodes.BackSpace});
 		}
 		if (inputOptions.suppressBrowserKeys && isKeyCodeBrowserKey(e.keyCode)) {
 			e.preventDefault();
@@ -1545,7 +1551,7 @@ function connect1() {
 		var msg = JSON.parse(event.data);
 		if (msg.type === 'config') {
 			onConfig(msg);
-			
+
 		} else if (msg.type === 'playerCount') {
 			updateKickButton(msg.count - 1);
 		} else if (msg.type === 'answer') {
@@ -1605,6 +1611,7 @@ function switchTo(val) {
 	};
 	emitUIInteraction(descriptor);
 }
+
 function goToFullScreen() {
 	var cmd = isFullScreen ? "Off" : "On";
 	isFullScreen = !isFullScreen;
@@ -1625,31 +1632,29 @@ function load() {
 
 
 //////////////////////////////////
-var clientInfo=undefined
-var userDeviceInfo =undefined
+var clientInfo = undefined
+var userDeviceInfo = undefined
 
-var failedAttmept=false
+var failedAttmept = false
 
 
-var isSpectator=false
-var useExtendedTyping =false
+var isSpectator = false
+var useExtendedTyping = false
 
 var urlParams = new URLSearchParams(window.location.search);
-var hostMeetingId =urlParams.get('hostMeetingId')
-var GuestMeetingId =urlParams.get('hostMeetingId')
-
-
+var hostMeetingId = urlParams.get('hostMeetingId')
+var GuestMeetingId = urlParams.get('hostMeetingId')
 
 
 function connect() {
 	"use strict";
 
-	if(failedAttmept)//2do---this is a hack. need to find out proper fix
+	if (failedAttmept)//2do---this is a hack. need to find out proper fix
 	{
 		//window.location.href ='/projectDoesNotExist.htm'  ;
 		return;
 	}
-	
+
 	window.WebSocket = window.WebSocket || window.MozWebSocket;
 
 	if (!window.WebSocket) {
@@ -1659,258 +1664,203 @@ function connect() {
 
 	//ws = new WebSocket(window.location.href.replace('http://', 'ws://').replace('https://', 'wss://'));
 
-	 
- var ttt=window.location.href.replace('http://', 'ws://')
- 
- console.log(' 1111111111111 window.location.href.replace(http://, ws://) > '+ ttt);
- 
-  ttt=ttt.replace('https://', 'wss://')
-  
- console.log(' 1111111111111 window.location.href.replace(https://, wss://) > '+ ttt);
-					  
+
+	var ttt = window.location.href.replace('http://', 'ws://')
+
+	console.log(' 1111111111111 window.location.href.replace(http://, ws://) > ' + ttt);
+
+	ttt = ttt.replace('https://', 'wss://')
+
+	console.log(' 1111111111111 window.location.href.replace(https://, wss://) > ' + ttt);
+
 	ws = new WebSocket(ttt);
-	
-	ws.onmessage = function (event) 
-	{
+
+	ws.onmessage = function (event) {
 		//console.log(`<- SS: ${event.data}`);
-		
+
 		var msg = JSON.parse(event.data);
-		
+
 		//console.log("SS--> ws msg: "+ JSON.stringify(msg));
-		console.log("SS--> ws (msg.type: "+ (msg.type));
-		if (msg.type === 'config') 
-		{
+		console.log("SS--> ws (msg.type: " + (msg.type));
+		if (msg.type === 'config') {
 			onConfig(msg);
-		} 
-		else if (msg.type === 'playerCount') 
-		{
+		} else if (msg.type === 'playerCount') {
 			updateKickButton(msg.count - 1);
-		} 
-		else if (msg.type === 'GuestJoined') 
-		{
-			
-			 var RunningMachinesfilter = document.getElementById("Guest-filter");
-						
-									 var option = document.createElement('option');
-									option.text = option.value = msg.guestPlayerId
-									RunningMachinesfilter.add(option, RunningMachinesfilter.length-1);
-					
-		} 
-		else if (msg.type === 'GuestLeft') 
-		{
+		} else if (msg.type === 'GuestJoined') {
+
 			var RunningMachinesfilter = document.getElementById("Guest-filter");
 
-						 if(RunningMachinesfilter)
-						 {
-							 for (var i=0;i<RunningMachinesfilter.length;  i++)
-							{
-								if (RunningMachinesfilter.options[i].value==msg.guestPlayerId) 
-								{
-												
-												RunningMachinesfilter.remove(i);
-								}
-							
-						    }	
-						 
-						// sortSelect(RunningMachinesfilter)
-						 }
-									
-			
-		}
-		else if (msg.type === 'sendplayerType') 
-		{
-			//https://devstreaming1.eaglepixelstreaming.com:3104/5435467354?appName=MP_PS2&version=35&isSpectator=true
-			
-			
-			console.log(' 1111111111111 window.location.href.replace(https://, wss://) > '+ ttt);
-			if(clientInfo==undefined)
-				clientInfo="undefined"
-			
-			 var dgsgsg=JSON.stringify(
-				{ 
-				type: 'takePlayerType',
-				isSpectator:isSpectator,
-				hostMeetingId: hostMeetingId,
-				GuestMeetingId: urlParams.get('GuestMeetingId'),
-				navigationType: window.location.href,
-				url: window.location.href,
-				userAgent: navigator.userAgent,
-				clientInfo:clientInfo
+			var option = document.createElement('option');
+			option.text = option.value = msg.guestPlayerId
+			RunningMachinesfilter.add(option, RunningMachinesfilter.length - 1);
+
+		} else if (msg.type === 'GuestLeft') {
+			var RunningMachinesfilter = document.getElementById("Guest-filter");
+
+			if (RunningMachinesfilter) {
+				for (var i = 0; i < RunningMachinesfilter.length; i++) {
+					if (RunningMachinesfilter.options[i].value == msg.guestPlayerId) {
+
+						RunningMachinesfilter.remove(i);
+					}
+
 				}
-				
-				)
-				
-				console.log(" ws.send(): "+JSON.stringify(dgsgsg));
-				ws.send(dgsgsg);	
-		}
-		else if (msg.type === 'answer') 
-		{
+
+				// sortSelect(RunningMachinesfilter)
+			}
+
+
+		} else if (msg.type === 'sendplayerType') {
+			//https://devstreaming1.eaglepixelstreaming.com:3104/5435467354?appName=MP_PS2&version=35&isSpectator=true
+
+
+			console.log(' 1111111111111 window.location.href.replace(https://, wss://) > ' + ttt);
+			if (clientInfo == undefined)
+				clientInfo = "undefined"
+
+			var dgsgsg = JSON.stringify(
+				{
+					type: 'takePlayerType',
+					isSpectator: isSpectator,
+					hostMeetingId: hostMeetingId,
+					GuestMeetingId: urlParams.get('GuestMeetingId'),
+					navigationType: window.location.href,
+					url: window.location.href,
+					userAgent: navigator.userAgent,
+					clientInfo: clientInfo
+				}
+			)
+
+			console.log(" ws.send(): " + JSON.stringify(dgsgsg));
+			ws.send(dgsgsg);
+		} else if (msg.type === 'answer') {
 			onWebRtcAnswer(msg);
-		}
-		else if (msg.type === 'reload')
-		{
+		} else if (msg.type === 'reload') {
 			location.reload();
-		}
-		else if (msg.type === 'redirectTo')
-		{
-		
-	
+		} else if (msg.type === 'redirectTo') {
+
+
 			//https://www.w3schools.com/howto/howto_js_redirect_webpage.asp
-					// Simulate a mouse click:
-		//window.location.href = msg.data.url;
-		console.log("222222 <- SS: msg.data.url: "+msg.url);
-		
-		
-		//https://www.w3schools.com/jsref/met_loc_replace.asp
-		//The benefit of using the window.location.replace function is that the current URL isn’t added to the visitor’s navigation history, whereas the popular JavaScript redirect window.location.href would. That could cause a visitor to get stuck in back-button loops. Therefore, don’t use it when redirecting visitors immediately to another URL.
-		// Simulate an HTTP redirect:
-		window.location.replace( msg.url);
+			// Simulate a mouse click:
+			//window.location.href = msg.data.url;
+			console.log("222222 <- SS: msg.data.url: " + msg.url);
 
 
+			//https://www.w3schools.com/jsref/met_loc_replace.asp
+			//The benefit of using the window.location.replace function is that the current URL isn’t added to the visitor’s navigation history, whereas the popular JavaScript redirect window.location.href would. That could cause a visitor to get stuck in back-button loops. Therefore, don’t use it when redirecting visitors immediately to another URL.
+			// Simulate an HTTP redirect:
+			window.location.replace(msg.url);
 
-		}	
-		
-		 
-		else if (msg.type === 'ShowThisHtmlPage')
-		 {
-			 failedAttmept=true
-			  ws.close(); 
-			  
-			  self.location = 
-			  msg.htmlPage
-			 // '/projectDoesNotExist.htm'
-			 // 'https://google.com'
-			  
+
+		} else if (msg.type === 'ShowThisHtmlPage') {
+			failedAttmept = true
+			ws.close();
+
+			self.location =
+				msg.htmlPage
+			// '/projectDoesNotExist.htm'
+			// 'https://google.com'
+
 			/*   window.location.href =
 		//	  msg.htmlPage
 		"google.com"
 
 			  ; */
-			
-	
-			 
-		 }
-		else if (msg.type === 'ShowInfo') 
-		{
-			console.log("222222 <- SS: msg.data.info: "+msg.data.info);
+
+
+		} else if (msg.type === 'ShowInfo') {
+			console.log("222222 <- SS: msg.data.info: " + msg.data.info);
 			//showTextOverlay(msg.data.info);
-			//restartAnimationText(msg.data.info) 
+			//restartAnimationText(msg.data.info)
 			//startMapLoadingAnimation();
-			
+
 			try {
-					var vm_Info=JSON.parse(msg.data.info)
-					console.log("33333 <- SS: msg.data.info: "+JSON.stringify(vm_Info));
-					
-					let Title_AcquiringProgresss = document.getElementById('Title_AcquiringProgresss');
-					let AcquiringProgress = document.getElementById('AcquiringProgress');
-					
-					let Title_PreparingProgress = document.getElementById('Title_PreparingProgress');
-					let PreparingProgress = document.getElementById('PreparingProgress');
-					
-					let LunchingProgress = document.getElementById('LunchingProgress');
-					let Title_LunchingProgress = document.getElementById('Title_LunchingProgress');
-					
-					
-					
-					if(   vm_Info.datatype==  "AppAcquiringData")
-					{
-					
-						Title_AcquiringProgresss.style.visibility = 'visible';
+				var vm_Info = JSON.parse(msg.data.info)
+				console.log("33333 <- SS: msg.data.info: " + JSON.stringify(vm_Info));
 
-							if (AcquiringProgress !== null) 
-							{
-								AcquiringProgress.value = vm_Info.data.percent*100
-								AcquiringProgress.style.visibility = 'visible';
-								
-								if(AcquiringProgress.value>=100)
-								{
-									
-									Title_PreparingProgress.style.visibility = 'visible';
+				let Title_AcquiringProgresss = document.getElementById('Title_AcquiringProgresss');
+				let AcquiringProgress = document.getElementById('AcquiringProgress');
 
-									
-										if (PreparingProgress !== null) 
-										{
-											PreparingProgress.value = 0
-											PreparingProgress.style.visibility = 'visible';
-										}
-									
-								}
-								
+				let Title_PreparingProgress = document.getElementById('Title_PreparingProgress');
+				let PreparingProgress = document.getElementById('PreparingProgress');
+
+				let LunchingProgress = document.getElementById('LunchingProgress');
+				let Title_LunchingProgress = document.getElementById('Title_LunchingProgress');
+
+
+				if (vm_Info.datatype == "AppAcquiringData") {
+
+					Title_AcquiringProgresss.style.visibility = 'visible';
+
+					if (AcquiringProgress !== null) {
+						AcquiringProgress.value = vm_Info.data.percent * 100
+						AcquiringProgress.style.visibility = 'visible';
+
+						if (AcquiringProgress.value >= 100) {
+
+							Title_PreparingProgress.style.visibility = 'visible';
+
+
+							if (PreparingProgress !== null) {
+								PreparingProgress.value = 0
+								PreparingProgress.style.visibility = 'visible';
 							}
-												
+
+						}
+
 					}
-					else if(   vm_Info.datatype==  "AppPreparationData")
-					{
-							if (PreparingProgress !== null) 
-							{
-								PreparingProgress.value = vm_Info.data.percent
-								if(PreparingProgress.value>=100)
-								{
-									
-										Title_LunchingProgress.style.visibility = 'visible';
-										if (LunchingProgress !== null) 
-										{
-											LunchingProgress.value = 0
-											LunchingProgress.style.visibility = 'visible';
-										}
-									
-								}
+
+				} else if (vm_Info.datatype == "AppPreparationData") {
+					if (PreparingProgress !== null) {
+						PreparingProgress.value = vm_Info.data.percent
+						if (PreparingProgress.value >= 100) {
+
+							Title_LunchingProgress.style.visibility = 'visible';
+							if (LunchingProgress !== null) {
+								LunchingProgress.value = 0
+								LunchingProgress.style.visibility = 'visible';
 							}
-							
-												
+
+						}
 					}
-					
-			} 
-			catch (e) 
-			{
-				
+
+
+				}
+
+			} catch (e) {
+
 			}
 
-			
-			
-			
-		}
-		else if (msg.type === 'mapIsReadyToSurve') 
-		{
-			 clearTimeout(MapLoadingAnimationTimer);
-			 MapLoadingAnimationText='Map Loading.'
-			 animationCount=0
+
+		} else if (msg.type === 'mapIsReadyToSurve') {
+			clearTimeout(MapLoadingAnimationTimer);
+			MapLoadingAnimationText = 'Map Loading.'
+			animationCount = 0
 			showTextOverlay('Map Ready');
 			createWebRtcOffer();
-			
-			
-			
-		}
-		else if (msg.type === 'TakeuserDeviceInfo') 
-		{
-			userDeviceInfo=msg.userDeviceInfo
-			
+
+
+		} else if (msg.type === 'TakeuserDeviceInfo') {
+			userDeviceInfo = msg.userDeviceInfo
+
 			console.log(`userDeviceInfo : ${JSON.stringify(userDeviceInfo)}`);
-			
-			if(userDeviceInfo.device.type== "smartphone")//desktop
-				useExtendedTyping=1
-			
-			console.log(' 1111111111111 useExtendedTyping > '+ useExtendedTyping);
- 
-		}
-		else if (msg.type === 'iceCandidate') 
-		{
+
+			if (userDeviceInfo.device.type == "smartphone")//desktop
+				useExtendedTyping = 1
+
+			console.log(' 1111111111111 useExtendedTyping > ' + useExtendedTyping);
+
+		} else if (msg.type === 'iceCandidate') {
 			onWebRtcIce(msg.candidate);
-		} 
-		else if (msg.type === 'DisableControlFromOthers') 
-		{
-			isSpectator=true
-		} 
-		else if (msg.type === 'GiveControlToThisGuest') 
-		{
-			isSpectator=false
-		} 
-		else 
-		{
+		} else if (msg.type === 'DisableControlFromOthers') {
+			isSpectator = true
+		} else if (msg.type === 'GiveControlToThisGuest') {
+			isSpectator = false
+		} else {
 			console.log(`invalid SS message type: ${msg.type}`);
 		}
-		
-		
+
+
 	};
 
 	ws.onerror = function (event) {

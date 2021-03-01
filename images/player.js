@@ -57,7 +57,9 @@ function onParagonLoad() {
 	}
 
 	// When the data channel is connected we want to ask UE4 if 4K is supported.
-	onDataChannelConnected = function () { emitUIInteraction("4K"); };
+	onDataChannelConnected = function () {
+		emitUIInteraction("4K");
+	};
 	addResponseEventListener("handle_responses", handleRespFunction);
 }
 
@@ -91,8 +93,8 @@ function enterFullscreen() {
 		['mozRequestFullScreen',
 			'msRequestFullscreen',
 			'webkitRequestFullScreen'].forEach(function (req) {
-				fullscreenFunc = fullscreenFunc || fullscreenDiv[req];
-			});
+			fullscreenFunc = fullscreenFunc || fullscreenDiv[req];
+		});
 	}
 
 	if (fullscreenFunc) {
@@ -128,8 +130,8 @@ function exitFullscreen() {
 		['mozCancelFullScreen',
 			'msExitFullscreen',
 			'webkitExitFullscreen'].forEach(function (req) {
-				exitFullscreenFunc = exitFullscreenFunc || document[req];
-			});
+			exitFullscreenFunc = exitFullscreenFunc || document[req];
+		});
 	}
 
 	if (exitFullscreenFunc) {
@@ -185,8 +187,7 @@ function onInPageFullscreen() {
 			//Video is now 100% of the playerElement so set the playerElement style
 			playerElement.style.width = styleWidth + "px";
 			playerElement.style.height = styleHeight + "px";
-		}
-		else {
+		} else {
 			styleWidth = window.innerWidth;
 			styleHeight = Math.floor(window.innerWidth * videoAspectRatio);
 			styleTop = Math.floor((window.innerHeight - styleHeight) * 0.5);
