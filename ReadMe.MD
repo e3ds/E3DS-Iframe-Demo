@@ -6,6 +6,10 @@ you can send json object like the following:
 ```
 {"cmd":"dance","room":"dining room"}
 ```
+
+KUnal,Attache instuctions on how to construct this json in ue4 and send as PS response
+
+
 <br><br>
 Here, `dance` is the event name. You can handle this event by setting an event listener like below:
 
