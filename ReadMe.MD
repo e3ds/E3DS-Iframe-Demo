@@ -7,7 +7,6 @@ you can send json object like the following:
 {"cmd":"dance","room":"dining room"}
 ```
 
-KUnal,Attache instuctions on how to construct this json in ue4 and send as PS response
 
 To send json form Unreal Project and send as Pixel Streaming Response, add the Pixel Streamer Input to the Player Controller of your project with Pixel Streaming Plugin enabled for your project.
 
@@ -36,7 +35,9 @@ Now, what you want to do is upto you. You can always leave a message on our supp
 ### Frequently Asked Questions
 
 ##### How do I add an element
-You can use DOM manipulation API of javascript to do so. Check the following links and examples:
+You can use DOM manipulation API of javascript to do so.   
+We have implemented an iframe as an example. You can click `increaseSessionTime` to make that iframe visible. Check the `/js/eventHandler.js` file.    
+Check the following links and examples:
 https://www.w3schools.com/js/js_htmldom.asp
 https://www.w3schools.com/jsref/met_document_createelement.asp
 
