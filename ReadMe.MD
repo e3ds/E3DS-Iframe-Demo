@@ -1,4 +1,4 @@
-# Eagle3dStreaming Demo
+# E3DS Iframe Demo
 ## Overview
 ## How to handle events thrown from UE4 App
 From UE4 App, if you send any json object that doesn't contain `type` property, it will be catched `window.e3ds.onEvent` function.
