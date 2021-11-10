@@ -20,7 +20,7 @@ const messageHandler = (event) => {
 			// loading screen 1 hides
 			break;
 		case "stage3_slotOccupied":
-			loaderStep1.style.visibility = "hidden";
+			loaderStep1.style.display = "none";
 			loaderStep2.style.visibility = "visible";
 			break;
 		case "stage4_playBtnShowedUp":
