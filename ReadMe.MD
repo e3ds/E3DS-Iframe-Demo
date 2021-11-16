@@ -8,7 +8,7 @@ you can send json object like the following:
 ```
 
 
-To send json form Unreal Project and send as Pixel Streaming Response, add the Pixel Streamer Input to the Player Controller of your project with Pixel Streaming Plugin enabled for your project.
+To send JSON from Unreal Project and send as Pixel Streaming Response, add the Pixel Streamer Input to the Player Controller of your project with Pixel Streaming Plugin enabled for your project.
 
 
 
@@ -31,6 +31,9 @@ window.e3ds.onEvent("dance", (data) => {
 The above code will just print, `Raven dancing in the dining room`.
 
 Now, what you want to do is upto you. You can always leave a message on our support center if you have any questions regarding this.
+
+### Demo of IFrame
+https://iframe.eagle3dstreaming.com
 
 ### Frequently Asked Questions
 
