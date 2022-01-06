@@ -41,6 +41,18 @@ const messageHandler = (event) => {
 			};
 			sendToMainPage(obj);
 			break;
+			
+		case "QueueNumberUpdated":
+			console.log("QueueNumberUpdated. New queuePosition: : " +  event.data.queuePosition)
+			break;
+			
+		case "stage3_1_AppAcquiringProgress":
+			console.log("stage3_1_AppAcquiringProgress percent: " + JSON.stringify( event.data.percent))
+			break;
+			
+		case "stage3_2_AppPreparationProgress":
+			console.log("stage3_2_AppPreparationProgress percent:" + JSON.stringify( event.data.percent))
+			break;	
 		default:
 			console.error("Unhandled message data type");
 			break;
