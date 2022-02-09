@@ -17,7 +17,7 @@ Example JSON object-
 `{"cmd":"run","room":"dining room"}`
 This will go in Pixel Streaming Response String variable.
 
-
+![Example of blueprint catching events from webpage](https://github.com/e3ds/E3DS-Iframe-Demo/blob/main/images/ue4-pixelstreaming-response.png?raw=true)
 
 
 <br><br>
@@ -51,6 +51,7 @@ To catch this event on the Unreal Engine side, use **Bind Event to OnPixelStream
 
 Following is an example that retrieves `Teleport` value from the JSON string passed from the page:
 
+![Example of blueprint catching events from webpage](https://github.com/e3ds/E3DS-Iframe-Demo/blob/main/images/ue4-catching-event-from-page.png?raw=true)
 
 ### Demo of IFrame
 https://iframe.eagle3dstreaming.com
