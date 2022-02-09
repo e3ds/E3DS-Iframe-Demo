@@ -13,8 +13,8 @@ To send JSON from Unreal Project and send as Pixel Streaming Response, add the P
 
 
 In your blueprint where you want to set this up (Actor/Pawn), Create a function called Send Pixel Streaming Response and create a string Variable Pixel Streaming Response String. In the function you can retrieve reference of Pixel Streaming Component from the Player Controller using the Actor > Get Component by Class node. Click the Component Class input, and look for the PixelStreamingInputComponent in the list. Set the json response you want to send in Pixel Streaming Response String and call the Send Pixel Streaming Response function on event where needed.
-Example json object-
-{"cmd":"run","room":"dining room"}
+Example JSON object-
+`{"cmd":"run","room":"dining room"}`
 This will go in Pixel Streaming Response String variable.
 
 
@@ -31,6 +31,26 @@ window.e3ds.onEvent("run", (data) => {
 The above code will just print, `Raven running in the dining room`.
 
 Now, what you want to do is upto you. You can always leave a message on our support center if you have any questions regarding this.
+
+## How to send events from iframe page to UE4
+
+From Javascript client page:
+
+```
+let descriptor = {
+		Teleport: "dining room"
+	};
+let obj = {
+	cmd: "sendToUe4",
+	value: descriptor
+}
+sendToMainPage(obj)
+```
+
+To catch this event on the Unreal Engine side, use **Bind Event to OnPixelStreamingInputEvent** node. You have to attach a **UI Interaction** node to the `event` field of **Bind Event to OnPixelStreamingInputEvent**. You need to bind this event once, typically at the start of your game.
+
+Following is an example that retrieves `Teleport` value from the JSON string passed from the page:
+
 
 ### Demo of IFrame
 https://iframe.eagle3dstreaming.com
