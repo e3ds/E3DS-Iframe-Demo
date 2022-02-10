@@ -20,6 +20,8 @@ This will go in Pixel Streaming Response String variable.
 ![Example of blueprint catching events from webpage](https://github.com/e3ds/E3DS-Iframe-Demo/blob/main/images/ue4-pixelstreaming-response.png?raw=true)
 
 
+![Example of blueprint catching events from webpage](https://github.com/e3ds/E3DS-Iframe-Demo/blob/main/images/Sending%20Response%20to%20Iframe.png?raw=true)
+
 <br><br>
 Here, `run` is the event name. You can handle this event by setting an event listener like below:
 
