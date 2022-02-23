@@ -28,11 +28,13 @@ const messageHandler = (event) => {
 			loaderStep2.style.visibility = "hidden";
 			iframeElem.style.visibility = "visible";
 			loaderStep3.style.visibility = "visible";
-			let playButton = document.getElementById("playButton");
+			let playButton = document.getElementById("playButtonParent");
+			playButton.click();
 			onPlayBtnPressed();
 			break;
 		case "stage5_playBtnPressed":
 			sidebar.style.visibility = "visible";
+			loaderStep2.style.display = "none";
 			break;
 		case "isIframe":
 			let obj = {
@@ -53,6 +55,9 @@ const messageHandler = (event) => {
 		case "stage3_2_AppPreparationProgress":
 			console.log("stage3_2_AppPreparationProgress percent:" + JSON.stringify( event.data.percent))
 			break;	
+		case "shortCuts":
+			console.log("Key pressed");
+			break;
 		default:
 			console.error("Unhandled message data type");
 			break;
