@@ -1,0 +1,154 @@
+<!-- Copyright Epic Games, Inc. All Rights Reserved. -->
+<!DOCTYPE HTML>
+<html>
+
+<head>
+    <!-- <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no"> -->
+    <meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="HandheldFriendly" content="true">
+    <title>E3DS Iframe Demo</title>
+    <link rel="shortcut icon" href="./images/favicon.ico" type="image/x-icon">
+    <link rel="icon" type="image/png" sizes="96x96" href="./images/favicon-96x96.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="./images/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="./images/favicon-16x16.png">
+
+    <script type="text/javascript" src="./images/jquery.min.js"></script>
+    <link type="text/css" rel="stylesheet" href="./images/style.css">
+    <!-- <script type="text/javascript" src="./js/main.js"></script> -->
+    <script type="text/javascript" src="./js/message.js"></script>
+    <script type="text/javascript" src="./js/demo.js"></script>
+    
+
+    <style type="text/css">
+        body, html {
+            margin: 0;
+            padding: 0;
+            height: 100%;
+            overflow: hidden;
+        }
+
+        #content {
+            position: absolute;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            top: 0px;
+        }
+    </style>
+    <!-- YOUR CODE GOES HERE -->
+    <script type="text/javascript" src="js/eventHandler.js"></script>
+</head>
+<body>
+<div id="loaderStep1"
+     style="visibility: visible;top: 0px; left: 0px; width: 100%; height: 100%; background-image: url('./images/background.jpg');"
+     class="loader">
+    <div class="loader-header"><img src="./images/Loading2.gif" alt=""></div>
+</div>
+
+<div id="loaderStep2"
+     style="visibility: hidden;top: 0px; left: 0px; width: 100%; height: 100%; background-image: url('./images/backgroundv1.jpg');"
+     class="loader">
+    <div class="loader-header"><img src="./images/gdgsg.gif" alt=""></div>
+</div>
+
+<div id="loaderStep3"
+     style="visibility: hidden;top: 0px; left: 0px; width: 100%; height: 100%; background-image: url('./images/21344090.jpg');"
+     class="loader">
+    <img id="playButtonParent" src="./images/PlayButton.png" alt="!!!!!" style="height: 250px; width: 250px; ">
+</div>
+
+
+<div id="wrapperdiv">
+    <div class="wrapper d-flex align-items-stretch">
+
+
+        <div class="flexstretch" id="sidebar" style="visibility: hidden;">
+            <div class="sidebar left">
+                <ul class="list-sidebar bg-defoult">
+                    <li>
+                        <a class="logo" href="javascript:;"><img class="full" src="./images/Unreal-Logo_1x.png"
+                                                                 width="45px" height="45px" alt=""/>
+                            <span class="nav-label">
+									<img src="./images/Unreal-Name2x.png" alt=""/>
+								</span>
+                        </a>
+                    </li>
+                    <li class="active">
+                        <a onclick="switchTo('Living Room')">
+								<span class="img-icon"><img src="./images/living_room.svg" width="30px" height="30px"
+                                                            alt=""/></span><span
+                                class="nav-label">Living Room</span></a>
+                    </li>
+                    <li>
+                        <a onclick="switchTo('Kitchen')">
+								<span class="img-icon"><img src="./images/Kitchen.svg" width="30px" height="30px"
+                                                            alt=""/></span><span class="nav-label">Kitchen</span></a>
+                    </li>
+                    <li>
+                        <a onclick="switchTo('Bedroom')">
+								<span class="img-icon"><img src="./images/Bedroom.svg" width="30px" height="30px"
+                                                            alt=""/></span><span class="nav-label">Bedroom</span></a>
+                    </li>
+                    <li>
+                        <a onclick="switchTo('Front')">
+								<span class="img-icon"><img src="./images/Front Yard.svg" width="30px" height="30px"
+                                                            alt=""/></span><span class="nav-label">Front Yard</span></a>
+                    </li>
+
+                    <li>
+                        <a onclick="switchTo('Back')">
+								<span class="img-icon"><img src="./images/Back Yard.svg" width="30px" height="30px"
+                                                            alt=""/></span><span class="nav-label">Back Yard</span></a>
+                    </li>
+                    <li>
+                        <a onclick="switchTo('Porch')">
+								<span class="img-icon"><img src="./images/Porch.svg" width="30px" height="30px"
+                                                            alt=""/></span><span class="nav-label">Porch</span></a>
+                    </li>
+
+                    <li>
+                        <a onclick="switchTo('Studio')">
+								<span class="img-icon"><img src="./images/Studio.svg" width="30px" height="30px"
+                                                            alt=""/></span><span class="nav-label">Studio</span></a>
+                    </li>
+                    <li id="countdown">
+                        <span class="nav-label time-label">Time Remaining: </span>
+                        <span class="time" id="timer">4.45</span>
+                    </li>
+                </ul>
+                <div class="float_left">
+                    <a href="javascript:;" class="button-left close-btn"><span class="button_collapse"></span></a>
+                </div>
+            </div>
+        </div>
+
+        <div id="content">
+            <div id="player">
+
+
+                <div id="content">
+                    <iframe id="iframe_1"
+                            src="file:///Users/robinmollah/clouds/e3ds/repos/tmp-lone-stream/nexhub.html"
+                            width="100%" height="100%" allowfullscreen>
+                    </iframe>
+
+                </div>
+            </div>
+            <!---Start footer-->
+            <a style="visibility: hidden;" id="ck-fullscreen" class="full-screen-btn" onclick="goToFullScreen()">
+                <span class="footer-icon fullscreen-icon"></span>
+            </a>
+            <!--End Footer-->
+        </div>
+    </div>
+</div>
+<script>
+    setInterval(function () {
+        $('#iframe_1').focus();
+    }, 1000);
+</script>
+
+</body>
+
+</html>
