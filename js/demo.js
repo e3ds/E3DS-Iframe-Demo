@@ -35,6 +35,7 @@ const messageHandler = (event) => {
 		case "stage5_playBtnPressed":
 			sidebar.style.visibility = "visible";
 			loaderStep2.style.display = "none";
+			iframeElem.style.visibility = "visible";
 			break;
 		case "isIframe":
 			let obj = {
