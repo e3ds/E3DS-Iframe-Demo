@@ -1,0 +1,16 @@
+name: Notify on Telegram
+on: [push, pull_request]
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: Notify on telegram
+        run: |
+          curl --request POST \
+            --url http://notifications.eagle3dstreaming.com:8080/message_sent \
+            --header 'Content-Type: application/json' \
+            --data '{
+              "input_chat_id": -680024091,
+              "message": "New update pushed in IFRAME DEMO:  ${{ github.event.head_commit.message }} by ${{ github.event.head_commit.author.name }}"
+          }'
