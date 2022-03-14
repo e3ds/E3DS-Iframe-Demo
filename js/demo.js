@@ -36,6 +36,7 @@ const messageHandler = (event) => {
 			sidebar.style.visibility = "visible";
 			loaderStep2.style.display = "none";
 			iframeElem.style.visibility = "visible";
+			$('#iframe_1').focus();
 			break;
 		case "isIframe":
 			let obj = {
