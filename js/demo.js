@@ -38,6 +38,9 @@ const messageHandler = (event) => {
 			iframeElem.style.visibility = "visible";
 			$('#iframe_1').focus();
 			break;
+		case "_focus":
+			document.getElementById("iframe_1").focus();
+			break;
 		case "isIframe":
 			let obj = {
 				cmd: 'isIframe',
