@@ -70,6 +70,12 @@ const messageHandler = (event) => {
 }
 window.addEventListener('message', messageHandler);
 
+window.addEventListener('message', (message) => {
+	if (message.data.type === '_focus') {
+		document.getElementById("iframe_1").focus();
+	}
+})
+
 function onPlayBtnPressed() {
 	let loaderStep2 = document.getElementById("loaderStep2")
 	loaderStep2.style.visibility = "hidden";
