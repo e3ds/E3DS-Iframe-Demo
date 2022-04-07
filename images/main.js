@@ -1,4 +1,4 @@
-const TIMEOUT_SECONDS = 5 * 60;
+const TIMEOUT_SECONDS = 5 * 60 * 5;
 
 function startTimer(display) {
 	var timer = TIMEOUT_SECONDS, minutes, seconds;
