@@ -1,0 +1,16 @@
+#dynamic-url-box {
+    z-index: 20;
+    position: absolute;
+    margin: auto;
+    width: 100%;
+    text-align: center;
+    font-size: 2em;
+}
+
+#dynamic-url {
+    font-size: 1em;
+}
+
+#submitUrl {
+    font-size: 0.8em;
+}
