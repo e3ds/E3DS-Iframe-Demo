@@ -98,12 +98,10 @@ function switchTo(val) {
 		Teleport: val
 	};
 	//emitUIInteraction(descriptor);
-	let obj =
-		{
+	let obj ={
 			cmd: "sendToUe4",
 			value: descriptor,
-
-		}
+	};
 	sendToMainPage(obj)
 }
 
