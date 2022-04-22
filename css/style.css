@@ -120,7 +120,7 @@ a.button-left.open-btn .button_collapse {
     display: inline-block;
     overflow: hidden;
     height: 30px;
-	width: 160px;
+	/* width: 160px; */
 	white-space: nowrap;
 	line-height: 30px;
 }
