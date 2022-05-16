@@ -5,6 +5,7 @@
 	--nav-bar-bg-color: #000000;
 	--nav-bar-bg-color-rgba: rgba(0, 0, 0, var(--transparency));
 }
+
 body {
 	font-size: 14px;
 	color: var(--color);
@@ -12,6 +13,7 @@ body {
 
 	background-size: cover;
 }
+
 
 #wrapperdiv {
 	max-height: 100%;
@@ -38,7 +40,7 @@ body {
 	background: #333333;
 	color: var(--color);
 	position: absolute;
-	top:0;
+	top: 0;
 	left: 0;
 	z-index: 100;
 
@@ -47,8 +49,8 @@ body {
 #countdown {
 	padding: 15px 0 15px 25px;
 	display: flex;
-    align-self: center;
-    align-items: center;
+	align-self: center;
+	align-items: center;
 }
 
 #countdown .time-label {
@@ -59,8 +61,8 @@ body {
 
 #countdown .time {
 	display: inline-block;
-    line-height: 30px;
-    height: 30px;
+	line-height: 30px;
+	height: 30px;
 }
 
 .float_left {
@@ -99,7 +101,7 @@ body {
 	background: var(--nav-bar-bg-color-rgba);
 }
 
- a.button-left.close-btn .button_collapse {
+a.button-left.close-btn .button_collapse {
 	background: url(../images/close.png) no-repeat left;
 	width: 21px;
 	display: block;
@@ -117,9 +119,9 @@ a.button-left.open-btn .button_collapse {
 
 .sidebar.left ul li .nav-label {
 	padding-right: 25px;
-    display: inline-block;
-    overflow: hidden;
-    height: 30px;
+	display: inline-block;
+	overflow: hidden;
+	height: 30px;
 	/* width: 160px; */
 	white-space: nowrap;
 	line-height: 30px;
@@ -139,12 +141,14 @@ a:hover {
 	background: none !important;
 	border-left: 10px solid transparent;
 }
+
 #sidebar {
 	position: fixed;
-    top: 0;
-    left: 0;
-    z-index: 10;
+	top: 0;
+	left: 0;
+	z-index: 10;
 }
+
 .sidebar {
 	width: auto;
 	height: 100vh;
@@ -160,9 +164,12 @@ a:hover {
 
 /* Hide scrollbar for IE, Edge and Firefox */
 .sidebar {
-	-ms-overflow-style: none; /* IE and Edge */
-	scrollbar-width: none; /* Firefox */
+	-ms-overflow-style: none;
+	/* IE and Edge */
+	scrollbar-width: none;
+	/* Firefox */
 }
+
 .bg-defoult {
 	background-color: var(--nav-bar-bg-color);
 }
@@ -178,7 +185,8 @@ a:hover {
 	height: 30px;
 	margin-right: 25px;
 }
-.sidebar ul li .img-icon > img {
+
+.sidebar ul li .img-icon>img {
 	vertical-align: baseline;
 }
 
@@ -192,12 +200,12 @@ a:hover {
 
 .sidebar li a {
 	display: flex;
-    padding: 15px 0 15px 15px;
-    color: var(--color);
-    text-decoration: none;
-    text-align: left;
-    cursor: pointer;
-    align-items: center;
+	padding: 15px 0 15px 15px;
+	color: var(--color);
+	text-decoration: none;
+	text-align: left;
+	cursor: pointer;
+	align-items: center;
 }
 
 .sidebar li.active a {
@@ -219,12 +227,12 @@ a:hover {
 }
 
 .sidebar li a .nav-label,
-.sidebar li a .nav-label + span {
+.sidebar li a .nav-label+span {
 	transition: display 0.3s ease-in-out;
 }
 
 .sidebar.flip li a .nav-label,
-.sidebar.flip li a .nav-label + span {
+.sidebar.flip li a .nav-label+span {
 	transition: display 0.3s ease-in-out;
 	display: none;
 }
@@ -273,11 +281,11 @@ a:hover {
 	display: inline-block;
 }
 
-.full-screen-btn > .fullscreen-icon {
+.full-screen-btn>.fullscreen-icon {
 	background: url(../images/full_screen.svg) no-repeat;
 }
 
-.full-screen-btn > .minimize-icon {
+.full-screen-btn>.minimize-icon {
 	background: url(../images/minimize.svg) no-repeat;
 }
 
@@ -295,14 +303,14 @@ a:hover {
 .loader {
 	height: 100vh;
 	width: 100%;
-    font-family: "EurostileLTStd-BoldEx2", "Roboto", sans-serif;
-    font-size: 20px;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-    background: #000000;
-    color: var(--color);
+	font-family: "EurostileLTStd-BoldEx2", "Roboto", sans-serif;
+	font-size: 20px;
+	display: flex;
+	flex-direction: column;
+	justify-content: center;
+	align-items: center;
+	background: #000000;
+	color: var(--color);
 	margin: 0 auto;
 	position: absolute;
 	z-index: 40;
@@ -310,13 +318,13 @@ a:hover {
 	left: 0;
 }
 
-.loader > div {
+.loader>div {
 	display: flex;
 	align-items: center;
 	justify-content: center;
 }
 
-.loader > div:not(:last-child) {
+.loader>div:not(:last-child) {
 	margin-bottom: 120px;
 	/* height: 30%; */
 }
@@ -328,54 +336,59 @@ a:hover {
 .loader-header {
 	height: auto;
 }
-.loader-header > img {
+
+.loader-header>img {
 	height: 160px;
-    width: 280px;
+	width: 280px;
 }
 
 .loader-content {
 	height: auto;
 }
 
-.loader-content > img {
+.loader-content>img {
 	height: 150px;
-    width: 200px;
+	width: 200px;
 }
 
-.loader-content > .img-play {
+.loader-content>.img-play {
 	height: 150px;
 	width: 150px;
 }
 
-.loader-content > img.lg {
+.loader-content>img.lg {
 	height: 100px;
-    width: 200px;
+	width: 200px;
 }
 
-.loader-content > img.md {
+.loader-content>img.md {
 	height: 75px;
-    width: 150px;
+	width: 150px;
 }
 
-.loader-content > img.sm {
+.loader-content>img.sm {
 	height: 60px;
-    width: 120px;
+	width: 120px;
 }
-.loader-content > img.xs {
+
+.loader-content>img.xs {
 	height: 40px;
-    width: 80px;
+	width: 80px;
 }
 
 .loader-footer {
 	height: auto;
 	flex-direction: column;
 }
-.loader-footer > p.sm-msg {
+
+.loader-footer>p.sm-msg {
 	font-size: 14px;
 }
-.loader-footer > p > span {
+
+.loader-footer>p>span {
 	font-size: 18px;
-	font-family: "EurostileLTStd", "Roboto", sans-serif;;
+	font-family: "EurostileLTStd", "Roboto", sans-serif;
+	;
 }
 
 /* @media (orientation: landscape) and (max-width: 700px) {
@@ -384,54 +397,59 @@ a:hover {
 	}
 } */
 /* @media screen and (max-width: 995px) , screen and (max-height: 700px) */
-@media screen and (max-width: 700px), screen and (max-height: 600px) {
-	.loader > div:not(:last-child)  {
+@media screen and (max-width: 700px),
+screen and (max-height: 600px) {
+	.loader>div:not(:last-child) {
 		margin-bottom: 50px;
 	}
+
 	#ck-fullscreen {
 		display: none;
 	}
 }
 
-@media screen and (max-width: 700px), screen and (max-height: 465px) {
+@media screen and (max-width: 700px),
+screen and (max-height: 465px) {
 
-	.loader > div:not(:last-child)  {
+	.loader>div:not(:last-child) {
 		margin-bottom: 20px;
 	}
 
-	.loader-header > img {
+	.loader-header>img {
 		height: 140px;
 		width: 250px;
 	}
 
-	.loader-content > img {
+	.loader-content>img {
 		height: 130px;
 		width: 170px;
 	}
 
-	.loader-content > .img-play {
+	.loader-content>.img-play {
 		height: 130px;
 		width: 130px;
 	}
 
-	.loader-content > img.lg {
+	.loader-content>img.lg {
 		height: 90px;
 		width: 180px;
 	}
 
-	.loader-content > img.md {
+	.loader-content>img.md {
 		height: 65px;
 		width: 130px;
 	}
 
-	.loader-content > img.sm {
+	.loader-content>img.sm {
 		height: 50px;
 		width: 100px;
 	}
-	.loader-content > img.xs {
+
+	.loader-content>img.xs {
 		height: 30px;
 		width: 60px;
 	}
+
 	#ck-fullscreen {
 		display: none;
 	}
