@@ -466,3 +466,113 @@ screen and (max-height: 465px) {
 	bottom: 0px;
 	left: 50%;
 }
+
+
+
+
+
+
+
+/** hour glass begin **/
+.icon__hourglass {
+	--size: 50px;
+	--color: hotpink;
+	--topfill: 30%;
+	transform-origin: bottom right;
+	box-sizing: border-box;
+	position: relative;
+	width: var(--size);
+	height: var(--size);
+	margin: -50px 25px 0px -25px;
+	transform: rotate(45deg) scale(0.5);
+	background: radial-gradient(#ffffff44, transparent 50%),
+		linear-gradient(135deg,
+			transparent var(--topfill),
+			var(--color) calc(var(--topfill) + 20px)),
+		linear-gradient(135deg, transparent 40%, #00000033 0%);
+	animation: anim__hourglass-fill 2s linear infinite;
+}
+
+.icon__hourglass::after {
+	content: "";
+	position: absolute;
+	width: calc(var(--size) * 1.5);
+	height: var(--size);
+	border-top: 12.5px solid var(--color);
+	border-bottom: 12.5px solid var(--color);
+	border-radius: 5px;
+	transform: rotate(-45deg) scaleY(1.5) translate(-1.5px, 10px);
+}
+
+.icon__hourglass::before {
+	content: "";
+	--bottomfill: calc((var(--topfill) + 20%));
+	position: absolute;
+	width: var(--size);
+	height: var(--size);
+	transform: rotate(180deg) translateX(-45px) translateY(-45px);
+	background: radial-gradient(#ffffff88, transparent 50%),
+		linear-gradient(135deg,
+			transparent 40%,
+			var(--color) 40%,
+			transparent var(--bottomfill)),
+		linear-gradient(135deg, transparent 40%, #00000033 0%),
+		linear-gradient(45deg,
+			transparent 0%,
+			transparent 47%,
+			#00000022 47%,
+			#00000022 53%,
+			transparent 53%);
+	background-repeat: no-repeat;
+	background-position-y: 0px, 0px, 0px, 25px;
+	background-position-x: 0px, 0px, 0px, 25px;
+}
+
+@keyframes anim__hourglass-fill {
+	0% {
+		--topfill: 30%;
+		transform: rotate(45deg) scale(0.5);
+	}
+
+	10% {
+		--topfill: 40%;
+		transform: rotate(45deg) scale(0.5);
+	}
+
+	20% {
+		--topfill: 50%;
+		transform: rotate(45deg) scale(0.5);
+	}
+
+	30% {
+		--topfill: 60%;
+		transform: rotate(45deg) scale(0.5);
+	}
+
+	40% {
+		--topfill: 70%;
+		transform: rotate(45deg) scale(0.5);
+	}
+
+	50% {
+		--topfill: 80%;
+		transform: rotate(45deg) scale(0.5);
+	}
+
+	85% {
+		--topfill: 90%;
+		transform: rotate(45deg) scale(0.5);
+	}
+
+	95% {
+		--topfill: 100%;
+		transform: rotate(160deg) scale(0.5);
+	}
+
+	100% {
+		--topfill: 100%;
+		transform: rotate(225deg) scale(0.5);
+	}
+}
+
+/** hour glass end  **/
