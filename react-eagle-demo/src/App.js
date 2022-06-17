@@ -65,6 +65,7 @@ function App() {
         <iframe
           ref={iframeElem}
           title='demo'
+          allow='camera;microphone'
           id='iframe_1'
           src='https://connector.eagle3dstreaming.com/v5/demo/FeaturesTemplate/E3DS-Iframe-Demo'
           width='100%'
