@@ -78,6 +78,9 @@ body {
 	background: none;
 }
 
+
+
+
 .sidebar.left .logo {
 	padding: 10px 0 10px 8px;
 	cursor: default;
@@ -100,6 +103,8 @@ body {
 	height: 60px;
 	background: var(--nav-bar-bg-color-rgba);
 }
+
+
 
 a.button-left.close-btn .button_collapse {
 	background: url(../images/close.png) no-repeat left;
@@ -156,6 +161,25 @@ a:hover {
 	background: none;
 	overflow-y: auto;
 	/* transition: width 0.3s ease-in-out; */
+}
+
+.hide {
+	display: none;
+	height: 20vh !important;
+}
+
+.menuButton {
+	/* background: white; */
+	/* color: black; */
+	padding: 6px 12px;
+	font-size: 18px;
+	text-align: center;
+	cursor: pointer;
+	width: 300px;
+	outline: none;
+	border: none;
+	font-weight: 800;
+	margin: 10px 0px;
 }
 
 .sidebar::-webkit-scrollbar {

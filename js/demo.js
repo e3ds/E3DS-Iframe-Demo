@@ -123,3 +123,15 @@ function goToFullScreen() {
 	sendToMainPage(obj)
 }
 
+	
+  const menuToggle = () => {
+	const listSidebar = document.getElementById("sidebar-items");
+	const menuButton = document.getElementById("menuButton");
+
+    if(menuButton.innerText ==='Menu'){
+		menuButton.innerText = 'Close Menu'
+	}else{
+		menuButton.innerText = 'Menu'
+	}
+       listSidebar.classList.toggle('hide');
+}
