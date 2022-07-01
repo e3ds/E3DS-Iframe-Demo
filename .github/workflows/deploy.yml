@@ -5,7 +5,7 @@ on:
       - main
 jobs:
   build:
-    runs-on: ubuntu-latest
+    runs-on: windows-latest
     steps:
       - uses: actions/checkout@master
       - name: Install SSH Key
@@ -15,7 +15,7 @@ jobs:
           known_hosts: "Something"
       - name: Adding known_hosts
         run: ssh-keyscan -H ${{ secrets.SSH_HOST }} >> ~/.ssh/known_hosts
-      - run: ssh -tt ubuntu@${{ secrets.SSH_HOST }} 'cd E3DS-Iframe-Demo; git stash push -m "Stashed by Actions"; git pull origin main; yarn; /home/ubuntu/.nvm/versions/node/v12.18.4/bin/pm2 restart E3DS-Iframe-Demo'
+      - run: ssh -tt Eagle3DStreaming@${{ secrets.SSH_HOST }} 'cd E3DS-Iframe-Demo; git stash push -m "Stashed by Actions"; git pull origin main; npm install'
       - name: Notify on telegram
         run: |
           curl --request POST \
