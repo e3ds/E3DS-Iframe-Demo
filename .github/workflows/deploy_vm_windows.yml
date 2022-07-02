@@ -1,0 +1,27 @@
+name: Deploy-VM-Windows
+on:
+  push:
+    branches:
+      - main
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@master
+      - name: Install SSH Key
+        uses: shimataro/ssh-key-action@v2
+        with:
+          key: ${{ secrets.PRV_KEY_VM }}
+          known_hosts: "Something"
+      - name: Adding known_hosts
+        run: ssh-keyscan -H ${{ secrets.SSH_HOST }} >> ~/.ssh/known_hosts
+      - run: ssh -tt Eagle3DStreaming@${{ secrets.SSH_HOST }} 'cd E3DS-Iframe-Demo; git stash push -m "Stashed by Actions"; git pull'
+      - name: Notify on telegram
+        run: |
+          curl --request POST \
+            --url http://notifications.eagle3dstreaming.com:8080/message_sent \
+            --header 'Content-Type: application/json' \
+            --data '{
+          	"input_chat_id": -680024091,
+          	"message": "New update pushed in E3DS-Iframe-Demo repo:  ${{ github.event.head_commit.message }} by ${{ github.event.head_commit.author.name }}"
+          }'
