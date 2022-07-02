@@ -14,6 +14,11 @@ jobs:
           key: ${{ secrets.PRV_KEY_VM }}
           known_hosts: "Something"
       - name: Adding known_hosts
-        run: ssh-keyscan -H ${{ secrets.SSH_HOST }} >> ~/.ssh/known_hosts
-      - run: ssh -tt Eagle3DStreaming@99.60.91.9&cd c:/wolf/E3DS-Iframe-Demo&git pull
+        with: 
+        host: 99.60.91.9
+        username: Eagle3DStreaming
+        key: ${{ secrets.PRV_KEY_VM }}
+        script: |
+          cd C:/wolf/E3DS-Iframe-Demo
+          git pull
       
