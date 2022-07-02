@@ -15,5 +15,5 @@ jobs:
           known_hosts: "Something"
       - name: Adding known_hosts
         run: ssh-keyscan -H ${{ secrets.SSH_HOST }} >> ~/.ssh/known_hosts
-      - run: ssh -tt Eagle3DStreaming@${{ secrets.SSH_HOST }} " touch m.txt "
+      - run: ssh -tt Eagle3DStreaming@99.60.91.9 " type nul > your_file.txt "
       
