@@ -10,15 +10,11 @@ jobs:
       - uses: actions/checkout@master
       - name: Install SSH Key
         uses: shimataro/ssh-key-action@v2
-        with:
-          key: ${{ secrets.PRV_KEY_VM }}
-          known_hosts: "Something"
-      - name: Adding known_hosts
         with: 
-        host: 99.60.91.9
-        username: Eagle3DStreaming
-        key: ${{ secrets.PRV_KEY_VM }}
-        script: |
-          cd C:/wolf/E3DS-Iframe-Demo
-          git pull
+          host: 99.60.91.9
+          username: Eagle3DStreaming
+          key: ${{ secrets.PRV_KEY_VM }}
+          script: |
+            cd C:/wolf/E3DS-Iframe-Demo
+            git pull
       
