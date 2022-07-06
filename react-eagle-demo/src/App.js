@@ -1,10 +1,15 @@
-import { useRef } from 'react';
+import { useRef, useState } from 'react';
 import './App.css';
 import { commands } from './utils';
-import Logo from './Unreal_Logo.png';
+import {
+  BsFillArrowLeftCircleFill,
+  BsFillArrowRightCircleFill,
+} from 'react-icons/bs';
 
 function App() {
   const iframeElem = useRef();
+  const [isOpen, setIsOpen] = useState(false);
+  const [cmd, setCmd] = useState('');
 
   const sendToMainPage = (obj) => {
     let origin = '*';
@@ -13,6 +18,7 @@ function App() {
       iframeElem.current.contentWindow.postMessage(JSON.stringify(obj), origin);
     }
   };
+
   function switchTo(val) {
     let descriptor = {
       Teleport: val,
@@ -26,43 +32,85 @@ function App() {
 
   return (
     <div style={{ display: 'flex', overflow: 'hidden' }}>
-      <div>
-        <div style={{ background: 'black', textAlign: 'center' }}>
-          <img
-            style={{ width: '50px', height: '50px' }}
-            src={Logo}
-            alt='logo'
-          />
+      <div
+        style={{
+          position: 'relative',
+        }}
+      >
+        <div style={{ display: isOpen ? 'block' : 'none' }}>
+          <div style={{ textAlign: 'center', margin: '10px' }}>
+            <img
+              style={{ width: '70px', height: '70px' }}
+              src='https://eagle3dstreaming.com/wp-content/uploads/2021/04/eagle3d-logo.png'
+              alt='logo'
+            />
+          </div>
+          <p
+            style={{ textAlign: 'center', fontSize: '14px', fontWeight: '600' }}
+          >
+            Explore Commands:
+          </p>
+          <div
+            style={{
+              display: 'flex',
+              flexDirection: 'column',
+              gap: '20px',
+              padding: '10px',
+              width: '250px',
+            }}
+          >
+            {commands.map((item) => (
+              <button
+                style={{
+                  outline: 'none',
+                  border: 'none',
+                  fontSize: '15px',
+                  cursor: 'pointer',
+                  padding: '8px 12px',
+                  display: 'flex',
+                  gap: '10px',
+                  justifyContent: 'center',
+                  alignItems: 'center',
+                  background: cmd === item.value ? 'black' : 'rgb(221 222 224)',
+                  color: cmd === item.value ? 'white' : 'black',
+                  fontWeight: '600',
+                  borderRadius: '20px',
+                }}
+                onClick={() => {
+                  setCmd(item.value);
+                  switchTo(item.value);
+                }}
+              >
+                <span style={{ fontSize: '17px' }}>{item.icon}</span>{' '}
+                <span>{item.name}</span>
+              </button>
+            ))}
+          </div>
         </div>
 
         <div
           style={{
-            display: 'flex',
-            flexDirection: 'column',
-            gap: '20px',
-            padding: '10px',
+            position: 'absolute',
+            right: '-60px',
+            top: '50%',
+            fontSize: '40px',
+            color: 'rgb(221 222 224)',
+            cursor: 'pointer',
+            border: 'none',
           }}
+          onClick={() => setIsOpen(!isOpen)}
         >
-          {commands.map((item) => (
-            <button
-              style={{
-                background: 'white',
-                outline: 'none',
-                border: '1px solid gray',
-                fontSize: '17px',
-                cursor: 'pointer',
-                padding: '6px',
-              }}
-              onClick={() => switchTo(item.value)}
-            >
-              {item.name}
-            </button>
-          ))}
+          {isOpen ? (
+            <BsFillArrowRightCircleFill />
+          ) : (
+            <BsFillArrowLeftCircleFill />
+          )}
         </div>
       </div>
 
       <div style={{ height: '100vh', width: '100%' }}>
         <iframe
+          style={{ border: 'none' }}
           ref={iframeElem}
           title='demo'
           allow='camera;microphone'
