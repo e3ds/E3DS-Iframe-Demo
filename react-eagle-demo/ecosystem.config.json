@@ -1,17 +1,10 @@
 {
-    "apps": [
-      {
-        "name": "iframe-react",
-        "script":"npm",
-        "args": "run start",
-        "instances": 1,
-        "autorestart": true,
-        "watch": false,
-        "time": true,
-        "env": {
-          "NODE_ENV": "production",
-          "PORT": 7000
-        }
-      }
-    ]
-  }
+  "apps" : [
+    {
+      "name"      : "iframe_react",
+      "script"    : "npx",
+      "interpreter": "none",
+      "args": "serve build/ 7000 --name 'react_iframe' --spa"
+    }
+  ]
+}
