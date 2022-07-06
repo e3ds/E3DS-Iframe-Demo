@@ -36,6 +36,7 @@ function App() {
         style={{
           position: 'relative',
           borderRight: '1px solid #e3e3e3',
+          background: '#ececec',
         }}
       >
         <div
@@ -63,6 +64,7 @@ function App() {
           >
             {commands.map((item) => (
               <button
+                className='cmd-btn'
                 style={{
                   outline: 'none',
                   border: 'none',
@@ -91,6 +93,7 @@ function App() {
         </div>
 
         <div
+          className='left-right-arrow'
           style={{
             position: 'absolute',
             right: '-60px',
