@@ -35,9 +35,14 @@ function App() {
       <div
         style={{
           position: 'relative',
+          borderRight: '1px solid #e3e3e3',
         }}
       >
-        <div style={{ display: isOpen ? 'block' : 'none' }}>
+        <div
+          style={{
+            display: isOpen ? 'block' : 'none',
+          }}
+        >
           <div style={{ textAlign: 'center', margin: '10px' }}>
             <img
               style={{ width: '70px', height: '70px' }}
@@ -45,11 +50,7 @@ function App() {
               alt='logo'
             />
           </div>
-          <p
-            style={{ textAlign: 'center', fontSize: '14px', fontWeight: '600' }}
-          >
-            Explore Commands:
-          </p>
+
           <div
             style={{
               display: 'flex',
@@ -57,6 +58,7 @@ function App() {
               gap: '20px',
               padding: '10px',
               width: '250px',
+              marginTop: '20px',
             }}
           >
             {commands.map((item) => (
