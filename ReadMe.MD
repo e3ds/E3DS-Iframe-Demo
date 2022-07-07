@@ -3,6 +3,12 @@
 ### Demo of IFrame
 https://iframe.eagle3dstreaming.com
 
+reactJS version:
+https://iframe_react.eagle3dstreaming.com/
+
+Ue4 project source code used in the dmeo:
+https://bitbucket.org/Eagle3DStreaming/e3dsfeaturestemplate/
+
 
 ## Overview
 ## How to handle events thrown from UE4 App
