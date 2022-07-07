@@ -9,6 +9,11 @@ https://iframe_react.eagle3dstreaming.com/
 Ue4 project source code used in the dmeo:
 https://bitbucket.org/Eagle3DStreaming/e3dsfeaturestemplate/
 
+more deatils doc:
+https://eagle3dstreaming.atlassian.net/l/c/Ndx0mHy1
+
+https://eagle3dstreaming.atlassian.net/l/c/VcBU1G1R
+
 
 ## Overview
 ## How to handle events thrown from UE4 App
