@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react';
+import { useRef, useState } from 'react';
 import './App.css';
 import { commands } from './utils';
 import {
@@ -7,27 +7,25 @@ import {
 } from 'react-icons/bs';
 
 function App() {
+  // create ref for iframe
   const iframeElem = useRef();
   const [isOpen, setIsOpen] = useState(false);
   const [cmd, setCmd] = useState('');
 
-  const sendToMainPage = (obj) => {
+  // send command to unreal engine
+  function switchTo(val) {
+    let obj = {
+      cmd: 'sendToUe4',
+      value: {
+        Teleport: val,
+      },
+    };
+
     let origin = '*';
-    console.log(iframeElem);
+
     if (null !== iframeElem.current) {
       iframeElem.current.contentWindow.postMessage(JSON.stringify(obj), origin);
     }
-  };
-
-  function switchTo(val) {
-    let descriptor = {
-      Teleport: val,
-    };
-    let obj = {
-      cmd: 'sendToUe4',
-      value: descriptor,
-    };
-    sendToMainPage(obj);
   }
 
   return (
@@ -52,33 +50,13 @@ function App() {
             />
           </div>
 
-          <div
-            style={{
-              display: 'flex',
-              flexDirection: 'column',
-              gap: '20px',
-              padding: '10px',
-              width: '250px',
-              marginTop: '20px',
-            }}
-          >
+          <div className='cmd-container'>
             {commands.map((item) => (
               <button
                 className='cmd-btn'
                 style={{
-                  outline: 'none',
-                  border: 'none',
-                  fontSize: '15px',
-                  cursor: 'pointer',
-                  padding: '8px 12px',
-                  display: 'flex',
-                  gap: '10px',
-                  justifyContent: 'center',
-                  alignItems: 'center',
                   background: cmd === item.value ? 'black' : 'rgb(221 222 224)',
                   color: cmd === item.value ? 'white' : 'black',
-                  fontWeight: '600',
-                  borderRadius: '20px',
                 }}
                 onClick={() => {
                   setCmd(item.value);
@@ -92,19 +70,7 @@ function App() {
           </div>
         </div>
 
-        <div
-          className='left-right-arrow'
-          style={{
-            position: 'absolute',
-            right: '-60px',
-            top: '50%',
-            fontSize: '40px',
-            color: 'rgb(221 222 224)',
-            cursor: 'pointer',
-            border: 'none',
-          }}
-          onClick={() => setIsOpen(!isOpen)}
-        >
+        <div className='left-right-arrow' onClick={() => setIsOpen(!isOpen)}>
           {isOpen ? (
             <BsFillArrowRightCircleFill />
           ) : (
