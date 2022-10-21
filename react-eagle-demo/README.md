@@ -1,14 +1,14 @@
 Follow this to run project locally
 
 ## Clone the repo: 
-git clone git@github.com:e3ds/E3DS-Iframe-Demo.git
+`git clone git@github.com:e3ds/E3DS-Iframe-Demo.git`
 
-##change the directory:
-cd react-eagle-demo
+## change the directory:
+`cd react-eagle-demo`
 
-##Install the packages:
-npm install
+## Install the packages:
+`npm install`
 
-##start the app:
+## start the app:
  `npm start`
 
