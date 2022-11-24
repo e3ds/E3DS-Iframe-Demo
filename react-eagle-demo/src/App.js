@@ -9,7 +9,7 @@ import {
 function App() {
   // create ref for iframe
   const iframeElem = useRef();
-  const [isOpen, setIsOpen] = useState(false);
+  const [isOpen, setIsOpen] = useState(true);
   const [cmd, setCmd] = useState('');
 
   // send command to unreal engine
@@ -72,9 +72,9 @@ function App() {
 
         <div className='left-right-arrow' onClick={() => setIsOpen(!isOpen)}>
           {isOpen ? (
-            <BsFillArrowRightCircleFill />
+                      <BsFillArrowLeftCircleFill />
           ) : (
-            <BsFillArrowLeftCircleFill />
+              <BsFillArrowRightCircleFill />
           )}
         </div>
       </div>
