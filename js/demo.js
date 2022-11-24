@@ -125,13 +125,8 @@ function goToFullScreen() {
 
 	
   const menuToggle = () => {
-	const listSidebar = document.getElementById("sidebar-items");
+	const listSidebar = document.getElementById("sidebar");
 	const menuButton = document.getElementById("menuButton");
-
-    if(menuButton.innerText ==='Menu'){
-		menuButton.innerText = 'Close Menu'
-	}else{
-		menuButton.innerText = 'Menu'
-	}
        listSidebar.classList.toggle('hide');
+       menuButton.classList.toggle('menu-toggle');
 }

@@ -1,189 +1,319 @@
 <!-- Copyright Epic Games, Inc. All Rights Reserved. -->
-<!DOCTYPE HTML>
+<!DOCTYPE html>
 <html>
-
-<head>
+  <head>
     <!-- <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no"> -->
-    <meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
-    <meta name="HandheldFriendly" content="true">
+    <meta
+      name="viewport"
+      content="width=device-width,initial-scale=1.0,maximum-scale=1"
+    />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+    <meta name="HandheldFriendly" content="true" />
     <title>E3DS Iframe Demo</title>
-    <link rel="shortcut icon" href="./images/favicon.png" type="image/x-icon">
-    <link rel="icon" type="image/png" sizes="96x96" href="./images/favicon.png">
-
+    <link rel="shortcut icon" href="./images/favicon.png" type="image/x-icon" />
+    <link
+      rel="icon"
+      type="image/png"
+      sizes="96x96"
+      href="./images/favicon.png"
+    />
 
     <script type="text/javascript" src="./images/jquery.min.js"></script>
-    <link type="text/css" rel="stylesheet" href="./css/style.css">
+    <link type="text/css" rel="stylesheet" href="./css/style.css" />
     <script type="text/javascript" src="./js/message.js"></script>
     <script type="text/javascript" src="./js/demo.js"></script>
-    
 
     <style type="text/css">
-        body, html {
-            margin: 0;
-            padding: 0;
-            height: 100%;
-            overflow: hidden;
-        }
+      body,
+      html {
+        margin: 0;
+        padding: 0;
+        height: 100%;
+        overflow: hidden;
+      }
 
-        #content {
-            position: absolute;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            top: 0px;
-        }
+      #content {
+        position: absolute;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        top: 0px;
+      }
     </style>
     <!-- YOUR CODE GOES HERE -->
     <script type="text/javascript" src="js/eventHandler.js"></script>
-</head>
-<body>
-<div id="loaderStep1"
-     style="visibility: visible;top: 0px; left: 0px; width: 100%; height: 100%;"
-
-
-     class="loader">
-    <div class="loader-header">
-     <div class="icon__hourglass"></div>
+  </head>
+  <body>
+    <div
+      id="loaderStep1"
+      style="
+        visibility: visible;
+        top: 0px;
+        left: 0px;
+        width: 100%;
+        height: 100%;
+      "
+      class="loader"
+    >
+      <div class="loader-header">
+        <div class="icon__hourglass"></div>
+      </div>
     </div>
-</div>
 
-<div id="loaderStep2"
-     style="visibility: hidden;top: 0px; left: 0px; width: 100%; height: 100%;"
-     class="loader">
-    <div class="loader-header">
-       <div class="icon__hourglass"></div>
+    <div
+      id="loaderStep2"
+      style="visibility: hidden; top: 0px; left: 0px; width: 100%; height: 100%"
+      class="loader"
+    >
+      <div class="loader-header">
+        <div class="icon__hourglass"></div>
+      </div>
     </div>
-</div>
 
-<div id="loaderStep3"
-     style="visibility: hidden;top: 0px; left: 0px; width: 100%; height: 100%; background-image: url('./images/21344090.jpg');"
-     class="loader">
-    <img id="playButton" src="./images/PlayButton.png" alt="!!!!!" style="height: 250px; width: 250px; ">
-</div>
+    <div
+      id="loaderStep3"
+      style="
+        visibility: hidden;
+        top: 0px;
+        left: 0px;
+        width: 100%;
+        height: 100%;
+        background-image: url('./images/21344090.jpg');
+      "
+      class="loader"
+    >
+      <img
+        id="playButton"
+        src="./images/PlayButton.png"
+        alt="!!!!!"
+        style="height: 250px; width: 250px"
+      />
+    </div>
 
-
-<div id="wrapperdiv">
-    <div class="wrapper d-flex align-items-stretch">
-
-
-        <div class="flexstretch" id="sidebar" style="visibility: hidden;">
-             <div>
-                        <a class="logo" href="javascript:;"><img class="full" src="./images/Unreal-Logo_1x.png"
-                                                                 width="45px" height="45px" alt=""/>
-                            <span class="nav-label">
-									<img src="./images/Unreal-Name2x.png" alt=""/>
-								</span>
-                        </a>
-                    </div>
-                    <button type="button" class="menuButton" id="menuButton" onclick="menuToggle()" >Close Menu</button>
-            <div class="sidebar left " id="sidebar-items">
-    <ul class="list-sidebar bg-defoult">
-                    
-                    <li class="active">
-                        <a onclick="switchTo('1')">
-								<span class="img-icon"><img src="./images/Front Yard.svg" width="30px" height="30px"
-                                                            alt=""/></span><span
-                                class="nav-label">Open URL</span></a>
-                    </li>
-                    <li>
-                        <a onclick="switchTo('2')">
-								<span class="img-icon"><img src="./images/Front Yard.svg" width="30px" height="30px"
-                                                            alt=""/></span><span class="nav-label">Open Mail App</span></a>
-                    </li>
-                    <li>
-                        <a onclick="switchTo('3')">
-								<span class="img-icon"><img src="./images/Front Yard.svg" width="30px" height="30px"
-                                                            alt=""/></span><span class="nav-label">Open Call</span></a>
-                    </li>
-                    <li>
-                        <a onclick="switchTo('4')">
-								<span class="img-icon"><img src="./images/Front Yard.svg" width="30px" height="30px"
-                                                            alt=""/></span><span class="nav-label">Open Keyboard</span></a>
-                    </li>
-
-                    <li>
-                        <a onclick="switchTo('5')">
-								<span class="img-icon"><img src="./images/Front Yard.svg" width="30px" height="30px"
-                                                            alt=""/></span><span class="nav-label">Toggle Browser Mouse</span></a>
-                    </li>
-                    <li>
-                        <a onclick="switchTo('6')">
-								<span class="img-icon"><img src="./images/Front Yard.svg" width="30px" height="30px"
-                                                            alt=""/></span><span class="nav-label">Increase Session Timer</span></a>
-                    </li>
-                    <li>
-                        <a onclick="switchTo('7')">
-								<span class="img-icon"><img src="./images/Front Yard.svg" width="30px" height="30px"
-                                                            alt=""/></span><span class="nav-label">Get User Info</span></a>
-                    </li>
-                    <li>
-                        <a onclick="switchTo('8')">
-								<span class="img-icon"><img src="./images/Front Yard.svg" width="30px" height="30px"
-                                                            alt=""/></span><span class="nav-label">Get User Device Info</span></a>
-                    </li>
-                    <li>
-                        <a onclick="switchTo('9')">
-								<span class="img-icon"><img src="./images/Front Yard.svg" width="30px" height="30px"
-                                                            alt=""/></span><span class="nav-label">Video Player</span></a>
-                    </li>
-                    <li>
-                        <a onclick="switchTo('10')">
-								<span class="img-icon"><img src="./images/Front Yard.svg" width="30px" height="30px"
-                                                            alt=""/></span><span class="nav-label">Audio Player</span></a>
-                    </li>
-                    <li>
-                        <a onclick="switchTo('11')">
-								<span class="img-icon"><img src="./images/Front Yard.svg" width="30px" height="30px"
-                                                            alt=""/></span><span class="nav-label">Command Line Argument Pass</span></a>
-                    </li>
-                    <li>
-                        <a onclick="switchTo('12')">
-								<span class="img-icon"><img src="./images/Front Yard.svg" width="30px" height="30px"
-                                                            alt=""/></span><span class="nav-label">Redirect URL</span></a>
-                    </li>
-                    <li id="countdown">
-                        <span class="nav-label time-label">Time Remaining: </span>
-                        <span class="time" id="timer">4.45</span>
-                    </li>
-                </ul>
-                  
-            
-                <div class="float_left" style="display: none;">
-                    <a href="javascript:;" class="button-left close-btn"><span class="button_collapse"></span></a>
-                </div>
+    <div id="wrapperdiv">
+      <div class="wrapper d-flex align-items-stretch">
+        <div class="left-container">
+          <div class="flexstretch" id="sidebar" style="visibility: hidden">
+            <div>
+              <a class="logo" href="javascript:;"
+                ><img
+                  class="full"
+                  src="./images/Unreal-Logo_1x.png"
+                  width="45px"
+                  height="45px"
+                  alt=""
+                />
+                <span class="nav-label">
+                  <img src="./images/Unreal-Name2x.png" alt="" />
+                </span>
+              </a>
             </div>
+            <div class="sidebar left">
+              <ul class="list-sidebar bg-defoult">
+                <li class="active">
+                  <a onclick="switchTo('1')">
+                    <span class="img-icon"
+                      ><img
+                        src="./images/Front Yard.svg"
+                        width="30px"
+                        height="30px"
+                        alt="" /></span
+                    ><span class="nav-label">Open URL</span></a
+                  >
+                </li>
+                <li>
+                  <a onclick="switchTo('2')">
+                    <span class="img-icon"
+                      ><img
+                        src="./images/Front Yard.svg"
+                        width="30px"
+                        height="30px"
+                        alt="" /></span
+                    ><span class="nav-label">Open Mail App</span></a
+                  >
+                </li>
+                <li>
+                  <a onclick="switchTo('3')">
+                    <span class="img-icon"
+                      ><img
+                        src="./images/Front Yard.svg"
+                        width="30px"
+                        height="30px"
+                        alt="" /></span
+                    ><span class="nav-label">Open Call</span></a
+                  >
+                </li>
+                <li>
+                  <a onclick="switchTo('4')">
+                    <span class="img-icon"
+                      ><img
+                        src="./images/Front Yard.svg"
+                        width="30px"
+                        height="30px"
+                        alt="" /></span
+                    ><span class="nav-label">Open Keyboard</span></a
+                  >
+                </li>
+
+                <li>
+                  <a onclick="switchTo('5')">
+                    <span class="img-icon"
+                      ><img
+                        src="./images/Front Yard.svg"
+                        width="30px"
+                        height="30px"
+                        alt="" /></span
+                    ><span class="nav-label">Toggle Browser Mouse</span></a
+                  >
+                </li>
+                <li>
+                  <a onclick="switchTo('6')">
+                    <span class="img-icon"
+                      ><img
+                        src="./images/Front Yard.svg"
+                        width="30px"
+                        height="30px"
+                        alt="" /></span
+                    ><span class="nav-label">Increase Session Timer</span></a
+                  >
+                </li>
+                <li>
+                  <a onclick="switchTo('7')">
+                    <span class="img-icon"
+                      ><img
+                        src="./images/Front Yard.svg"
+                        width="30px"
+                        height="30px"
+                        alt="" /></span
+                    ><span class="nav-label">Get User Info</span></a
+                  >
+                </li>
+                <li>
+                  <a onclick="switchTo('8')">
+                    <span class="img-icon"
+                      ><img
+                        src="./images/Front Yard.svg"
+                        width="30px"
+                        height="30px"
+                        alt="" /></span
+                    ><span class="nav-label">Get User Device Info</span></a
+                  >
+                </li>
+                <li>
+                  <a onclick="switchTo('9')">
+                    <span class="img-icon"
+                      ><img
+                        src="./images/Front Yard.svg"
+                        width="30px"
+                        height="30px"
+                        alt="" /></span
+                    ><span class="nav-label">Video Player</span></a
+                  >
+                </li>
+                <li>
+                  <a onclick="switchTo('10')">
+                    <span class="img-icon"
+                      ><img
+                        src="./images/Front Yard.svg"
+                        width="30px"
+                        height="30px"
+                        alt="" /></span
+                    ><span class="nav-label">Audio Player</span></a
+                  >
+                </li>
+                <li>
+                  <a onclick="switchTo('11')">
+                    <span class="img-icon"
+                      ><img
+                        src="./images/Front Yard.svg"
+                        width="30px"
+                        height="30px"
+                        alt="" /></span
+                    ><span class="nav-label"
+                      >Command Line Argument Pass</span
+                    ></a
+                  >
+                </li>
+                <li>
+                  <a onclick="switchTo('12')">
+                    <span class="img-icon"
+                      ><img
+                        src="./images/Front Yard.svg"
+                        width="30px"
+                        height="30px"
+                        alt="" /></span
+                    ><span class="nav-label">Redirect URL</span></a
+                  >
+                </li>
+                <li id="countdown">
+                  <span class="nav-label time-label">Time Remaining: </span>
+                  <span class="time" id="timer">4.45</span>
+                </li>
+              </ul>
+
+              <div class="float_left" style="display: none">
+                <a href="javascript:;" class="button-left close-btn"
+                  ><span class="button_collapse"></span
+                ></a>
+              </div>
+            </div>
+          </div>
+          <button
+            type="button"
+            class="menuButton left-right-arrow"
+            id="menuButton"
+            onclick="menuToggle()"
+          >
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke-width="1.5"
+              stroke="currentColor"
+              class="arrow-svg"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                d="M12.75 15l3-3m0 0l-3-3m3 3h-7.5M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+              />
+            </svg>
+          </button>
         </div>
 
         <div id="content">
-            <div id="player">
-
-
-                <div id="content">
-                    <iframe allow="camera;microphone" style="visibility: hidden;" id="iframe_1"
-                            src="https://connector.eagle3dstreaming.com/v5/demo/E3DSFeaturesTemplate/E3DS-Iframe-Demo"
-                            width="100%" height="100%" allowfullscreen>
-                    </iframe>
-
-                </div>
+          <div id="player">
+            <div id="content">
+              <iframe
+                allow="camera;microphone"
+                style="visibility: hidden"
+                id="iframe_1"
+                src="https://connector.eagle3dstreaming.com/v5/demo/E3DSFeaturesTemplate/E3DS-Iframe-Demo"
+                width="100%"
+                height="100%"
+                allowfullscreen
+              >
+              </iframe>
             </div>
-            <!---Start footer-->
-            <a style="visibility: hidden;" id="ck-fullscreen" class="full-screen-btn" onclick="goToFullScreen()">
-                <span class="footer-icon fullscreen-icon"></span>
-            </a>
-            <!--End Footer-->
+          </div>
+          <!---Start footer-->
+          <a
+            style="visibility: hidden"
+            id="ck-fullscreen"
+            class="full-screen-btn"
+            onclick="goToFullScreen()"
+          >
+            <span class="footer-icon fullscreen-icon"></span>
+          </a>
+          <!--End Footer-->
         </div>
+      </div>
     </div>
-</div>
-<script>
-    $("body").click(function(){
+    <script>
+      $('body').click(function () {
         $('#iframe_1').focus();
-    });
-
-
-</script>
-<script type="text/javascript" src="./_js/active-element.js"></script>
-
-</body>
-
+      });
+    </script>
+    <script type="text/javascript" src="./_js/active-element.js"></script>
+  </body>
 </html>
