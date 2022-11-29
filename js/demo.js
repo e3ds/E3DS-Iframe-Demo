@@ -127,6 +127,6 @@ function goToFullScreen() {
   const menuToggle = () => {
 	const listSidebar = document.getElementById("sidebar");
 	const menuButton = document.getElementById("menuButton");
-       listSidebar.classList.toggle('hide');
+       listSidebar.classList.toggle('show');
        menuButton.classList.toggle('menu-toggle');
 }

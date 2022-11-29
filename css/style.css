@@ -21,7 +21,7 @@ body {
 }
 .left-right-arrow {
   position: absolute;
-  left: 260px;
+  left: 0px;
   top: 50%;
   color: rgb(221 222 224);
   cursor: pointer;
@@ -34,7 +34,7 @@ body {
   height: 45px;
 }
 .menu-toggle {
-  left: 0px;
+  left: 260px;
   transform: rotate(180deg);
 }
 #wrapperdiv {
@@ -173,15 +173,15 @@ a:hover {
 
 .sidebar {
   width: auto;
-  height: 100vh;
+  height: 84vh;
   max-height: 100%;
   background: none;
   overflow-y: auto;
   /* transition: width 0.3s ease-in-out; */
 }
 
-.hide {
-  display: none;
+.show {
+  display: block !important;
   /* height: 20vh !important; */
 }
 
