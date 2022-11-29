@@ -12,6 +12,19 @@ code {
     monospace;
 }
 
+::-webkit-scrollbar {
+  width: 4px;
+}
+
+::-webkit-scrollbar-thumb {
+  background-color: black;
+  border-radius: 40px;
+}
+
+::-webkit-scrollbar-track {
+  background-color: transparent;
+}
+
 .cmd-btn {
   outline: none;
   border: none;
@@ -20,7 +33,6 @@ code {
   padding: 8px 12px;
   display: flex;
   gap: 10px;
-  justify-content: center;
   align-items: center;
   font-weight: 600;
   border-radius: 20px;
@@ -33,6 +45,8 @@ code {
   padding: 10px;
   width: 250px;
   margin-top: 20px;
+  overflow: auto;
+  height: 70vh;
 }
 .left-right-arrow {
   position: absolute;
@@ -49,4 +63,11 @@ code {
 
 .left-right-arrow:hover {
   color: rgb(203, 203, 203) !important;
+}
+.sidebar-container {
+  position: absolute;
+  borderright: 1px solid #e3e3e3;
+  background: rgba(0, 0, 0, 0.5);
+  padding-top: 20px;
+  margin-bottom: 20px;
 }

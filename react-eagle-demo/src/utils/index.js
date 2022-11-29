@@ -68,7 +68,7 @@ export const commands = [
     icon: <AiFillAudio />,
   },
   {
-    name: 'Command Line Argument',
+    name: 'Command Line Arg',
     value: '11',
     icon: <BsCommand />,
   },
@@ -77,4 +77,5 @@ export const commands = [
     value: '12',
     icon: <FaDirections />,
   },
+  
 ];

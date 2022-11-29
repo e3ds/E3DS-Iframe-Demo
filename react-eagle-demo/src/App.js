@@ -9,7 +9,7 @@ import {
 function App() {
   // create ref for iframe
   const iframeElem = useRef();
-  const [isOpen, setIsOpen] = useState(true);
+  const [isOpen, setIsOpen] = useState(false);
   const [cmd, setCmd] = useState('');
 
   // send command to unreal engine
@@ -29,15 +29,12 @@ function App() {
   }
 
   return (
-    <div style={{ display: 'flex', overflow: 'hidden' }}>
+    <div style={{ display: 'flex', overflow: 'hidden', position:'relative' }}>
       <div
-        style={{
-          position: 'relative',
-          borderRight: '1px solid #e3e3e3',
-          background: '#ececec',
-        }}
+      className='sidebar-container'
       >
-        <div
+        <div style={{height:'86vh'}}>
+          <div
           style={{
             display: isOpen ? 'block' : 'none',
           }}
@@ -77,9 +74,11 @@ function App() {
               <BsFillArrowRightCircleFill />
           )}
         </div>
+        </div>
+     
       </div>
 
-      <div style={{ height: '100vh', width: '100%' }}>
+      <div style={{ height: '100vh', width: '100vw' }}>
         <iframe
           style={{ border: 'none' }}
           ref={iframeElem}
