@@ -2,7 +2,7 @@ name: Deploy-VM-Prime
 on:
   push:
     branches:
-      - staging_main
+      - staging_iframe_ue5
 jobs:
   build:
     runs-on: ubuntu-latest
@@ -15,7 +15,7 @@ jobs:
           known_hosts: "Something"
       - name: Adding known_hosts
         run: ssh-keyscan -H ${{ secrets.SSH_HOST_VM }} >> ~/.ssh/known_hosts
-      - run: ssh -tt ubuntu@${{ secrets.SSH_HOST_VM }} 'cd E3DS-Iframe-Demo; git stash push -m "Stashed by Actions"; git pull'
+      - run: ssh -tt ubuntu@${{ secrets.SSH_HOST_VM }} 'cd iframe_ue5; cd E3DS-Iframe-Demo; git stash push -m "Stashed by Actions"; git pull'
       - name: Notify on telegram
         run: |
           curl --request POST \
