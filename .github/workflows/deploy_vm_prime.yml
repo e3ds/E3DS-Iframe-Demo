@@ -2,7 +2,7 @@ name: Deploy-VM-Prime
 on:
   push:
     branches:
-      - main
+      - staging_main
 jobs:
   build:
     runs-on: ubuntu-latest
