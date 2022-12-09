@@ -2,7 +2,7 @@ name: Deploy-VM-React
 on:
   push:
     branches:
-      - react-eagle-demo
+      - staging_iframe_react
 jobs:
   build:
     runs-on: ubuntu-latest
