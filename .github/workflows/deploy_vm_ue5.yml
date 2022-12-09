@@ -2,7 +2,7 @@ name: Deploy-VM-Prime
 on:
   push:
     branches:
-      - iframe_ue5
+      - staging_iframe_ue5
 jobs:
   build:
     runs-on: ubuntu-latest
