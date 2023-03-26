@@ -1,0 +1,70 @@
+<!-- Copyright Epic Games, Inc. All Rights Reserved. -->
+<!DOCTYPE HTML>
+<html>
+
+<head>
+    <!-- <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no"> -->
+    <meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="HandheldFriendly" content="true">
+    <title>E3DS Iframe Demo</title>
+    <link rel="shortcut icon" href="./images/favicon.ico" type="image/x-icon">
+    <link rel="icon" type="image/png" sizes="96x96" href="./images/favicon-96x96.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="./images/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="./images/favicon-16x16.png">
+
+    <script type="text/javascript" src="./images/jquery.min.js"></script>
+    <link type="text/css" rel="stylesheet" href="./images/style.css">
+   
+
+    <style type="text/css">
+        body, html {
+            margin: 0;
+            padding: 0;
+            height: 100%;
+            overflow: hidden;
+        }
+
+       
+    </style>
+
+
+<script>
+
+//https://connector.eagle3dstreaming.com/v5/invidar/Antler_Demo/Demo
+
+//https://streamingfrontend_dev.eaglepixelstreaming.com/?app=CarConfigurator427_reimport&owner=demo&configuration=z
+//https://streamingfrontend_dev.eaglepixelstreaming.com/?app=walkkk&owner=ASP&configuration=z
+
+//https://streamingfrontend_dev.eaglepixelstreaming.com/?app=HEADCRASH_59&owner=HeadcrashHotel&configuration=HeadcrashDemo
+//https://streamingfrontend_dev.eaglepixelstreaming.com/?app=CH_Waterton_v004&owner=avedis&configuration=CH_Waterton
+
+//https://connector.eagle3dstreaming.com/v5/HeadcrashHotel/HEADCRASH_59/HeadcrashDemo?exeLunchArgs=-ping2dxxn70irqifr
+
+//https://connector.eagle3dstreaming.com/v5/avedis/CH_Waterton_v004/CH_Waterton
+
+//https://eagle3dstreaming.atlassian.net/browse/SUPPORT-357
+//https://connector.eagle3dstreaming.com/v5/ASP/walkkk/z
+//https://connector.eagle3dstreaming.com/v5/Test2/VL3/1
+</script>
+
+</head>
+<body>
+
+<div id="content"   style="position: absolute;left: 0;right: 0;bottom: 0;top: 0px;" >
+	<iframe id="iframe_1"                                               
+		src="https://streamingfrontend_dev.eaglepixelstreaming.com/?app=VL3&owner=Test2&configuration=1"
+		width="100%" height="100%" allowfullscreen>
+	</iframe>
+</div>
+           
+
+<script>
+    setInterval(function () {
+        $('#iframe_1').focus();
+    }, 1000);
+</script>
+
+</body>
+
+</html>
