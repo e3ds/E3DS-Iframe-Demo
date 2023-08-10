@@ -105,6 +105,14 @@ function switchTo(val) {
 	sendToMainPage(obj)
 }
 
+function sentMessage(message) {
+	let obj ={
+			cmd: "sendToUe4",
+			value: message,
+	};
+	sendToMainPage(obj);
+}
+
 let isFullScreen = false
 
 function goToFullScreen() {

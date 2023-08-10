@@ -40,8 +40,6 @@
         top: 0px;
       }
     </style>
-    <!-- YOUR CODE GOES HERE -->
-    <script type="text/javascript" src="js/eventHandler.js"></script>
   </head>
   <body>
     <div
@@ -111,7 +109,7 @@
             <div class="sidebar left">
               <ul class="list-sidebar bg-defoult">
                 <li class="active">
-                  <a onclick="switchTo('1')">
+                  <a onclick="sentMessage('test message')">
                     <span class="img-icon"
                       ><img
                         src="./images/Front Yard.svg"
@@ -120,134 +118,6 @@
                         alt="" /></span
                     ><span class="nav-label">Open URL</span></a
                   >
-                </li>
-                <li>
-                  <a onclick="switchTo('2')">
-                    <span class="img-icon"
-                      ><img
-                        src="./images/Front Yard.svg"
-                        width="30px"
-                        height="30px"
-                        alt="" /></span
-                    ><span class="nav-label">Open Mail App</span></a
-                  >
-                </li>
-                <li>
-                  <a onclick="switchTo('3')">
-                    <span class="img-icon"
-                      ><img
-                        src="./images/Front Yard.svg"
-                        width="30px"
-                        height="30px"
-                        alt="" /></span
-                    ><span class="nav-label">Open Call</span></a
-                  >
-                </li>
-                <li>
-                  <a onclick="switchTo('4')">
-                    <span class="img-icon"
-                      ><img
-                        src="./images/Front Yard.svg"
-                        width="30px"
-                        height="30px"
-                        alt="" /></span
-                    ><span class="nav-label">Open Keyboard</span></a
-                  >
-                </li>
-
-                <li>
-                  <a onclick="switchTo('5')">
-                    <span class="img-icon"
-                      ><img
-                        src="./images/Front Yard.svg"
-                        width="30px"
-                        height="30px"
-                        alt="" /></span
-                    ><span class="nav-label">Toggle Browser Mouse</span></a
-                  >
-                </li>
-                <li>
-                  <a onclick="switchTo('6')">
-                    <span class="img-icon"
-                      ><img
-                        src="./images/Front Yard.svg"
-                        width="30px"
-                        height="30px"
-                        alt="" /></span
-                    ><span class="nav-label">Increase Session Timer</span></a
-                  >
-                </li>
-                <li>
-                  <a onclick="switchTo('7')">
-                    <span class="img-icon"
-                      ><img
-                        src="./images/Front Yard.svg"
-                        width="30px"
-                        height="30px"
-                        alt="" /></span
-                    ><span class="nav-label">Get User Info</span></a
-                  >
-                </li>
-                <li>
-                  <a onclick="switchTo('8')">
-                    <span class="img-icon"
-                      ><img
-                        src="./images/Front Yard.svg"
-                        width="30px"
-                        height="30px"
-                        alt="" /></span
-                    ><span class="nav-label">Get User Device Info</span></a
-                  >
-                </li>
-                <li>
-                  <a onclick="switchTo('9')">
-                    <span class="img-icon"
-                      ><img
-                        src="./images/Front Yard.svg"
-                        width="30px"
-                        height="30px"
-                        alt="" /></span
-                    ><span class="nav-label">Video Player</span></a
-                  >
-                </li>
-                <li>
-                  <a onclick="switchTo('10')">
-                    <span class="img-icon"
-                      ><img
-                        src="./images/Front Yard.svg"
-                        width="30px"
-                        height="30px"
-                        alt="" /></span
-                    ><span class="nav-label">Audio Player</span></a
-                  >
-                </li>
-                <li>
-                  <a onclick="switchTo('11')">
-                    <span class="img-icon"
-                      ><img
-                        src="./images/Front Yard.svg"
-                        width="30px"
-                        height="30px"
-                        alt="" /></span
-                    ><span class="nav-label"
-                      >Command Line Argument Pass</span
-                    ></a
-                  >
-                </li>
-                <li>
-                  <a onclick="switchTo('12')">
-                    <span class="img-icon"
-                      ><img
-                        src="./images/Front Yard.svg"
-                        width="30px"
-                        height="30px"
-                        alt="" /></span
-                    ><span class="nav-label">Redirect URL</span></a
-                  >
-                </li>
-                <li id="countdown">
-                  <span class="nav-label time-label">Time Remaining: </span>
-                  <span class="time" id="timer">4.45</span>
                 </li>
               </ul>
 
@@ -288,7 +158,7 @@
                 allow="camera;microphone"
                 style="visibility: hidden"
                 id="iframe_1"
-                src="https://connector.eagle3dstreaming.com/v5/demo/E3DSFeaturesTemplate/E3DS-Iframe-Demo"
+                src="https://connector.eagle3dstreaming.com/v5/demo/SimplifiedIframeDemo/E3DS-Iframe-Demo"
                 width="100%"
                 height="100%"
                 allowfullscreen
