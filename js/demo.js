@@ -46,7 +46,7 @@ const messageHandler = (event) => {
 				cmd: 'isIframe',
 				value: true
 			};
-			sendToMainPage(obj);
+			sendToIframe(obj);
 			break;
 			
 		case "QueueNumberUpdated":
@@ -85,24 +85,10 @@ function onPlayBtnPressed() {
 	eleBanner.style.visibility = "visible";
 }
 
-function sendToMainPage(obj) {
+function sendToIframe(obj) {
 	let origin = "*"
 	let myIframe = document.getElementById("iframe_1");
 	myIframe.contentWindow.postMessage(JSON.stringify(obj), origin);
-}
-
-function switchTo(val) {
-	console.log("=== Registered switchTo action, Value is: ", val);
-
-	let descriptor = {
-		Teleport: val
-	};
-	//emitUIInteraction(descriptor);
-	let obj ={
-			cmd: "sendToUe4",
-			value: descriptor,
-	};
-	sendToMainPage(obj)
 }
 
 function sentMessage(message) {
@@ -110,29 +96,10 @@ function sentMessage(message) {
 			cmd: "sendToUe4",
 			value: message,
 	};
-	sendToMainPage(obj);
+	sendToIframe(obj);
 }
-
-let isFullScreen = false
-
-function goToFullScreen() {
-	var cmd = isFullScreen ? "Off" : "On";
-	isFullScreen = !isFullScreen;
-	console.log("=== Registered full screen action, Value is: ", cmd);
-	let descriptor = {
-		FullScreen: cmd
-	};
-	//emitUIInteraction(descriptor);
-	let obj =
-		{
-			cmd: "sendToUe4",
-			value: descriptor,
-		}
-	sendToMainPage(obj)
-}
-
 	
-  const menuToggle = () => {
+const menuToggle = () => {
 	const listSidebar = document.getElementById("sidebar");
 	const menuButton = document.getElementById("menuButton");
        listSidebar.classList.toggle('show');
