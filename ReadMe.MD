@@ -1,7 +1,7 @@
 ## How to run iframe react app.
 
 First you have to clone this repo using this command:
-### git clone https://github.com/e3ds/partial-html-control
+### git clone https://github.com/e3ds/E3DS-Iframe-Demo/
 
 
 Then use this command to change the branch to **reactJs**:
