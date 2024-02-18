@@ -1,0 +1,10 @@
+{
+  "apps" : [
+    {
+      "name"      : "iframe_react",
+      "script"    : "npx",
+      "interpreter": "none",
+      "args": "serve build/ 7000 --name 'react_iframe' --spa"
+    }
+  ]
+}
