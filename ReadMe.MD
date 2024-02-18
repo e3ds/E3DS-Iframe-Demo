@@ -4,8 +4,8 @@ First you have to clone this repo using this command:
 ### git clone https://github.com/e3ds/E3DS-Iframe-Demo/
 
 
-Then use this command to change the branch to **reactJs**:
-### git checkout reactJs
+Then use this command to change the branch to **iframe-demo-react**:
+### git checkout iframe-demo-react
 
 
 Then run this command to install all dependencies:
