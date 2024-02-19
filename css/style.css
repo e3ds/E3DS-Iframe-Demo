@@ -15,7 +15,7 @@ body {
 }
 .left-container {
   position: relative;
-  borderright: 1px solid #e3e3e3;
+  border-right: 1px solid #e3e3e3;
   background: #ececec;
   height: 100vh;
 }
@@ -304,7 +304,6 @@ a:hover {
   background-size: 30px 30px;
   background-position: center;
   float: left;
-  display: inline-block;
 }
 
 .full-screen-btn > .fullscreen-icon {

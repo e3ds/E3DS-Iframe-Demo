@@ -20,7 +20,9 @@ const eventHandler = (event) => {
 
 	if (!event.data.type) // is it a data not from server
 	{
-		const parsedData = JSON.parse(event.data);
+		// console.log(event.data);
+		// const parsedData = JSON.parse(event.data);
+		const parsedData = event.data;
 		console.log('Message From UE4-- > Iframe  :', parsedData)
 		if (parsedData.cmd)//than is it a data from ue4 ???
 		{

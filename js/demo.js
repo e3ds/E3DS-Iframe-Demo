@@ -27,7 +27,7 @@ const messageHandler = (event) => {
 			//loading screen 2 hides
 			loaderStep2.style.visibility = "hidden";
 			iframeElem.style.visibility = "visible";
-			loaderStep3.style.visibility = "visible";
+			// loaderStep3.style.visibility = "visible";
 			let playButton = document.getElementById("playButtonParent");
 			playButton.click();
 			onPlayBtnPressed();
@@ -129,4 +129,33 @@ function goToFullScreen() {
 	const menuButton = document.getElementById("menuButton");
        listSidebar.classList.toggle('show');
        menuButton.classList.toggle('menu-toggle');
+}
+
+const toggleSettings = (id)=>{
+
+	let descriptor = {
+		id,
+		property: 'display',
+		value: 'none'
+	};
+	let obj =
+		{
+			cmd: "style",
+			value: descriptor,
+		}
+	sendToMainPage(obj)
+}
+
+const modalInputFocus = (e)=>{
+	e.stopPropagation();
+}
+
+const resSubmit = (e)=>{
+	e.preventDefault();
+	let obj = {
+			cmd: "freezeResolutionAt",
+			x: e.target.width.value,
+			y: e.target.height.value
+	}
+	sendToMainPage(obj);
 }
