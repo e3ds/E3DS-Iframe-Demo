@@ -46,7 +46,7 @@ const messageHandler = (event) => {
 				cmd: 'isIframe',
 				value: true
 			};
-			sendToMainPage(obj);
+			document.getElementById("iframe_1").contentWindow.postMessage(JSON.stringify(obj), "*");;
 			break;
 			
 		case "QueueNumberUpdated":
@@ -85,11 +85,6 @@ function onPlayBtnPressed() {
 	eleBanner.style.visibility = "visible";
 }
 
-function sendToMainPage(obj) {
-	let origin = "*"
-	let myIframe = document.getElementById("iframe_1");
-	myIframe.contentWindow.postMessage(JSON.stringify(obj), origin);
-}
 
 function switchTo(val) {
 	console.log("=== Registered switchTo action, Value is: ", val);
@@ -102,7 +97,7 @@ function switchTo(val) {
 			cmd: "sendToUe4",
 			value: descriptor,
 	};
-	sendToMainPage(obj)
+	document.getElementById("iframe_1").contentWindow.postMessage(JSON.stringify(obj), "*");
 }
 
 let isFullScreen = false
@@ -120,7 +115,7 @@ function goToFullScreen() {
 			cmd: "sendToUe4",
 			value: descriptor,
 		}
-	sendToMainPage(obj)
+	document.getElementById("iframe_1").contentWindow.postMessage(JSON.stringify(obj), "*");
 }
 
 	
@@ -143,7 +138,7 @@ const toggleSettings = (id)=>{
 			cmd: "style",
 			value: descriptor,
 		}
-	sendToMainPage(obj)
+	document.getElementById("iframe_1").contentWindow.postMessage(JSON.stringify(obj), "*");
 }
 
 const modalInputFocus = (e)=>{
@@ -157,5 +152,5 @@ const resSubmit = (e)=>{
 			x: e.target.width.value,
 			y: e.target.height.value
 	}
-	sendToMainPage(obj);
+	document.getElementById("iframe_1").contentWindow.postMessage(JSON.stringify(obj), "*");;
 }
