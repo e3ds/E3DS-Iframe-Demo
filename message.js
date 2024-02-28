@@ -8,7 +8,6 @@ window.e3ds = {
 
 function HandleResponseFromUE4(jsonObj)//process whatever u want to do with your object
 {
-	console.log(jsonObj);
 	if(window.e3ds.events[jsonObj.cmd]){
 		window.e3ds.events[jsonObj.cmd](jsonObj);
 	}

@@ -100,6 +100,11 @@ function switchTo(val) {
 	document.getElementById("iframe_1").contentWindow.postMessage(JSON.stringify(obj), "*");
 }
 
+function updateStreamURL(){
+	const url = document.getElementById('urlInput').value;
+	document.getElementById("iframe_1").src = url;
+}
+
 let isFullScreen = false
 
 function goToFullScreen() {
