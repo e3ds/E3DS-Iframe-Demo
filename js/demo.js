@@ -63,6 +63,10 @@ const messageHandler = (event) => {
 		case "shortCuts":
 			console.log("Key pressed");
 			break;
+		case "Error_Redirect":
+			loaderStep2.style.display = "none";
+			iframeElem.style.visibility = "visible";
+			$('#iframe_1').focus();
 		default:
 			console.error("Unhandled message data type");
 			break;
