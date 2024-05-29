@@ -31,5 +31,9 @@ const eventHandler = (event) => {
 		
 	}
 }
-
+window.onload = function(){
+	if(!localStorage.getItem("isAuthenticated")){
+		window.location.href = "/login.html"
+	}
+}
 window.addEventListener("message", eventHandler);
