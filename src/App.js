@@ -158,8 +158,8 @@ function App() {
           title='demo'
           allow='camera;microphone'
           id='iframe_1'
-          src='https://localhost:55555/testToken'
-          // src='https://connector.eagle3dstreaming.com/v5/demo/E3DSFeaturesTemplate/E3DS-Iframe-Demo'
+          //src='https://localhost:55555/testToken'
+          src='https://connector.eagle3dstreaming.com/v5/demo/E3DSFeaturesTemplate/E3DS-Iframe-Demo'
           width='100%'
           height='100%'
           allowfullscreen
