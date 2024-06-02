@@ -6,6 +6,8 @@ import {
   BsFillArrowRightCircleFill,
 } from 'react-icons/bs';
 import { FiSettings } from 'react-icons/fi';
+import { messageHandler } from './utils/demo';
+import { eventHandler } from './utils/message';
 function App() {
   const iframeElem = useRef();
   const [isOpen, setIsOpen] = useState(false);
@@ -43,7 +45,23 @@ function App() {
     };
     sendToMainPage(obj);
   }
+  useEffect(()=>{
+    window.e3ds = {
+      // list of event listeners
+      events: {},
+      onEvent(eventName, callback){
+        this.events[eventName] = callback;
+      }
+    };
 
+    window.addEventListener('message', messageHandler);
+    window.addEventListener('message', eventHandler);
+    
+  },[])
+  window?.e3ds?.onEvent("increaseSessionExpireTime", (data) => {
+    alert("Increasing session expire time");
+  
+  });
   return (
     <div style={{ display: 'flex', overflow: 'hidden' }}>
       <div
@@ -76,8 +94,9 @@ function App() {
               marginTop: '20px',
             }}
           >
-            {commands.map((item) => (
+            {commands.map((item, i) => (
               <button
+                key={i}
                 className='cmd-btn'
                 style={{
                   outline: 'none',
@@ -141,7 +160,11 @@ function App() {
             cursor: 'pointer',
             border: 'none',
           }}
-          onClick={() => setIsOpen(!isOpen)}
+          onClick={() => {
+            setIsOpen(!isOpen)
+            const iframe = document.getElementById('iframe_1');
+            iframe.contentWindow.focus();
+          }}
         >
           {isOpen ? (
             <BsFillArrowLeftCircleFill />
@@ -162,7 +185,7 @@ function App() {
           src='https://connector.eagle3dstreaming.com/v5/demo/E3DSFeaturesTemplate/E3DS-Iframe-Demo'
           width='100%'
           height='100%'
-          allowfullscreen
+          allowFullScreen
         ></iframe>
       </div>
     </div>
