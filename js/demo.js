@@ -104,6 +104,26 @@ function switchTo(val) {
 	document.getElementById("iframe_1").contentWindow.postMessage(JSON.stringify(obj), "*");
 }
 
+
+
+function switchMap(val) 
+{
+	console.log("=== Registered switchTo action, Value is: ", val);
+
+	let descriptor = {
+		"type":"changeLevel",
+		"value":val// it have to be same as unreal umap name 
+	};
+	//emitUIInteraction(descriptor);
+	let obj =	{
+					cmd: "sendToUe4",
+					value: descriptor,
+				}
+	
+
+	document.getElementById("iframe_1").contentWindow.postMessage(JSON.stringify(obj), "*");
+}
+
 let isFullScreen = false
 
 function goToFullScreen() {
