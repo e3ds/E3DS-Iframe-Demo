@@ -1,3 +1,9 @@
+window.onload = function(){
+	if(!localStorage.getItem("isAuthenticated")){
+		window.location.href = "/login.html"
+	}
+}
+
 function onPlayBtnPressed() {
 	let loaderStep2 = document.getElementById("loaderStep2")
 	loaderStep2.style.visibility = "hidden";
