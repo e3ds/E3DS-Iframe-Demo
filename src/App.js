@@ -10,7 +10,7 @@ import { messageHandler } from './utils/demo';
 import { eventHandler } from './utils/message';
 function App() {
   const iframeElem = useRef();
-  const [isOpen, setIsOpen] = useState(false);
+  const [isOpen, setIsOpen] = useState(true);
   const [cmd, setCmd] = useState('');
 
   const sendToMainPage = (obj) => {
@@ -79,7 +79,7 @@ function App() {
           <div style={{ textAlign: 'center', margin: '10px' }}>
             <img
               style={{ width: '70px', height: '70px' }}
-              src='https://eagle3dstreaming.com/wp-content/uploads/2021/04/eagle3d-logo.png'
+              src='logo-only.png'
               alt='logo'
             />
           </div>
