@@ -1,19 +1,35 @@
-window.e3ds.onEvent("increaseSessionExpireTime", (data) => {
-	console.log("Increasing session expire time", data);
+function HandleResponseFromUE4(jsonObj)//process whatever u want to do with your object
+{
+	console.log(jsonObj);
+	switch (jsonObj.cmd) {
+		case "increaseSessionExpireTime":
+			alert(JSON.stringify(jsonObj));
+			break;
+	
+		default:
+			break;
+	}
+}
 
-	// Example of iframe
-	let iframe = document.createElement("iframe");
-	iframe.src="http://example.com";
-	iframe.classList.add("iframeStyle");
-	iframe.style.display = "block";
-	document.getElementsByTagName("body")[0].append(iframe);
+//eagle3dstreaming's Server   to Iframe communication
+const eventHandler = (event) => {
+	console.log('Message From SS -- > Iframe  ', event.data);
+	if (!event.data.type) // data not from server
+	{
+		console.log('Message From UE4-- > Iframe  :', event.data);
+		if(typeof event.data === 'string' && event.data.includes('cmd')){
+			const parsedData = JSON.parse(event.data);
+			if (parsedData.cmd){//it is a data from unreal
+				HandleResponseFromUE4(parsedData)//process the data sent by ue4
+			}
+		}
+		
+	}
+	else{
+		//data sent from server
+		messageHandler(event);
 
-	// Example of a button
-	let button1 = document.createElement("button");
-	button1.innerText = "Close Iframe";
-	button1.classList.add("closeButtonOfIframe");
-	button1.addEventListener("click", (ev) => {
-		iframe.style.display = "none";
-	});
-	document.getElementsByTagName("body")[0].append(button1);
-});
+	}
+}
+
+window.addEventListener("message", eventHandler); //listening to messages sent from the iframe
