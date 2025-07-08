@@ -9,7 +9,7 @@ import {
 function App() {
   // create ref for iframe
   const iframeElem = useRef();
-  const [isOpen, setIsOpen] = useState(false);
+  const [isOpen, setIsOpen] = useState(true);
   const [cmd, setCmd] = useState('');
 
   // send command to unreal engine
@@ -42,7 +42,7 @@ function App() {
           <div style={{ textAlign: 'center', margin: '10px' }}>
             <img
               style={{ width: '70px', height: '70px' }}
-              src='https://eagle3dstreaming.com/wp-content/uploads/2021/04/eagle3d-logo.png'
+              src='logo-only.png'
               alt='logo'
             />
           </div>
