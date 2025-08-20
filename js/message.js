@@ -63,6 +63,20 @@ const messageHandler = (event) => {
 		case "shortCuts":
 			console.log("Key pressed");
 			break;
+		case "sessionExpired":
+			sidebar.style.visibility = "hidden";
+			loaderStep2.style.display = "flex";
+			iframeElem.style.visibility = "hidden";
+			$('#iframe_1').focus();
+			document.getElementById("iframe_1").src = document.getElementById("iframe_1").src;
+			break;
+		case "videoStreamFailed":
+			sidebar.style.visibility = "hidden";
+			loaderStep2.style.display = "flex";
+			iframeElem.style.visibility = "hidden";
+			$('#iframe_1').focus();
+			document.getElementById("iframe_1").src = document.getElementById("iframe_1").src;
+			break;
 		case "Error_Redirect":
 			loaderStep2.style.display = "none";
 			iframeElem.style.visibility = "visible";
