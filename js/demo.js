@@ -1,10 +1,29 @@
+var streamStarted = false;
+const loadingVideo = document.getElementById("loadingVideo");
+if (loadingVideo) {
+	loadingVideo.onended = function () {
+		console.warn("video ended")
+		if(streamStarted){
+			const loadingStep1 = document.getElementById("loaderStep1");
+			if(loadingStep1){
+				loadingStep1.style.display = "none";
+			}
+			loadingVideo.remove();
+			const iframe = document.getElementById("iframe_1");
+			if(iframe){
+				iframe.style.visibility = "visible";
+				iframe.focus();
+			}
+		}
+		else{
+			loadingVideo.play().then(()=>console.warn("video replaying"))
+		}
+	}
+}
+
 function onPlayBtnPressed() {
-	let loaderStep2 = document.getElementById("loaderStep2")
-	loaderStep2.style.visibility = "hidden";
-	let loaderStep3 = document.getElementById("loaderStep3")
-	loaderStep3.style.visibility = "hidden";
-	let eleBanner = document.getElementById("iframe_1")
-	eleBanner.style.visibility = "visible";
+	let iframe = document.getElementById("iframe_1")
+	iframe.style.visibility = "visible";
 }
 
 
