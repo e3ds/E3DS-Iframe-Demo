@@ -9,8 +9,7 @@ const messageHandler = (event) => {
 	console.log("received data event type " + event.data.type)
 	switch (event.data.type) {
 		case "ResponseFromUE4":
-			console.log("UE4->iframe: " + event.data.descriptor)
-			myHandleResponseFunction(event.data.descriptor);
+			console.log("Response from Unreal to iframe: " + event.data.descriptor)
 			break;
 		case "stage1_inqueued":
 			loaderStep1.style.visibility = "visible";

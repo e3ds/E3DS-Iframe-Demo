@@ -13,10 +13,10 @@ function HandleResponseFromUE4(jsonObj)//process whatever u want to do with your
 
 //eagle3dstreaming's Server   to Iframe communication
 const eventHandler = (event) => {
-	console.log('Message From SS -- > Iframe  ', event.data);
+	console.log('Message from E3DS System to iframe :', event.data);
 	if (!event.data.type) // data not from server
 	{
-		console.log('Message From UE4-- > Iframe  :', event.data);
+		console.log('Message from Unreal to iframe :', event.data);
 		if(typeof event.data === 'string' && event.data.includes('cmd')){
 			const parsedData = JSON.parse(event.data);
 			if (parsedData.cmd){//it is a data from unreal
