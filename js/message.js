@@ -9,8 +9,7 @@ const messageHandler = (event) => {
 	console.log("received data event type " + event.data.type)
 	switch (event.data.type) {
 		case "ResponseFromUE4":
-			console.log("UE4->iframe: " + event.data.descriptor)
-			myHandleResponseFunction(event.data.descriptor);
+			console.log("Response from Unreal to iframe: " + event.data.descriptor)
 			break;
 		case "stage1_inqueued":
 			loaderStep1.style.visibility = "visible";
@@ -62,6 +61,20 @@ const messageHandler = (event) => {
 			break;	
 		case "shortCuts":
 			console.log("Key pressed");
+			break;
+		case "sessionExpired":
+			sidebar.style.visibility = "hidden";
+			loaderStep2.style.display = "flex";
+			iframeElem.style.visibility = "hidden";
+			$('#iframe_1').focus();
+			document.getElementById("iframe_1").src = document.getElementById("iframe_1").src;
+			break;
+		case "videoStreamFailed":
+			sidebar.style.visibility = "hidden";
+			loaderStep2.style.display = "flex";
+			iframeElem.style.visibility = "hidden";
+			$('#iframe_1').focus();
+			document.getElementById("iframe_1").src = document.getElementById("iframe_1").src;
 			break;
 		case "Error_Redirect":
 			loaderStep2.style.display = "none";
