@@ -1,7 +1,6 @@
 const messageHandler = (event) => {
 	const loaderStep1 = document.getElementById("loaderStep1");
 	const loaderStep2 = document.getElementById("loaderStep2");
-	const loaderStep3 = document.getElementById("loaderStep3");
 	const iframeElem = document.getElementById("iframe_1");
 	const sidebar = document.getElementById("sidebar");
 
