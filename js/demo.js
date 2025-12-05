@@ -1,4 +1,5 @@
 var streamStarted = false;
+
 const loadingVideo = document.getElementById("loadingVideo");
 if (loadingVideo) {
 	loadingVideo.onended = function () {
@@ -17,6 +18,25 @@ if (loadingVideo) {
 		}
 		else{
 			loadingVideo.play().then(()=>console.warn("video replaying"))
+		}
+	}
+}
+
+const customSkipBtn = document.getElementById("customSkipBtn");
+if(customSkipBtn){
+	customSkipBtn.onclick = function(){
+		const loadingVideo = document.getElementById("loadingVideo");
+		if(streamStarted){
+			const loadingStep1 = document.getElementById("loaderStep1");
+			if(loadingStep1){
+				loadingStep1.style.display = "none";
+			}
+			loadingVideo.remove();
+			const iframe = document.getElementById("iframe_1");
+			if(iframe){
+				iframe.style.visibility = "visible";
+				iframe.focus();
+			}
 		}
 	}
 }

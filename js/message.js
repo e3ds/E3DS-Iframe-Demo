@@ -23,6 +23,11 @@ const messageHandler = (event) => {
 			break;
 		case "stage5_playBtnPressed":
 			streamStarted = true;
+			//show customSkipBtn
+			const customSkipBtn = document.getElementById("customSkipBtn");
+			if(customSkipBtn){
+				customSkipBtn.style.display = "flex";
+			}
 			break;
 		case "_focus":
 			document.getElementById("iframe_1").focus();
