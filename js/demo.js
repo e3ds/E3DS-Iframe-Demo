@@ -2,6 +2,9 @@ var streamStarted = false;
 
 const loadingVideo = document.getElementById("loadingVideo");
 if (loadingVideo) {
+	loadingVideo.onclick = function(){
+		loadingVideo.muted = false;
+	}
 	loadingVideo.onended = function () {
 		console.warn("video ended")
 		if(streamStarted){
