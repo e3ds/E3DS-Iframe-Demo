@@ -18,7 +18,7 @@
       href="./images/favicon.png"
     />
 
-    <script type="text/javascript" src="./images/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.1.1/jquery.min.js" integrity="sha512-U6K1YLIFUWcvuw5ucmMtT9HH4t0uz3M366qrF5y4vnyH6dgDzndlcGvH/Lz5k8NFh80SN95aJ5rqGZEdaQZ7ZQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
     <link type="text/css" rel="stylesheet" href="./css/style.css" />
     <script type="text/javascript" src="./js/message.js"></script>
@@ -72,200 +72,27 @@
         <img src="./images/Loading2.gif" alt=""/>
       </div>
     </div>
-
-    <!-- <div
-      id="loaderStep3"
-      style="
-        visibility: hidden;
-        top: 0px;
-        left: 0px;
-        width: 100%;
-        height: 100%;
-        background-image: url('./images/21344090.jpg');
-      "
-      class="loader"
-    >
-      <img
-        id="playButton"
-        src="./images/PlayButton.png"
-        alt="!!!!!"
-        style="height: 250px; width: 250px"
-      />
-    </div> -->
-
     <div id="wrapperdiv">
       <div class="wrapper d-flex align-items-stretch">
         <div class="left-container">
           <div class="flexstretch show" id="sidebar" style="display: none">
-            <div>
-              <a class="logo" href="javascript:;"
-                ><img
-                  class="full"
-                  src="./images/Unreal-Logo_1x.png"
-                  width="45px"
-                  height="45px"
-                  alt=""
-                />
-                <span class="nav-label">
-                  <img src="./images/Unreal-Name2x.png" alt="" />
-                </span>
-              </a>
-            </div>
             <div class="sidebar left">
               <ul class="list-sidebar bg-defoult">
                 <li class="active">
                   <a onclick="switchTo('2')">
-                    <span class="img-icon"
-                      ><img
-                        src="./images/Front Yard.svg"
-                        width="30px"
-                        height="30px"
-                        alt="" /></span
-                    ><span class="nav-label">Open URL</span></a
-                  >
-                </li>
-                <li>
-                  <a data-bs-toggle="modal" data-bs-target="#exampleModal">
-                    <span class="img-icon"
-                      ><img
-                        src="./images/Front Yard.svg"
-                        width="30px"
-                        height="30px"
-                        alt="" /></span
-                    ><span class="nav-label">Change Resolution</span></a
-                  >
-                </li>
-                <li>
-                  <a onclick="switchTo('4')">
-                    <span class="img-icon"
-                      ><img
-                        src="./images/Front Yard.svg"
-                        width="30px"
-                        height="30px"
-                        alt="" /></span
-                    ><span class="nav-label">Open Call</span></a
-                  >
-                </li>
-                <!-- <li>
-                  <a onclick="switchTo('4')">
-                    <span class="img-icon"
-                      ><img
-                        src="./images/Front Yard.svg"
-                        width="30px"
-                        height="30px"
-                        alt="" /></span
-                    ><span class="nav-label">Open Keyboard</span></a
-                  >
-                </li> -->
-
-                <li>
-                  <a onclick="switchTo('6')">
-                    <span class="img-icon"
-                      ><img
-                        src="./images/Front Yard.svg"
-                        width="30px"
-                        height="30px"
-                        alt="" /></span
-                    ><span class="nav-label">Toggle Browser Mouse</span></a
-                  >
-                </li>
-                <li>
-                  <a onclick="switchTo('7')">
-                    <span class="img-icon"
-                      ><img
-                        src="./images/Front Yard.svg"
-                        width="30px"
-                        height="30px"
-                        alt="" /></span
-                    ><span class="nav-label">Increase Session Timer</span></a
-                  >
-                </li>
-                <li>
-                  <a onclick="switchTo('8')">
-                    <span class="img-icon"
-                      ><img
-                        src="./images/Front Yard.svg"
-                        width="30px"
-                        height="30px"
-                        alt="" /></span
-                    ><span class="nav-label">Get User Info</span></a
+                    <span class="nav-label">Open URL</span></a
                   >
                 </li>
                 <li>
                   <a onclick="switchTo('9')">
-                    <span class="img-icon"
-                      ><img
-                        src="./images/Front Yard.svg"
-                        width="30px"
-                        height="30px"
-                        alt="" /></span
-                    ><span class="nav-label">Get User Device Info</span></a
+                    <span class="nav-label">Get User Device Info</span></a
                   >
                 </li>
                 <li>
-                  <a onclick="switchTo('10')">
-                    <span class="img-icon"
-                      ><img
-                        src="./images/Front Yard.svg"
-                        width="30px"
-                        height="30px"
-                        alt="" /></span
-                    ><span class="nav-label">Video Player</span></a
+                  <a data-bs-toggle="modal" data-bs-target="#exampleModal">
+                    <span class="nav-label">Change Resolution</span></a
                   >
                 </li>
-                <li>
-                  <a onclick="switchTo('11')">
-                    <span class="img-icon"
-                      ><img
-                        src="./images/Front Yard.svg"
-                        width="30px"
-                        height="30px"
-                        alt="" /></span
-                    ><span class="nav-label">Audio Player</span></a
-                  >
-                </li>
-                <li>
-                  <a onclick="switchTo('12')">
-                    <span class="img-icon"
-                      ><img
-                        src="./images/Front Yard.svg"
-                        width="30px"
-                        height="30px"
-                        alt="" /></span
-                    ><span class="nav-label"
-                      >Command Line Argument Pass</span
-                    ></a
-                  >
-                </li>
-                <li>
-                  <a onclick="switchTo('16')">
-                    <span class="img-icon"
-                      ><img
-                        src="./images/Front Yard.svg"
-                        width="30px"
-                        height="30px"
-                        alt="" /></span
-                    ><span class="nav-label">Redirect URL</span></a
-                  >
-                </li>
-                <li id="settings">
-                  <a onclick="toggleSettings('e3ds_control_toggle_Obj')">
-                    <span class="img-icon">
-                      <img
-                          src="./images/Front Yard.svg"
-                          width="30px"
-                          height="30px"
-                          alt="" />
-                    </span>
-                    <span class="nav-label ">Hide Settings Icon </span>
-                  </a>
-                  
-                </li>
-                <li id="countdown">
-                  <span class="nav-label time-label">Time Remaining: </span>
-                  <span class="time" id="timer">4.45</span>
-                </li>
-                
               </ul>
 
               <div class="float_left" style="display: none">

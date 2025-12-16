@@ -25,9 +25,7 @@ const messageHandler = (event) => {
 			//loading screen 2 hides
 			loaderStep2.style.visibility = "hidden";
 			iframeElem.style.visibility = "visible";
-			// loaderStep3.style.visibility = "visible";
-			let playButton = document.getElementById("playButtonParent");
-			playButton.click();
+			
 			onPlayBtnPressed();
 			break;
 		case "stage5_playBtnPressed":
