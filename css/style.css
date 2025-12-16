@@ -173,7 +173,7 @@ a:hover {
 
 .sidebar {
   width: auto;
-  height: 84vh;
+  height: 100vh;
   max-height: 100%;
   background: none;
   overflow-y: auto;

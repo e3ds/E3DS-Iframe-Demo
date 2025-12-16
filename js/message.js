@@ -1,6 +1,11 @@
+const showLoadingMessage = (msg)=>{
+	const customLoaderMessage = document.getElementById("customLoaderMessage");
+	if(customLoaderMessage){
+		customLoaderMessage.innerText = msg;
+	}
+}
 const messageHandler = (event) => {
 	const loaderStep1 = document.getElementById("loaderStep1");
-	const loaderStep3 = document.getElementById("loaderStep3");
 	const iframeElem = document.getElementById("iframe_1");
 	const sidebar = document.getElementById("sidebar");
 
@@ -12,17 +17,19 @@ const messageHandler = (event) => {
 			break;
 		case "stage1_inqueued":
 			loaderStep1.style.visibility = "visible";
+			showLoadingMessage("stage1_inqueued");
 			break;
 		case "stage2_deQueued":
-			// loading screen 1 hides
+			showLoadingMessage("stage2_deQueued");
 			break;
 		case "stage3_slotOccupied":
+			showLoadingMessage("stage3_slotOccupied");
 			break;
 		case "stage4_playBtnShowedUp":
-			//loading screen 2 hides
+			showLoadingMessage("stage4_playBtnShowedUp");
+			//loading screen 1 hides
 			loaderStep1.style.visibility = "hidden";
 			iframeElem.style.visibility = "visible";
-
 			onPlayBtnPressed();
 			break;
 		case "stage5_playBtnPressed":
