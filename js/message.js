@@ -6,7 +6,7 @@ const showLoadingMessage = (msg)=>{
 }
 const messageHandler = (event) => {
 	const loaderStep1 = document.getElementById("loaderStep1");
-	const iframeElem = document.getElementById("iframe_1");
+	const iframeElem = document.getElementById("content");
 	const sidebar = document.getElementById("sidebar");
 
 
