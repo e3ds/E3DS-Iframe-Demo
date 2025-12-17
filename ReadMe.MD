@@ -6,7 +6,7 @@ This project is ideal for developers who want to integrate interactive Unreal En
 
 ---
 
-## 🚀 Features
+## Features
 
 - Embed Unreal Engine Pixel Streaming apps using an `<iframe>`
 - Customize loading screens and UI states
@@ -16,18 +16,18 @@ This project is ideal for developers who want to integrate interactive Unreal En
 
 ---
 
-## 📌 Live Demo
+##  Live Demo
 
-👉 **Live Iframe Demo**  
+ **Live Iframe Demo**  
 https://iframe.eagle3dstreaming.com/
 
 ---
 
-## 📘 Official Documentation
+##  Official Documentation
 
 The following guides explain how to embed, configure, and communicate with the streaming app.
 
-### 🧱 Embedding & Setup
+###  Embedding & Setup
 
 - **Embedding with iframe**  
   Learn how to embed a Pixel Streaming session into your webpage using an `<iframe>`.  
@@ -39,7 +39,7 @@ The following guides explain how to embed, configure, and communicate with the s
 
 ---
 
-### 🔄 Communication
+###  Communication
 
 - **Webpage ↔ Unreal Messaging**  
   Send and receive structured messages between your webpage and the Unreal Engine app.  
@@ -47,7 +47,7 @@ The following guides explain how to embed, configure, and communicate with the s
 
 ---
 
-### 🧠 Iframe Connection Stages
+###  Iframe Connection Stages
 
 - **Connection Stages & Events**  
   Learn each stage of the stream startup lifecycle and how to customize UI behavior at every step.  
@@ -55,7 +55,7 @@ The following guides explain how to embed, configure, and communicate with the s
 
 ---
 
-## 🛠️ Use Cases
+##  Use Cases
 
 - Embedding Unreal Engine experiences into websites
 - Product configurators and 3D viewers
@@ -65,7 +65,7 @@ The following guides explain how to embed, configure, and communicate with the s
 
 ---
 
-## 🤝 Support & Community
+##  Support & Community
 
 If you need help or want to connect with other developers:
 
@@ -74,7 +74,7 @@ If you need help or want to connect with other developers:
 
 ---
 
-## 🤲 Contributing
+##  Contributing
 
 Contributions and improvements are welcome!
 
@@ -83,7 +83,7 @@ Contributions and improvements are welcome!
 
 ---
 
-## 📄 License
+##  License
 
 This project is provided as a demo and example.  
 Please refer to Eagle 3D Streaming’s terms and documentation for usage guidelines.
