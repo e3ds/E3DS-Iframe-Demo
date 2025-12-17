@@ -69,7 +69,8 @@ The following guides explain how to embed, configure, and communicate with the s
 
 If you need help or want to connect with other developers:
 
-- 💬 **Join the Eagle 3D Streaming Discord Community**
+- 💬 **[Join the Eagle 3D Streaming Discord Community](https://discord.gg/hMwR2Uxr33)**
+
 
 ---
 
