@@ -1,8 +1,12 @@
+const showLoadingMessage = (msg)=>{
+	const customLoaderMessage = document.getElementById("customLoaderMessage");
+	if(customLoaderMessage){
+		customLoaderMessage.innerText = msg;
+	}
+}
 const messageHandler = (event) => {
 	const loaderStep1 = document.getElementById("loaderStep1");
-	const loaderStep2 = document.getElementById("loaderStep2");
-	const loaderStep3 = document.getElementById("loaderStep3");
-	const iframeElem = document.getElementById("iframe_1");
+	const iframeElem = document.getElementById("content");
 	const sidebar = document.getElementById("sidebar");
 
 
@@ -13,26 +17,24 @@ const messageHandler = (event) => {
 			break;
 		case "stage1_inqueued":
 			loaderStep1.style.visibility = "visible";
+			showLoadingMessage("stage1_inqueued");
 			break;
 		case "stage2_deQueued":
-			// loading screen 1 hides
+			showLoadingMessage("stage2_deQueued");
 			break;
 		case "stage3_slotOccupied":
-			loaderStep1.style.display = "none";
-			loaderStep2.style.visibility = "visible";
+			showLoadingMessage("stage3_slotOccupied");
 			break;
 		case "stage4_playBtnShowedUp":
-			//loading screen 2 hides
-			loaderStep2.style.visibility = "hidden";
+			showLoadingMessage("stage4_playBtnShowedUp");
+			//loading screen 1 hides
+			loaderStep1.style.visibility = "hidden";
 			iframeElem.style.visibility = "visible";
-			// loaderStep3.style.visibility = "visible";
-			let playButton = document.getElementById("playButtonParent");
-			playButton.click();
 			onPlayBtnPressed();
 			break;
 		case "stage5_playBtnPressed":
 			sidebar.style.visibility = "visible";
-			loaderStep2.style.display = "none";
+			loaderStep1.style.display = "none";
 			iframeElem.style.visibility = "visible";
 			$('#iframe_1').focus();
 			break;
@@ -64,20 +66,18 @@ const messageHandler = (event) => {
 			break;
 		case "sessionExpired":
 			sidebar.style.visibility = "hidden";
-			loaderStep2.style.display = "flex";
 			iframeElem.style.visibility = "hidden";
 			$('#iframe_1').focus();
 			document.getElementById("iframe_1").src = document.getElementById("iframe_1").src;
 			break;
 		case "videoStreamFailed":
 			sidebar.style.visibility = "hidden";
-			loaderStep2.style.display = "flex";
 			iframeElem.style.visibility = "hidden";
 			$('#iframe_1').focus();
 			document.getElementById("iframe_1").src = document.getElementById("iframe_1").src;
 			break;
 		case "Error_Redirect":
-			loaderStep2.style.display = "none";
+			loaderStep1.style.display = "none";
 			iframeElem.style.visibility = "visible";
 			$('#iframe_1').focus();
 		default:

@@ -1,8 +1,6 @@
 function onPlayBtnPressed() {
-	let loaderStep2 = document.getElementById("loaderStep2")
-	loaderStep2.style.visibility = "hidden";
-	let loaderStep3 = document.getElementById("loaderStep3")
-	loaderStep3.style.visibility = "hidden";
+	let loaderStep1 = document.getElementById("loaderStep1")
+	loaderStep1.style.visibility = "hidden";
 	let eleBanner = document.getElementById("iframe_1")
 	eleBanner.style.visibility = "visible";
 }

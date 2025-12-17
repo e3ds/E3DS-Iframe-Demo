@@ -1,6 +1,10 @@
 function HandleResponseFromUE4(jsonObj)//process whatever u want to do with your object
 {
 	console.log(jsonObj);
+	const unrealResponseViewer = document.getElementById("unrealResponseViewer");
+	if(unrealResponseViewer){
+		unrealResponseViewer.textContent = JSON.stringify(jsonObj);
+	}
 	switch (jsonObj.cmd) {
 		case "increaseSessionExpireTime":
 			alert(JSON.stringify(jsonObj));
