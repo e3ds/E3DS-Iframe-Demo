@@ -8,11 +8,16 @@ function onPlayBtnPressed() {
 
 function switchTo(val) {
 	console.log("=== Registered switchTo action, Value is: ", val);
+	
+	//if your unreal app expects json data
+	// let descriptor = {
+	// 	switchColor: val
+	// };
+	
 
-	let descriptor = {
-		Teleport: val
-	};
-	//emitUIInteraction(descriptor);
+	//if your unreal app expects string data
+	let descriptor = val;
+
 	let obj ={
 			cmd: "sendToUe4",
 			value: descriptor,
@@ -29,7 +34,7 @@ function goToFullScreen() {
 	let descriptor = {
 		FullScreen: cmd
 	};
-	//emitUIInteraction(descriptor);
+	
 	let obj =
 		{
 			cmd: "sendToUe4",
