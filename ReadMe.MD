@@ -31,7 +31,8 @@ The following guides explain how to embed, configure, and communicate with the s
 
 - **Embedding with iframe**  
   Learn how to embed a Pixel Streaming session into your webpage using an `<iframe>`.  
-  https://docs.eagle3dstreaming.com/wiki/embedding-stream-into-your-webpage-using-iframe
+  https://docs.eagle3dstreaming.com/wiki/embed-stream-using-iframe
+  
 
 - **HTML Embed Guide**  
   Step-by-step instructions to host and run the embed locally using a simple HTML page.  
