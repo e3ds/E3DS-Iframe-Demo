@@ -15,27 +15,59 @@ body {
 }
 .left-container {
   position: relative;
-  border-right: 1px solid #e3e3e3;
-  background: #ececec;
+  /* Was #ececec with a light border, which showed as a pale empty block above
+   * and below the menu - the sidebar's own background does not fill its
+   * container. Matching the nav colour makes the column read as one panel
+   * instead of a menu floating in grey. */
+  border-right: 1px solid rgba(255, 255, 255, 0.08);
+  background-color: var(--nav-bar-bg-color);
   height: 100vh;
 }
+/* The collapse handle.
+ *
+ * It used to sit at left:0, top:50% - inside the menu, on top of whichever item
+ * happened to be halfway down. The expanded state then moved it with a
+ * hardcoded left:260px, which only lines up while the sidebar happens to be
+ * exactly 260px wide.
+ *
+ * Anchored to the RIGHT EDGE of .left-container instead, straddling the border
+ * so it reads as a handle on the boundary. That follows the sidebar whatever
+ * its width, in both states, with no magic number. */
 .left-right-arrow {
   position: absolute;
-  left: 0px;
+  right: -17px;
   top: 50%;
+  transform: translateY(-50%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 34px;
+  height: 34px;
+  padding: 0;
+  border: 1px solid rgba(255, 255, 255, 0.22);
+  border-radius: 50%;
+  /* Opaque, not transparent: it overlaps the stream, and a bare glyph on moving
+   * video is unreadable. */
+  background: #17181a;
   color: rgb(221 222 224);
   cursor: pointer;
-  border: none;
-  z-index: 10;
-  background: transparent;
+  z-index: 30;
+  transition: background 0.15s ease, border-color 0.15s ease;
+}
+
+.left-right-arrow:hover {
+  background: #26282b;
+  border-color: rgba(255, 255, 255, 0.4);
 }
 .arrow-svg {
   width: 45px;
   height: 45px;
 }
+/* Expanded state: the arrow only needs to point the other way. Its POSITION is
+ * handled by .left-right-arrow anchoring to the container edge, so the old
+ * left:260px is gone - it was a second, conflicting source of truth. */
 .menu-toggle {
-  left: 260px;
-  transform: rotate(180deg);
+  transform: translateY(-50%) rotate(180deg);
 }
 #wrapperdiv {
   max-height: 100%;
