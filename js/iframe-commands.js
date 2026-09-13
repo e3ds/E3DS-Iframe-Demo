@@ -136,10 +136,10 @@ function setStreamElementStyle(elementId, cssProperty, cssValue) {
  * example of a command that already exists on the platform - the page's whole
  * job is to name the command and its value.
  *
- * Three of these are DIFFERENT SHAPES and do not fit sendCommandToStream()'s
- * { cmd, value }: freezeResolutionAt takes x and y, setAdaptiveQualityPoint
- * takes minValue and maxValue, and the microphone setters take a settings
- * object. They are written out in full rather than bent to fit.
+ * Two of these are DIFFERENT SHAPES and do not fit sendCommandToStream()'s
+ * { cmd, value }: freezeResolutionAt takes x and y, and setAdaptiveQualityPoint
+ * takes minValue and maxValue. They are written out in full rather than bent to
+ * fit.
  */
 
 /** Press the play button for the viewer, when your page has its own. */

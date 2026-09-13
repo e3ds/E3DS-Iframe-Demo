@@ -179,9 +179,10 @@
             lives in one place rather than being buried in the HTML. You can
             hard-code it here instead if you prefer.
 
-            `allow` grants fullscreen. An app that needs the microphone needs
-            more than an attribute - see iframe-demo-microphone, which is this
-            same demo with that part built in.
+            `allow` grants fullscreen, and that is all this demo asks for.
+            Camera and microphone need more than an attribute - the permission
+            has to be asked for by THIS page, inside a click, before the frame
+            loads - and none of that belongs in a demo about embedding.
           -->
           <iframe
             id="streamFrame"

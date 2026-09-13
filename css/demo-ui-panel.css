@@ -211,10 +211,9 @@
     font-size: 11px;
 }
 
-/* [E3DS-LOG] Direction by colour, the same three the mic-test page uses -
-   outgoing blue, incoming green, failure red - so anyone who debugged the
-   microphone work there reads this without relearning it. A note is this page
-   talking about itself and stays grey. */
+/* [E3DS-LOG] Direction by colour - outgoing blue, incoming green, failure red.
+   The same three the other E3DS debugging pages use, so nobody has to relearn
+   them. A note is this page talking about itself and stays grey. */
 .app-response-entry[data-kind="out"]  .app-response-time { color: #8fc4e0; }
 .app-response-entry[data-kind="in"]   .app-response-time { color: #9ed6ab; }
 .app-response-entry[data-kind="err"]  .app-response-time { color: #e89898; }
@@ -403,39 +402,3 @@
     -webkit-user-select: text;
 }
 
-/* [E3DS-MIC-ASK-FIRST] The choice the first load offers, when the stream is
-   allowed a microphone. On the loading screen rather than over the video,
-   because there is no video yet - this is what the viewer sees first.
-
-   Declining is a quiet equal of accepting, not a hidden link: an app that CAN
-   use a microphone is not an app that must have one, and the layout should not
-   argue otherwise. */
-.start-gate {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 10px;
-    margin-top: 22px;
-}
-
-.start-gate-button {
-    min-width: 260px;
-    padding: 13px 28px;
-    border: 1px solid rgba(255, 255, 255, 0.35);
-    border-radius: 6px;
-    cursor: pointer;
-    background: transparent;
-    color: #fff;
-    font-family: inherit;
-    font-size: 15px;
-}
-.start-gate-button:hover:not(:disabled) { background: rgba(255, 255, 255, 0.12); }
-.start-gate-button:disabled { opacity: .55; cursor: default; }
-
-.start-gate-button--primary {
-    border-color: transparent;
-    background: #f0f0f0;
-    color: #111;
-    font-size: 16px;
-}
-.start-gate-button--primary:hover:not(:disabled) { background: #fff; }

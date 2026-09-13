@@ -29,11 +29,16 @@ That is a working embed. The rest is optional.
 
 | | |
 |---|---|
-| **`/`** | the standard demo — the one to start from |
-| **`/microphone`** | the same demo plus the microphone: asking for the permission, choosing an input device, and why both are harder than they look |
+| **`/`** | the standard demo — the one to start from. No microphone anywhere in it. |
+| **`/microphone`** | one file, one subject: letting the viewer **choose which microphone is captured**, and the browser permission rules that make it harder than it looks |
 
-They are separate on purpose. A page that asks for a microphone costs every
-visitor a browser prompt, and most integrations do not need one.
+They are separate on purpose, and deliberately unalike. A page that asks for a
+microphone costs every visitor a browser prompt before anything starts, and most
+integrations do not need one — so the standard demo has none. The microphone
+page is the smallest thing that demonstrates the feature: a cross-origin iframe,
+a dropdown, and `postMessage` between them. **The whole feature is two
+commands** — `getMicDevices` asks the frame what it can see, `setMicDevice` tells
+it which one to capture.
 
 ---
 

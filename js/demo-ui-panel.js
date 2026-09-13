@@ -400,10 +400,9 @@ function addDemoTextInput(label, opts, onSubmit, category, needs) {
 
 /* [E3DS-DEMO-SELECT] One of a list, chosen.
  *
- * A dropdown rather than a button per option, because the options are not known
- * when the panel is built - the microphones on this machine are whatever the
- * platform reports, and it can report one or six. A row of buttons cannot be
- * that.
+ * A dropdown rather than a button per option, because the options are not
+ * always known when the panel is built - a list the platform reports can have
+ * one entry or six. A row of buttons cannot be that.
  */
 function addDemoSelect(label, opts, onChange, category, needs) {
     const section = e3dsCategorySection(category);
@@ -497,7 +496,7 @@ function buildDemoPanel() {
      * site is which first turns that from a contradiction into a fact.
      *
      * Only when a permission is actually in play. On a stream that asks for
-     * neither microphone nor camera this is four lines about nothing. */
+     * no camera this is four lines about nothing. */
     e3dsExplainTheTwoSites();
 
     /* [E3DS-APP-GATING] Decide from the URL now; the player corrects it later. */
@@ -847,7 +846,7 @@ function e3dsBuildVideoControls() {
 function e3dsExplainTheTwoSites() {
     const frame = getStreamFrame();
     const allow = (frame && frame.getAttribute("allow")) || "";
-    if (allow.indexOf("microphone") === -1 && allow.indexOf("camera") === -1) return;
+    if (allow.indexOf("camera") === -1) return;
 
     window.e3dsLogAppResponse(
         "\u2022 " + e3dsThisSite() + " \u2014 this page. Its padlock is the one you can see.\n"
@@ -881,10 +880,10 @@ function e3dsExplainTheTwoSites() {
  * pressed, still no camera. So the current browser state is shown next to
  * each row - granted, denied, or ask - and a denied one says where to fix it.
  *
- * The microphone is deliberately not here. It needs more than a checkbox - the
- * permission has to be asked for by THIS page, inside a click, before the frame
- * ever loads - and that whole arrangement lives in iframe-demo-microphone,
- * which is this demo with that part built in.
+ * The microphone is deliberately not here, and not anywhere in this demo. It
+ * needs more than a checkbox - the permission has to be asked for by THIS page,
+ * inside a click, before the frame ever loads - and that is a subject of its
+ * own. It has its own demo; this one is about embedding.
  */
 const E3DS_PERMISSIONS = [
     { key: "camera",     label: "Camera",     on: true },
@@ -895,7 +894,7 @@ const E3DS_PERMISSIONS = [
  *
  * navigator.permissions does not answer for every name in every browser -
  * "fullscreen" is not a permission it knows, and Firefox has historically
- * refused "microphone" - so a name it will not answer for simply shows nothing
+ * refused some names - so a name it will not answer for simply shows nothing
  * rather than an error. */
 function e3dsShowPermissionState(perm, stateEl) {
     if (perm.key === "fullscreen") return;      // not a queryable permission
@@ -992,12 +991,10 @@ function e3dsApplyConnection(url) {
      * the one path that started from a real click arrived at the navigation
      * with no click attached to it.
      *
-     * It matters because a cross-origin frame asking for a microphone with no
-     * activation behind it is refused - and the standalone mic-test page, which
-     * works, differs from this one in exactly that respect: its iframe starts
-     * empty and gets its src assigned synchronously inside a Start button's
-     * handler. Same commands, same player, same allow attribute; the only
-     * difference was where the navigation happened relative to the gesture.
+     * It matters because a cross-origin frame asking the browser for anything
+     * with no activation behind it is refused, silently. The navigation has to
+     * happen inside the click, which is why the element is replaced rather than
+     * having its src reassigned from a timer.
      *
      * Replacing the element rather than reassigning src is what lets this be
      * synchronous. A fresh iframe reads `allow` on its first navigation, so
@@ -1042,10 +1039,10 @@ function e3dsApplyConnection(url) {
  * question anyone actually has - did my message go out, and did anything come
  * back - could not be answered from it.
  *
- * So it logs BOTH DIRECTIONS and every kind of traffic, the way the standalone
- * mic-test page does, and for the same reason: that page was the only place the
- * microphone work could be debugged precisely because it showed the whole
- * conversation.
+ * So it logs BOTH DIRECTIONS and every kind of traffic. A page that shows only
+ * what it sent cannot answer "did that arrive", and a page that shows only what
+ * came back cannot answer "did I ask correctly". The whole conversation is the
+ * only view that answers both.
  *
  *   out   what this page sent into the frame
  *   in    what came back - platform events and app messages alike
