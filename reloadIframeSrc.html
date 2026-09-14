@@ -1,0 +1,86 @@
+<html>
+  <head>
+    <title>iFrame</title>
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
+      html, body {
+        width: 100%;
+        height: 100%;
+        overflow: hidden; /* removes scrollbars */
+      }
+
+      .stream-container {
+        position: relative;
+        width: 100vw;
+        height: 100vh;
+      }
+
+      iframe {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        border: none;
+        z-index: 1;
+      }
+
+      .restart-btn {
+        position: absolute;
+        top: 16px;
+        left: 16px;
+        z-index: 10; /* sits above the iframe */
+        padding: 10px 20px;
+        font-size: 14px;
+        font-weight: 600;
+        background-color: rgba(0, 0, 0, 0.6);
+        color: #fff;
+        border: none;
+        border-radius: 6px;
+        cursor: pointer;
+        backdrop-filter: blur(4px);
+      }
+
+      .restart-btn:hover {
+        background-color: rgba(0, 0, 0, 0.8);
+      }
+    </style>
+  </head>
+
+  <body>
+    <div class="stream-container">
+      <!-- Restart button, floats above iframe -->
+      <button class="restart-btn" onclick="restartIframe()">Restart</button>
+
+      <!-- Embed the Unreal Engine app using Eagle 3D iframe -->
+      <iframe
+        id="iframe_1"
+        src="https://connector.eagle3dstreaming.com/v5/Fakhrul/DemoAppTP/afk"
+        allowfullscreen
+        title="Unreal Stream"
+      ></iframe>
+    </div>
+
+    <script>
+      function restartIframe() {
+        var iframe = document.getElementById("iframe_1");
+        var originalSrc = "https://connector.eagle3dstreaming.com/v5/Fakhrul/DemoAppTP/afk";
+
+        // Setting src to blank first forces a full reload,
+        // even if the src string is identical to what's already there
+        iframe.src = "about:blank";
+
+        // Small delay before restoring, to ensure the browser
+        // actually tears down the old frame before loading again
+        setTimeout(function () {
+          iframe.src = originalSrc;
+        }, 50);
+      }
+    </script>
+  </body>
+</html>
