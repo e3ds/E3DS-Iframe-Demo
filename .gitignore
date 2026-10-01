@@ -5,3 +5,6 @@ node_modules
 # cannot be committed.
 CLAUDE*.md
 *-TASKS.md
+
+# login example: your own settings (copy of config.example.json)
+login/config.json
