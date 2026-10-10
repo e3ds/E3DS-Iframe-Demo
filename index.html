@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<!--
+  Eagle 3D Streaming - iframe embedding demo
+  ==========================================
+
+  A complete, working example of embedding a streaming app in a web page and
+  talking to it in both directions.
+
+  WHERE TO START:
+    1. js/iframe-config.js          - point this at your own app (the only edit needed)
+    2. js/iframe-commands.js - sending instructions TO the app
+    3. js/iframe-events.js   - receiving events FROM the platform and the app
+    4. js/demo-ui-page.js       - this page's own buttons (an example, not a library)
+
+  Full documentation, including every message you can send and receive, is in
+  README.md next to this file.
+
+  Bootstrap is used only for the "Change Resolution" dialog and the general
+  look. It is not required for streaming - remove it and everything still works.
+-->
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1" />
+    <meta name="HandheldFriendly" content="true" />
+
+    <title>Eagle 3D Streaming — iframe demo</title>
+
+    <link rel="shortcut icon" href="./images/favicon.png" type="image/x-icon" />
+    <link rel="icon" type="image/png" sizes="96x96" href="./images/favicon.png" />
+
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+      integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC"
+      crossorigin="anonymous"
+    />
+    <!-- [E3DS-IOS-VIEWPORT] The ?v= is a cache buster, and it is load-bearing on
+         phones. A mobile browser will hold a stylesheet for days and show an old
+         layout against new markup; bump this number whenever css/ or js/ changes
+         so the device is forced to fetch it rather than trusting what it has. -->
+    <link rel="stylesheet" href="./css/style.css?v=1.2.29" />
+    <!--
+      The floating control panel. Deliberately the same look as the SDK
+      demo's panel - the two show the same controls over two different
+      transports, and the difference should be in the wiring, not the UI.
+    -->
+    <link rel="stylesheet" href="./css/demo-ui-panel.css?v=1.2.29" />
+  </head>
+
+  <body>
+    <!--
+      Your own loading screen.
+
+      The platform reports its startup progress as a series of events (see
+      iframe-events.js), which is what lets you show something like this
+      instead of a blank frame while a machine is found and the app starts.
+
+      Style it however you like - it is entirely your page.
+    -->
+    <div id="loadingScreen" class="loading-screen">
+      <div class="loading-screen__spinner">
+        <img src="./images/Loading2.gif" alt="Loading" />
+      </div>
+      <div class="loading-screen__text">
+        <!-- The LIVE status comes first and is the loudest thing on the screen:
+             it is the only part that changes, and it is what a waiting viewer
+             is actually reading. -->
+        <p id="loadingStatusText" class="loading-screen__status"></p>
+
+        <!-- The note to whoever is integrating this. Static, so it is quiet and
+             sits underneath - it must never compete with the status above. -->
+        <p class="loading-screen__note">
+          This is your custom loading screen &mdash; modify it to fit your needs.
+        </p>
+      </div>
+    </div>
+
+    <div class="page-wrapper">
+      <div class="wrapper d-flex align-items-stretch">
+        <!-- ── The stream itself ─────────────────────────────────────── -->
+        <div id="streamArea" class="stream-area">
+          <!--
+            Shows whatever your Unreal app sends back to the page, so you can
+            watch data arriving while experimenting. Delete it in your own page.
+          -->
+
+          <!--
+            THE STREAM.
+
+            `src` is set from js/iframe-config.js when the page loads, so that the URL
+            lives in one place rather than being buried in the HTML. You can
+            hard-code it here instead if you prefer.
+
+            `allow` grants fullscreen, and that is all this demo asks for.
+            Camera and microphone need more than an attribute - the permission
+            has to be asked for by THIS page, inside a click, before the frame
+            loads - and none of that belongs in a demo about embedding.
+          -->
+          <iframe
+            id="streamFrame"
+            title="Eagle 3D Streaming application"
+            allow="fullscreen"
+            allowfullscreen
+          ></iframe>
+
+          <!--
+            Your own "the stream has ended" screen.
+
+            Hidden until the platform sends "redirectingWithMessage" - see
+            iframe-events.js. Showing your own screen here is what stops the
+            platform's plain default page appearing inside your page.
+
+            KEEP the `visibility: visible` in the CSS class for this element.
+            It looks redundant, but its parent starts hidden and only becomes
+            visible once the stream is playing - without it, a session that
+            ends BEFORE playback starts would show nothing at all.
+          -->
+          <div id="sessionEndOverlay" class="session-end-overlay">
+            <div class="session-end-overlay__icon">&#128546;</div>
+            <div id="sessionEndOverlayMessage" class="session-end-overlay__message"></div>
+          </div>
+
+          <a
+            id="fullscreenButton"
+            class="full-screen-btn"
+            onclick="toggleFullScreen()"
+            aria-label="Toggle fullscreen"
+          >
+            <span class="footer-icon fullscreen-icon"></span>
+          </a>
+        </div>
+      </div>
+    </div>
+
+    <!--
+      Load order matters:
+        iframe-config.js         defines the settings the others read
+        iframe-commands.js defines the send functions
+        iframe-events.js   uses those functions when events arrive
+        demo-ui-page.js       wires up this page's buttons
+    -->
+    <script src="./js/iframe-config.js?v=1.2.29"></script>
+    <script src="./js/iframe-commands.js?v=1.2.29"></script>
+    <script src="./js/iframe-events.js?v=1.2.29"></script>
+    <script src="./js/demo-ui-page.js?v=1.2.29"></script>
+    <!--
+      AFTER iframe-commands.js: every button in the panel routes through the
+      helpers in that file, which is the only place postMessage is called.
+    -->
+    <script src="./js/demo-ui-panel.js?v=1.2.29"></script>
+
+    <script
+      src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"
+      integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM"
+      crossorigin="anonymous"
+    ></script>
+  </body>
+</html>

@@ -1,0 +1,112 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Eagle 3D Streaming — your own loading video</title>
+<!--
+  Eagle 3D Streaming - showing YOUR OWN video while the stream gets ready.
+
+  DELIBERATELY STANDALONE, like ../microphone/: one file, no framework, no build step, nothing from the main demo.
+  Copy it, change VIDEO_URL and STREAM_URL, and it works on your page.
+
+  HOW IT WORKS, in order:
+    1. The stream's iframe loads at once, underneath. Your video plays on top of it (muted, because browsers only
+       autoplay muted video; a click on the video turns the sound on).
+    2. The iframe tells this page how far it has got, with postMessage events. While the stream is not ready the
+       video keeps looping.
+    3. "stage4_playBtnShowedUp": the stream is ready - a Start button appears
+       on the video.
+    4. The viewer presses Start, OR the video reaches its end after the stream is ready: the video is removed and
+       the stream is shown.
+    5. "stage5_playBtnPressed": the stream is already playing behind the video (for
+       example when autoplay started it) - the video is removed as soon as it finishes its current loop.
+-->
+<style>
+  * { box-sizing: border-box; }
+  html, body { margin: 0; height: 100%; background: #000; font: 15px/1.5 system-ui, sans-serif; color: #eee; }
+  #stage { position: relative; width: 100%; height: 100%; }
+  iframe { position: absolute; inset: 0; width: 100%; height: 100%; border: 0; background: #000; }
+  #overlay { position: absolute; inset: 0; background: #000; display: flex; align-items: center; justify-content: center; }
+  #overlay video { width: 100%; height: 100%; object-fit: cover; cursor: pointer; }
+  #status { position: absolute; left: 16px; bottom: 16px; padding: 6px 12px; border-radius: 4px;
+            background: rgba(0, 0, 0, .55); font-size: 14px; pointer-events: none; }
+  #start { position: absolute; right: 24px; bottom: 24px; padding: 12px 22px; font: 600 16px system-ui, sans-serif;
+           color: #fff; background: #176b6b; border: 0; border-radius: 6px; cursor: pointer; display: none; }
+  #start:hover { background: #1d8484; }
+  #start:focus-visible { outline: 3px solid #fff; outline-offset: 2px; }
+  #sound { position: absolute; top: 16px; right: 16px; padding: 6px 12px; border-radius: 4px; border: 0;
+           background: rgba(0, 0, 0, .55); color: #fff; font: inherit; cursor: pointer; }
+</style>
+</head>
+<body>
+<div id="stage">
+  <iframe id="stream" allow="autoplay; fullscreen; microphone" allowfullscreen></iframe>
+  <div id="overlay">
+    <video id="video" autoplay muted playsinline></video>
+    <button id="sound" type="button">Sound on</button>
+    <div id="status">Getting your stream ready…</div>
+    <button id="start" type="button">Start</button>
+  </div>
+</div>
+<script>
+  /* ---- change these two for your own page ---------------------------------------------------------------- */
+  const VIDEO_URL  = "loading-video.webm";   // your video; MP4 (H.264) plays in every browser
+  const STREAM_URL = new URLSearchParams(location.search).get("stream")
+    || "https://connector.eagle3dstreaming.com/v5/demo/EpicPixelStreamingSample/E3DS-Iframe-Demo";
+  /* -------------------------------------------------------------------------------------------------------- */
+
+  const frame = document.getElementById("stream");
+  const overlay = document.getElementById("overlay");
+  const video = document.getElementById("video");
+  const status = document.getElementById("status");
+  const start = document.getElementById("start");
+  const sound = document.getElementById("sound");
+  let ready = false, playing = false;
+
+  video.src = VIDEO_URL;
+  frame.src = STREAM_URL;
+
+  function showStream(why) {
+    if (!overlay.isConnected) return;
+    console.log("[loading-video] showing the stream - " + why);
+    overlay.remove();
+    frame.focus();
+  }
+
+  // A click on the video (or the button) turns its sound on - browsers only autoplay muted video.
+  function soundOn() { video.muted = false; sound.remove(); }
+  video.addEventListener("click", soundOn);
+  sound.addEventListener("click", soundOn);
+
+  // Loop until the stream is ready; once it is, the end of the video hands over to the stream.
+  video.addEventListener("ended", () => {
+    if (ready || playing) showStream("video ended, stream ready");
+    else video.play().catch((e) => console.warn("[loading-video] replay refused:", e.message));
+  });
+  start.addEventListener("click", () => showStream("Start pressed"));
+
+  // What the stream's iframe reports. Messages may arrive as objects or JSON strings.
+  window.addEventListener("message", (event) => {
+    if (event.source !== frame.contentWindow) return;
+    let data = event.data;
+    if (typeof data === "string") { try { data = JSON.parse(data); } catch (e) { console.warn("[loading-video] ignored a message that is not JSON:", e.message); return; } }
+    const type = data && data.type;
+    if (type === "stage4_playBtnShowedUp") {
+      ready = true;
+      status.textContent = "Your stream is ready.";
+      start.style.display = "block";
+      start.focus();
+    } else if (type === "stage5_playBtnPressed") {
+      playing = true;
+      status.textContent = "Your stream is playing.";
+      start.style.display = "block";
+    } else if (type === "stage1_inqueued") {
+      status.textContent = "Waiting for a free machine…";
+    } else if (type === "stage3_1_AppAcquiringProgress" || type === "stage3_2_AppPreparationProgress") {
+      status.textContent = "Preparing the app…";
+    }
+  });
+</script>
+</body>
+</html>

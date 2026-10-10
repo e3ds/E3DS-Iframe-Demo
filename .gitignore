@@ -1,0 +1,7 @@
+node_modules
+
+# Internal notes live beside these files in the private repo and get copied
+# across sooner or later. This is the backstop: even if one lands here, it
+# cannot be committed.
+CLAUDE*.md
+*-TASKS.md

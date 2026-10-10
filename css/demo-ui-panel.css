@@ -1,0 +1,465 @@
+/**
+ * demo-ui-panel.css — the floating control panel.
+ *
+ * DELIBERATELY IDENTICAL to the SDK demo's panel (sdk/css/style.css). The two
+ * demos show the same controls doing the same things through two different
+ * transports - direct calls in the SDK, postMessage here - and the whole point
+ * is that the difference is in the wiring, not in what the viewer sees. If you
+ * change one, change the other.
+ *
+ * Nothing here touches the rest of the page: every rule is scoped to
+ * #demoButtonPanel or to a .demo- class that only this panel uses.
+ */
+
+#demoButtonPanel {
+    /* FIXED, not absolute. Absolute would position against the nearest
+       positioned ancestor, so the panel would move whenever the page's layout
+       did. Fixed pins it to the window and keeps it there.
+
+       Anchored to the RIGHT edge, clear of the stream's own controls.
+
+       KNOWN LIMIT: a fixed element outside the element being made fullscreen is
+       not painted while that element is fullscreen. So this panel disappears if
+       the viewer puts the IFRAME into fullscreen and returns when they leave.
+       That is a property of fullscreen, not a bug here - and unlike the SDK
+       there is no way around it, because the stream is in another document
+       entirely. */
+    position: fixed;
+    right: 20px;
+    top: 20px;
+
+    /* Above the page's own sidebar and overlays. */
+    z-index: 100000;
+
+    /* RESIZABLE, like the log. The panel grows as controls arrive - a stream
+       that reaches the video stage has five more sections than one that has
+       just connected - and 70vh of buttons over the picture is a lot of stream
+       to cover. The default stays the comfortable size; whoever wants more or
+       less drags the corner.
+
+       `resize` needs a non-visible overflow to work at all, which is why the
+       scrolling lives here rather than on an inner element. min-width keeps the
+       200px buttons from being squeezed into something unreadable. */
+    width: 250px;
+    height: 70vh;
+    min-width: 216px;
+    min-height: 140px;
+    max-width: 90vw;
+    max-height: 92vh;
+    resize: both;
+
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+
+    /* Scrolls when there are more buttons than fit, so the last ones stay
+       reachable instead of being clipped off the bottom. */
+    overflow-y: auto;
+    overflow-x: hidden;
+
+    padding: 0 0 16px;
+    border-radius: 12px;
+    background-color: rgba(40, 40, 40, 0.9);
+}
+
+.demo-drag-handle {
+    flex-shrink: 0;
+    align-self: stretch;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 4px;
+
+    height: 22px;
+    margin-bottom: 10px;
+    border-radius: 12px 12px 0 0;
+    background-color: rgba(255, 255, 255, 0.07);
+
+    cursor: grab;
+    /* Stops the browser turning a drag into a text selection or a page pan. */
+    user-select: none;
+    -webkit-user-select: none;
+    touch-action: none;
+
+    /* Sticky so the handle stays visible once the button list is scrolled -
+       otherwise scrolling down takes the only way to move the panel with it. */
+    position: sticky;
+    top: 0;
+    z-index: 1;
+}
+
+.demo-drag-handle:hover { background-color: rgba(255, 255, 255, 0.12); }
+.demo-drag-handle.dragging { cursor: grabbing; }
+
+.demo-drag-handle span {
+    width: 4px;
+    height: 4px;
+    border-radius: 50%;
+    background-color: rgba(255, 255, 255, 0.45);
+}
+
+.demo-button {
+    flex-shrink: 0;
+    width: 200px;
+    min-height: 40px;
+
+    border: 0;
+    border-radius: 5px;
+    cursor: pointer;
+
+    background-color: #f0f0f0;
+    color: #111;
+    font-family: inherit;
+    font-size: 14px;
+}
+
+.demo-button:hover { background-color: #fff; }
+.demo-button:active { transform: translateY(1px); }
+/* [E3DS-RESULT-BOX] An answer the viewer asked for (Device info), over the stream, until Close. */
+#e3dsResultBox {
+    position: fixed;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    z-index: 100005;
+    display: none;
+    flex-direction: column;
+    gap: 10px;
+    width: min(440px, calc(100vw - 32px));
+    max-height: calc(100vh - 48px);
+    padding: 16px;
+    border-radius: 12px;
+    background-color: rgba(30, 30, 30, 0.96);
+    color: #eee;
+    box-shadow: 0 12px 40px rgba(0, 0, 0, 0.5);
+}
+.e3ds-result-title { font-size: 14px; font-weight: 600; }
+.e3ds-result-body {
+    flex: 1;
+    min-height: 0;
+    margin: 0;
+    padding: 10px;
+    overflow: auto;
+    border-radius: 6px;
+    background-color: rgba(0, 0, 0, 0.35);
+    font: 12px/1.45 ui-monospace, SFMono-Regular, Menlo, monospace;
+    white-space: pre-wrap;
+    word-break: break-word;
+}
+#e3dsResultBox .e3ds-result-close { width: 100%; }
+
+/* [E3DS-APP-CONTROLS] "No app controls available for this app." */
+.demo-empty-note { width: 200px; padding: 6px 2px; color: rgba(255, 255, 255, 0.55); font-size: 12px; line-height: 1.4; }
+/* Visible but not usable yet - e.g. the key buttons until a key is chosen, the connection controls while loading. */
+.demo-select:disabled, .demo-text-input:disabled, .demo-text-send:disabled { opacity: 0.45; cursor: not-allowed; }
+.demo-button:disabled,
+.demo-button:disabled:hover { background-color: #f0f0f0; opacity: 0.45; cursor: not-allowed; transform: none; }
+
+/* A section label, not a control. There is no equivalent in the SDK panel yet -
+   it is here because the iframe demo groups more commands than the SDK does,
+   and an unbroken column of twelve identical buttons is hard to scan. */
+.demo-group-label {
+    flex-shrink: 0;
+    width: 200px;
+
+    margin: 6px 0 -2px;
+    padding: 0 2px;
+
+    color: rgba(255, 255, 255, 0.5);
+    font-family: inherit;
+    font-size: 11px;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+}
+
+/* [E3DS-APP-RESPONSE] The log of what the app sends back.
+ *
+ * Same furniture as the control panel - fixed, dark, rounded, its own drag
+ * handle - so the two read as one interface rather than two. Anchored LEFT
+ * because the controls own the right edge, and a viewer should be able to see
+ * both at once without moving either. */
+#appResponsePanel {
+    position: fixed;
+    left: 20px;
+    top: 20px;
+    z-index: 100000;
+
+    /* RESIZABLE, because the right width is not something this file can know.
+       A message with long device ids needs a wide panel; a short status object
+       does not, and a panel sized for the worst case covers the stream the rest
+       of the time. `resize` needs a non-visible overflow to work at all, which
+       is why it is set here and the scrolling lives on the list inside. */
+    width: 340px;
+    height: 45vh;
+    min-width: 220px;
+    min-height: 120px;
+    max-width: 90vw;
+    max-height: 85vh;
+    resize: both;
+    overflow: hidden;
+
+    display: flex;
+    flex-direction: column;
+
+    padding: 0 0 10px;
+    border-radius: 12px;
+    background-color: rgba(40, 40, 40, 0.9);
+}
+
+/* The list takes whatever height is left after the handle and the title, so
+   dragging the corner grows the readable area rather than the furniture. */
+#appResponsePanel #appResponseList { flex: 1; }
+
+.app-response-head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+    padding: 0 10px;
+}
+
+.app-response-clear {
+    flex-shrink: 0;
+    padding: 2px 10px;
+    border: 0;
+    border-radius: 4px;
+    cursor: pointer;
+    background-color: rgba(255, 255, 255, 0.12);
+    color: #eee;
+    font-family: inherit;
+    font-size: 11px;
+}
+.app-response-clear:hover { background-color: rgba(255, 255, 255, 0.22); }
+
+#appResponseList {
+    overflow-y: auto;
+    overflow-x: hidden;
+    padding: 0 10px;
+}
+
+.app-response-entry {
+    padding: 6px 0;
+    border-top: 1px solid rgba(255, 255, 255, 0.08);
+}
+.app-response-entry:first-child { border-top: 0; }
+
+.app-response-time {
+    color: rgba(255, 255, 255, 0.45);
+    font-size: 11px;
+}
+
+/* [E3DS-LOG] Direction by colour - outgoing blue, incoming green, failure red.
+   The same three the other E3DS debugging pages use, so nobody has to relearn
+   them. A note is this page talking about itself and stays grey. */
+.app-response-entry[data-kind="out"]  .app-response-time { color: #8fc4e0; }
+.app-response-entry[data-kind="in"]   .app-response-time { color: #9ed6ab; }
+.app-response-entry[data-kind="err"]  .app-response-time { color: #e89898; }
+
+.app-response-entry[data-kind="out"]  .app-response-body { color: #cfe4f0; }
+.app-response-entry[data-kind="err"]  .app-response-body { color: #f0d2d2; }
+.app-response-entry[data-kind="note"] .app-response-body { color: #cccccc; }
+
+/* pre, so an object keeps its shape. Wrapped, because a long value must not
+   make the whole panel scroll sideways. */
+.app-response-body {
+    margin: 2px 0 0;
+    color: #d8e8d8;
+    font: 12px/1.4 ui-monospace, SFMono-Regular, Menlo, monospace;
+    white-space: pre-wrap;
+    word-break: break-word;
+}
+
+/* [E3DS-DEMO-PHONE] On a phone the controls, the log and the menu all opened at once and covered the stream.
+   Now: all closed at load; the two buttons of #e3dsPhoneBar open ONE of them at a time, as a sheet along the bottom,
+   and the stream keeps the rest of the screen. Turned on by the e3ds-phone class (js/demo-ui-panel.js decides: narrow
+   window or touch screen), not by a width query, so a phone held sideways gets it too.
+   The panels are not moved by dragging here; each sheet's top bar resizes it instead.
+   !important because a drag on a wider window may have left inline left/top on the element. */
+body.e3ds-phone #demoButtonPanel,
+body.e3ds-phone #appResponsePanel {
+    display: none !important;
+    left: 8px !important; right: 8px !important; top: auto !important; bottom: 8px !important;
+    width: auto !important; height: auto !important; max-width: 640px !important; margin: 0 auto !important;
+    max-height: 55vh !important; resize: none !important;
+}
+body.e3ds-phone #demoButtonPanel.e3ds-phone-open,
+body.e3ds-phone #appResponsePanel.e3ds-phone-open { display: flex !important; }
+body.e3ds-phone #appResponsePanel.e3ds-phone-open { height: 35vh !important; min-height: 120px !important; max-height: 85vh !important; }
+/* A sheet's top bar resizes it on a phone - tall enough to grab with a thumb. */
+body.e3ds-phone #appResponsePanel .demo-drag-handle,
+body.e3ds-phone #demoButtonPanel .demo-drag-handle { cursor: ns-resize; touch-action: none; min-height: 28px; }
+#e3dsPhoneBar {
+    position: fixed;
+    top: 10px;
+    right: 10px;
+    z-index: 100001;
+    display: flex;
+    gap: 6px;
+}
+#e3dsPhoneBar button {
+    min-height: 36px;
+    padding: 0 14px;
+    border: 1px solid rgba(255, 255, 255, 0.25);
+    border-radius: 18px;
+    background: rgba(20, 20, 20, 0.85);
+    color: #eee;
+    font: 14px sans-serif;
+    cursor: pointer;
+}
+#e3dsPhoneBar button.on { background: #eee; color: #111; }
+
+/* [E3DS-DEMO-CATEGORY] A category is a column of its own, so a button added
+   later drops into the right group instead of the end of the panel. */
+.demo-category {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+    width: 100%;
+}
+
+/* [E3DS-DEMO-TEXT-INPUT] Field plus its button on one row, the same 200px width
+   as a button so the panel keeps a single edge down its length. */
+.demo-text-row {
+    flex-shrink: 0;
+    display: flex;
+    gap: 6px;
+    width: 200px;
+}
+
+.demo-text-input {
+    flex: 1;
+    min-width: 0;          /* or a long value stretches the row past the panel */
+    min-height: 34px;
+    padding: 0 8px;
+    border: 0;
+    border-radius: 5px;
+    background-color: #f0f0f0;
+    color: #111;
+    font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+    font-size: 13px;
+}
+
+.demo-text-send {
+    flex-shrink: 0;
+    min-height: 34px;
+    padding: 0 10px;
+    border: 0;
+    border-radius: 5px;
+    cursor: pointer;
+    /* Same look as the panel's buttons when it can be pressed; greyed out (see :disabled) while there is nothing
+       to send. */
+    background-color: #f0f0f0;
+    color: #111;
+    font-family: inherit;
+    font-size: 13px;
+}
+.demo-text-send:hover { background-color: #fff; }
+.demo-text-send:active { transform: translateY(1px); }   /* the same press as every other button */
+
+/* The message box: the whole JSON object in view (scrolls when longer), its button underneath. */
+.demo-text-multiline { flex-direction: column; }
+.demo-text-multiline .demo-text-input {
+    min-height: 58px;
+    padding: 6px 8px;
+    font-size: 11.5px;
+    line-height: 1.35;
+    resize: vertical;
+    overflow: auto;
+    white-space: pre-wrap;
+    word-break: break-all;
+}
+.demo-text-multiline .demo-text-send { min-height: 30px; }
+
+/* [E3DS-APP-RESPONSE] What an empty log says, so that empty never reads as
+   broken. */
+.app-response-empty {
+    padding: 8px 0;
+    color: rgba(255, 255, 255, 0.4);
+    font-size: 12px;
+    line-height: 1.5;
+}
+
+/* [E3DS-VIEWER-NOTICE] A message from the platform, over the stream.
+   Bottom centre: out of the way of the control panel on the right and the
+   response log on the left, and where a viewer already expects transient
+   status. pointer-events: none so it can never intercept the very click it is
+   asking for. */
+#streamNotice {
+    position: fixed;
+    left: 50%;
+    bottom: 32px;
+    transform: translateX(-50%) translateY(8px);
+    z-index: 100002;
+
+    max-width: min(560px, 90vw);
+    padding: 10px 18px;
+    border-radius: 8px;
+
+    background-color: rgba(20, 20, 20, 0.92);
+    color: #fff;
+    font-family: sans-serif;
+    font-size: 14px;
+    line-height: 1.4;
+    text-align: center;
+
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 160ms ease, transform 160ms ease;
+}
+
+#streamNotice.is-visible {
+    opacity: 1;
+    transform: translateX(-50%) translateY(0);
+}
+
+@media (prefers-reduced-motion: reduce) {
+    #streamNotice { transition: none; }
+}
+
+/* [E3DS-DEMO-SELECT] A dropdown, wearing the same 200px width as a button so
+   the panel keeps one edge down its length. The label sits above rather than
+   beside it: a device name is long, and a side label would leave the useful
+   part of it clipped. */
+.demo-select-row {
+    flex-shrink: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    width: 200px;
+}
+
+.demo-select-label {
+    color: rgba(255, 255, 255, 0.55);
+    font-size: 11px;
+}
+
+.demo-select {
+    width: 100%;
+    min-height: 36px;
+    padding: 0 8px;
+    border: 0;
+    border-radius: 5px;
+    cursor: pointer;
+    background-color: #f0f0f0;
+    color: #111;
+    font-family: inherit;
+    font-size: 13px;
+}
+
+/* [E3DS-PANEL-SELECT] A drag on the panel moves or resizes it; it does not
+   select the text of every button on the way past. The fields are the exception
+   - text you can type is text you must be able to select. */
+#demoButtonPanel {
+    user-select: none;
+    -webkit-user-select: none;
+}
+#demoButtonPanel input,
+#demoButtonPanel select,
+#demoButtonPanel textarea {
+    user-select: text;
+    -webkit-user-select: text;
+}
+

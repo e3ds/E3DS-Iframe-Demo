@@ -1,0 +1,325 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta http-equiv="Cache-Control" content="no-store">
+<title>Eagle 3D Streaming — choose the microphone</title>
+<!--
+  Eagle 3D Streaming - letting the viewer choose which microphone is captured.
+
+  DELIBERATELY STANDALONE. One file, no framework, no build step, nothing from
+  the SDK or the iframe demo. It is the shape your own page already has: a
+  cross-origin iframe, a dropdown, and postMessage between them - so what works
+  here works there, and if it stops working nothing else can be the reason.
+
+  THE WHOLE FEATURE IS TWO COMMANDS: getMicDevices asks the frame what it can
+  see, setMicDevice tells it which one to capture. Everything else on this page
+  is the browser's permission model, which is the part that actually catches
+  people out.
+
+  IT TELLS YOU WHAT TO DO NEXT, in one line, at every moment. The first version
+  showed every control from the start with a dash in the dropdown, so there was
+  no way to tell "not ready yet" from "broken" - and on the first real run that
+  cost two rounds of confusion before anyone looked at the log.
+-->
+<style>
+  * { box-sizing: border-box; }
+  body { font: 15px/1.5 system-ui, sans-serif; margin: 0; background: #1e1e1e; color: #eee; }
+
+  #step { padding: 10px 14px; background: #0b4f6c; font-weight: 600;
+          white-space: normal; word-break: break-word; }
+  #step.go   { background: #14632f; }
+  #step.warn { background: #7a4a00; }
+  #step.bad  { background: #6e2020; }
+
+  header { padding: 10px 14px; background: #2a2a2a; display: flex; gap: 8px; align-items: center; flex-wrap: wrap; }
+  input[type=text] { flex: 1 1 260px; min-width: 0; padding: 8px; font: inherit; }
+  select, button { padding: 8px 12px; font: inherit; }
+  button { cursor: pointer; }
+  button:disabled, select:disabled { opacity: .4; cursor: not-allowed; }
+  #mics { flex: 1 1 220px; min-width: 0; }
+
+  #wrap { display: flex; height: calc(100vh - 108px); }
+  iframe { flex: 1; border: 0; background: #000; }
+  #log { width: 400px; overflow: auto; padding: 10px; background: #141414;
+         font: 12px/1.45 ui-monospace, monospace; white-space: pre-wrap; }
+  .in { color: #7ec699; } .out { color: #6fb3d2; } .err { color: #e08f8f; }
+
+  @media (max-width: 820px) {
+    /* The stream was rendering at 414x150 on an iPhone - a strip - because the
+       status bar, the controls and the log were each taking a share of a short
+       screen. The picture is the thing being tested, so it gets the room and
+       the log becomes something you open when you want it. */
+    #wrap { flex-direction: column; height: auto; }
+    iframe { height: 60vh; min-height: 320px; }
+    #log { width: auto; height: 26vh; }
+    #log.hidden { display: none; }
+    header { padding: 8px 10px; gap: 6px; }
+    select, button { padding: 6px 9px; }
+  }
+</style>
+</head>
+<body>
+
+<div id="step">Step 1 — press Start</div>
+
+<header>
+  <!-- Any streaming URL works here - paste your own and press Start. The one
+       below is a public sample whose configuration has the browser microphone
+       enabled, which is the part that has to be true for any of this to do
+       anything: a stream that does not capture a microphone has no track to
+       switch. That setting is per configuration, in the Control Panel. -->
+  <input type="text" id="url"
+         value="https://connector.eagle3dstreaming.com/v5/demo/e3ds_mic_demo/default">
+  <button id="start">Start</button>
+
+  <select id="mics" disabled><option value="">— not yet —</option></select>
+  <button id="list"  disabled>List microphones</button>
+  <button id="apply" disabled>Use selected</button>
+  <button id="togglelog">Hide log</button>
+</header>
+
+<div id="wrap">
+  <!-- WHY "microphone *" AND NOT "microphone".
+
+     Bare `microphone` is shorthand for `microphone 'src'`: the permission is
+     delegated to the origin the frame is pointed at, which requires the browser
+     to MATCH that origin against the allowlist. Some Eagle 3D Streaming
+     connector hostnames contain an UNDERSCORE. Underscores are legal in DNS
+     names but not in hostnames, so a browser that parses
+     strictly cannot form a matching origin - the policy check fails, and a
+     Permissions Policy failure rejects getUserMedia with NotAllowedError: no
+     prompt, no padlock row, nothing recorded anywhere. That is exactly what
+     Chrome does, with the microphone explicitly Allowed for both sites in
+     settings. Firefox is lenient about the underscore and never shows it.
+
+     `*` needs no origin matching at all, so it sidesteps the parse entirely.
+
+     IN YOUR OWN PAGE, name your connector's origin rather than using a
+     wildcard - `allow="microphone https://connector.eagle3dstreaming.com"` -
+     unless your connector hostname has an underscore in it, in which case this
+     is the workaround until it does not. -->
+<iframe id="stream" allow="microphone *; camera *; fullscreen *" allowfullscreen></iframe>
+  <div id="log"></div>
+</div>
+
+<script>
+const $ = (id) => document.getElementById(id);
+const frame = $("stream");
+let ready = false;          // the player has said it can receive messages
+
+function step(text, cls) {
+  $("step").textContent = text;
+  $("step").className = cls || "";
+}
+
+/* [E3DS-WHO-IS-WHO] Name the site in every line that is about a permission.
+ *
+ * Two different websites are involved and they have separate permissions:
+ * THIS page, and the stream inside the iframe, which is a different origin. A
+ * line saying "microphone granted" or "permission denied" without saying WHICH
+ * of the two is unreadable - and that ambiguity cost real time, with a padlock
+ * showing granted and a log saying denied, both correct, about different sites.
+ *
+ * So nothing here says "this page" or "the stream" without the hostname beside
+ * it. */
+const THIS_SITE = location.hostname;
+
+function streamSite() {
+  try { return new URL($("url").value).hostname; } catch (e) { return "the stream"; }
+}
+
+function log(text, cls) {
+  const line = document.createElement("div");
+  if (cls) line.className = cls;
+  line.textContent = new Date().toLocaleTimeString() + "  " + text;
+  $("log").prepend(line);
+}
+
+/* Every parent-to-player message goes through here, so the wire format is
+   visible in one place. The player parses with JSON.parse, so it must be a
+   STRING - an object posted directly is silently ignored. */
+function send(msg) {
+  if (!frame.contentWindow) { log("no iframe yet", "err"); return; }
+  log("→ " + JSON.stringify(msg), "out");
+  frame.contentWindow.postMessage(JSON.stringify(msg), "*");
+}
+
+function setControls(on) {
+  $("list").disabled = !on;
+  $("apply").disabled = !on;
+  $("mics").disabled = !on;
+}
+
+/* [E3DS-MIC-ASK-FIRST] Ask on THIS page, inside the click, before the frame
+   loads. This is the whole difference between working and not working in
+   Chrome, and it took a day to see.
+
+   The player asks for the microphone itself, from inside the frame, when WebRTC
+   sets up - PeerConnectionController.setupAudioSender(). That is seconds after
+   the frame was told to load: a machine has to be found, the app launched, the
+   connection negotiated. By then the transient user activation from the Start
+   click is long expired.
+
+   Firefox does not require activation, so it prompts and everything works.
+   Chrome requires it for a cross-origin frame and refuses WITHOUT PROMPTING -
+   no dialog, no Microphone row in the padlock menu, "No usage data" in site
+   settings, and NotAllowedError in the log. Chrome never recorded a request at
+   all, which is why resetting the site's permissions changes nothing: there is
+   nothing to reset.
+
+   Asking here fixes it because this call is IN the click. The prompt appears
+   while the activation is alive, the answer is stored against this top-level
+   origin, and the frame's own request - whenever it eventually happens - is
+   then using an already-granted permission and needs no prompt and no
+   activation of its own.
+
+   The track is stopped at once: this asks for permission, not for audio.
+
+   Failure is not fatal on purpose. A viewer who refuses should still get their
+   stream, just without a microphone - which is exactly what would have happened
+   before this existed. */
+async function askForMicrophone() {
+  if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) return false;
+  try {
+    const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+    stream.getTracks().forEach(t => t.stop());
+    log("✓ microphone granted to " + THIS_SITE + " (this page). "
+        + streamSite() + " (the stream) is a different site with its own "
+        + "permission - this grant is meant to cover it, and the next lines "
+        + "say whether it did.", "in");
+    return true;
+  } catch (e) {
+    log("microphone refused by " + THIS_SITE + " (this page): "
+        + (e && e.name ? e.name : e)
+        + " - the stream will start without a microphone", "err");
+    return false;
+  }
+}
+
+$("start").onclick = async () => {
+  $("log").textContent = "";
+  ready = false;
+  setControls(false);
+  $("mics").innerHTML = '<option value="">— not yet —</option>';
+
+  step("Step 2 — allow the microphone when asked", "warn");
+  await askForMicrophone();
+
+  step("Step 3 — wait for the picture", "warn");
+  frame.src = $("url").value;
+  log("loading " + frame.src);
+};
+
+/* [E3DS-MIC-DEVICE] A command the player does not handle produces NOTHING -
+   no error, no empty reply, nothing. From the page that is identical to a reply
+   saying "no microphones", and telling those two apart is the difference
+   between "the app has no mic enabled" and "this build does not have the
+   feature". So the request is timed. */
+let awaitingDevices = null;
+
+function askForDevices() {
+  send({ cmd: "getMicDevices" });
+  clearTimeout(awaitingDevices);
+  awaitingDevices = setTimeout(() => {
+    step("No answer to getMicDevices. This player build probably does not have "
+       + "the command - check the connector and that the config loads player source.", "bad");
+    log("no micDevices reply from " + streamSite()
+        + " after 5s - that build probably does not handle the command", "err");
+  }, 5000);
+}
+
+$("list").onclick = () => askForDevices();
+
+$("apply").onclick = () => {
+  const id = $("mics").value;
+  /* Placeholder options carry value="" for exactly this check. Without it,
+     reading the select returns the LABEL, and the first real run duly sent
+     setMicDevice with deviceId "- no devices listed yet -". */
+  if (!id) { log("no device selected", "err"); return; }
+  step("switching…", "warn");
+  send({ cmd: "setMicDevice", deviceId: id });
+};
+
+window.addEventListener("message", (e) => {
+  let msg = e.data;
+  if (typeof msg === "string") { try { msg = JSON.parse(msg); } catch (_) { return; } }
+  if (!msg || !msg.type) return;
+
+  if (msg.type === "micDevices") {
+    clearTimeout(awaitingDevices);
+    const list = msg.devices || [];
+    log("← " + streamSite() + " (the stream) reports "
+        + list.length + " microphone(s)", "in");
+
+    const sel = $("mics");
+    sel.innerHTML = "";
+    list.forEach((d, i) => {
+      const o = document.createElement("option");
+      o.value = d.deviceId;
+      /* A blank label means the browser has not granted the microphone yet.
+         Saying so beats an empty row nobody can interpret. */
+      o.textContent = (d.label || "(no label yet) #" + (i + 1)) + (d.isActive ? "  ← in use" : "");
+      if (d.isActive) o.selected = true;
+      sel.appendChild(o);
+    });
+
+    if (!list.length) {
+      sel.innerHTML = '<option value="">— none found —</option>';
+      step(streamSite() + " reports no microphones — that site could not open "
+        + "one, whatever " + THIS_SITE + " was granted", "bad");
+    } else {
+      step(list.length === 1
+        ? "Step 4 — one microphone reported. On iOS that is normal until a headset "
+          + "is connected; plug one in and press List again to get a second."
+        : "Step 4 — pick a microphone, then press Use selected", "go");
+    }
+  }
+
+  else if (msg.type === "micDeviceChanged") {
+    if (msg.ok) {
+      log("← micDeviceChanged OK: " + (msg.label || msg.deviceId), "in");
+      step("Switched to: " + (msg.label || msg.deviceId) + " — the picture should not have flickered", "go");
+      /* Re-list so the "← in use" marker follows, which is also the only
+         independent confirmation that the player really switched. */
+      askForDevices();
+    } else {
+      log("← micDeviceChanged FAILED: " + msg.error + (msg.message ? " — " + msg.message : ""), "err");
+      step("Switch failed: " + msg.error, "bad");
+    }
+  }
+
+  else {
+    log("← " + msg.type, "in");
+
+    /* A command sent before the player is listening is dropped - no queue, no
+       error - which looks exactly like the feature being broken. On the first
+       run getMicDevices went out eight seconds before readyToReceiveMessage.
+       So the controls unlock here, and the first list is fetched automatically
+       rather than leaving anyone to guess the moment. */
+    if (!ready && (msg.type === "readyToReceiveMessage" ||
+                   msg.type === "bidirectionalChannelBetweenUnrealAndIframeReady")) {
+      ready = true;
+      setControls(true);
+      step("Step 3 — asking the player for the microphone list…", "warn");
+      askForDevices();
+    }
+  }
+});
+
+$("togglelog").onclick = () => {
+  const hidden = $("log").classList.toggle("hidden");
+  $("togglelog").textContent = hidden ? "Show log" : "Hide log";
+};
+
+log("build 10 ready");
+log("TWO SITES, TWO PERMISSIONS:", "in");
+log("  • " + THIS_SITE + " — this page. Its padlock is the one you see.", "in");
+log("  • " + streamSite() + " — the stream, inside the iframe. "
+  + "A different site, with its own permission, which you cannot see from here.", "in");
+log("Every line below names which of the two it is about.", "in");
+</script>
+
+</body>
+</html>

@@ -1,0 +1,982 @@
+/* [E3DS-IOS-TEXT-INFLATION] Stop iOS resizing the text on its own.
+ *
+ * iOS Safari and Chrome-on-iOS apply "text autosizing" to pages they judge not
+ * to be mobile-friendly: they inflate font sizes by a factor of their own
+ * choosing, per BLOCK, so a 14px panel can render near 22px while everything
+ * around it keeps its size. The result reads as the whole UI being zoomed - and
+ * it is not fixed by the viewport meta tag, which is already correct here.
+ *
+ * Reported from a phone where the stream itself was the right size (414x720)
+ * while the stats and control panels were visibly oversized. That mismatch is
+ * the signature: the video is an element with real dimensions, the panels are
+ * text, and only the text was being inflated.
+ *
+ * 100% means "use the size I asked for". It does NOT stop the user pinching to
+ * zoom - that is a separate control and is left alone.
+ */
+html {
+	-webkit-text-size-adjust: 100%;
+	text-size-adjust: 100%;
+}
+
+:root {
+  --transparency: 0.5;
+  --color: #f2f2f2;
+  --active-color: #ffffff;
+  --nav-bar-bg-color: #000000;
+  --nav-bar-bg-color-rgba: rgba(0, 0, 0, var(--transparency));
+}
+
+body {
+  font-size: 14px;
+  color: var(--color);
+  font-family: 'EurostileLTStd', 'Roboto', sans-serif;
+
+  background-size: cover;
+}
+.left-container {
+  position: relative;
+  /* Was #ececec with a light border, which showed as a pale empty block above
+   * and below the menu - the sidebar's own background does not fill its
+   * container. Matching the nav colour makes the column read as one panel
+   * instead of a menu floating in grey. */
+  border-right: 1px solid rgba(255, 255, 255, 0.08);
+  background-color: var(--nav-bar-bg-color);
+  height: 100vh;   /* [E3DS-IOS-VIEWPORT] fallback */
+  height: 100dvh;  /* the height actually on screen right now */
+}
+/* The collapse handle.
+ *
+ * It used to sit at left:0, top:50% - inside the menu, on top of whichever item
+ * happened to be halfway down (it landed on "Blue"). The expanded state then
+ * moved it with a hardcoded left:260px, which only lines up while the sidebar
+ * happens to be exactly 260px wide.
+ *
+ * Anchored to the RIGHT EDGE of .left-container instead, straddling the border
+ * so it reads as a handle on the boundary. That follows the sidebar whatever
+ * its width, in both states, with no magic number. */
+.left-right-arrow {
+  position: absolute;
+  right: -17px;
+  top: 50%;
+  transform: translateY(-50%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 34px;
+  height: 34px;
+  padding: 0;
+  border: 1px solid rgba(255, 255, 255, 0.22);
+  border-radius: 50%;
+  /* Opaque, not transparent: it overlaps the stream, and a bare glyph on moving
+   * video is unreadable. */
+  background: #17181a;
+  color: rgb(221 222 224);
+  cursor: pointer;
+  z-index: 30;
+  transition: background 0.15s ease, border-color 0.15s ease;
+}
+
+.left-right-arrow:hover {
+  background: #26282b;
+  border-color: rgba(255, 255, 255, 0.4);
+}
+.arrow-svg {
+  width: 45px;
+  height: 45px;
+}
+/* Expanded state: the arrow only needs to point the other way. Its POSITION is
+ * handled by .left-right-arrow anchoring to the container edge, so the old
+ * left:260px is gone - it was a second, conflicting source of truth. */
+.menu-toggle {
+  transform: translateY(-50%) rotate(180deg);
+}
+.page-wrapper {
+  max-height: 100%;
+  height: 100vh;
+}
+
+.wrapper {
+  min-height: 100%;
+}
+
+.flexstretch {
+  position: relative;
+  background: var(--nav-bar-bg-color-rgba);
+}
+
+#portrait-banner {
+  margin: 0;
+  padding: 0;
+  font-family: 'EurostileLTStd-BoldEx2', 'Roboto', sans-serif;
+  font-size: 20px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background: #333333;
+  color: var(--color);
+  position: absolute;
+  top: 0;
+  left: 0;
+  z-index: 100;
+}
+
+#countdown {
+  padding: 15px 0 15px 25px;
+  display: flex;
+  align-self: center;
+  align-items: center;
+}
+
+#countdown .time-label {
+  width: 113px;
+  max-width: 113px;
+  padding-right: 0;
+}
+
+#countdown .time {
+  display: inline-block;
+  line-height: 30px;
+  height: 30px;
+}
+
+.float_left {
+  position: absolute;
+  right: -21px;
+  top: calc(50% - 30px);
+  z-index: 55;
+}
+
+.stream-area {
+  background: #303030;
+  color: var(--color);
+  background: none;
+}
+
+.sidebar.left .logo {
+  padding: 10px 0 10px 8px;
+  cursor: default;
+}
+
+.sidebar.left .list-sidebar.bg-defoult {
+  background: none;
+  overflow: hidden;
+}
+
+.sidebar ul a {
+  border-left: 10px solid;
+  border-color: transparent;
+  font-size: 14px;
+}
+
+.sidebar.left .float_left a.button-left {
+  width: 21px;
+  display: block;
+  height: 60px;
+  background: var(--nav-bar-bg-color-rgba);
+}
+
+/* a.button-left.close-btn .button_collapse {
+  background: url(../images/close.png) no-repeat left;
+  width: 21px;
+  display: block;
+  height: 60px;
+  margin-left: 4px;
+}
+
+a.button-left.open-btn .button_collapse {
+  background: url(../images/open.png) no-repeat left;
+  width: 21px;
+  display: block;
+  height: 60px;
+  margin-left: 4px;
+} */
+
+.sidebar.left ul li .nav-label {
+  padding-right: 25px;
+  display: inline-block;
+  overflow: hidden;
+  height: 30px;
+  /* width: 160px; */
+  white-space: nowrap;
+  line-height: 30px;
+}
+
+.sidebar.left ul li a.logo .nav-label {
+  padding-left: 15px;
+  height: 45px;
+}
+
+a:hover {
+  text-decoration: none;
+}
+
+/***********************  TOP Bar ********************/
+.sidebar li a.logo:hover {
+  background: none !important;
+  border-left: 10px solid transparent;
+}
+
+#sidebar {
+  position: relative;
+  top: 167px;
+  left: 0;
+  z-index: 10;
+  width: 260px;
+}
+
+.sidebar {
+  width: auto;
+  height: 100vh;   /* [E3DS-IOS-VIEWPORT] fallback */
+  height: 100dvh;
+  max-height: 100%;
+  background: none;
+  overflow-y: auto;
+  /* transition: width 0.3s ease-in-out; */
+}
+
+.show {
+  display: block !important;
+  /* height: 20vh !important; */
+}
+
+.sidebar::-webkit-scrollbar {
+  display: none;
+}
+
+/* Hide scrollbar for IE, Edge and Firefox */
+.sidebar {
+  -ms-overflow-style: none;
+  /* IE and Edge */
+  scrollbar-width: none;
+  /* Firefox */
+}
+
+.bg-defoult {
+  background-color: var(--nav-bar-bg-color);
+}
+
+.sidebar ul {
+  list-style: none;
+  margin: 0px;
+  padding: 0px;
+}
+
+.sidebar ul li .img-icon {
+  width: 30px;
+  height: 30px;
+  margin-right: 25px;
+}
+
+.sidebar ul li .img-icon > img {
+  vertical-align: baseline;
+}
+
+.sidebar li a.collapsed.active {
+  display: block;
+  padding: 15px 0 15px 15px;
+  color: var(--active-color);
+  text-decoration: none;
+}
+
+.sidebar li a {
+  display: flex;
+  padding: 15px 0 15px 15px;
+  color: var(--color);
+  text-decoration: none;
+  text-align: left;
+  cursor: pointer;
+  align-items: center;
+}
+
+.sidebar li.active a {
+  background: var(--nav-bar-bg-color-rgba);
+  color: var(--active-color);
+  /* transition: all 0.3s ease-in-out; */
+  border-left: 10px solid var(--nav-bar-bg-color);
+  font-size: 16px;
+}
+
+.sidebar li a:hover {
+  background: var(--nav-bar-bg-color-rgba);
+  color: var(--active-color);
+  border-left: 10px solid var(--nav-bar-bg-color);
+}
+
+.sidebar li a i {
+  padding-right: 5px;
+}
+
+.sidebar li a .nav-label,
+.sidebar li a .nav-label + span {
+  transition: display 0.3s ease-in-out;
+}
+
+.sidebar.flip li a .nav-label,
+.sidebar.flip li a .nav-label + span {
+  transition: display 0.3s ease-in-out;
+  display: none;
+}
+
+.sidebar.flip {
+  width: 80px;
+  transition: all 0.3s ease-in-out;
+}
+
+.sidebar.flip li {
+  position: relative;
+}
+
+.stream-area {
+  /* padding-top: 10px !important;
+	padding-left: 35px !important; */
+  width: 100%;
+}
+
+.full-screen-btn {
+  display: inline-block;
+  border-bottom: 10px solid transparent;
+  background-color: transparent;
+  cursor: pointer;
+  padding: 10px;
+  margin: 0;
+  position: fixed;
+  right: 0;
+  bottom: 0;
+}
+
+.full-screen-btn:hover {
+  color: var(--active-color);
+  text-decoration: none;
+  background: var(--nav-bar-bg-color-rgba);
+  border-bottom: 10px solid var(--nav-bar-bg-color);
+  display: inline-block;
+}
+
+.footer-icon {
+  height: 30px;
+  width: 30px;
+  background-size: 30px 30px;
+  background-position: center;
+  float: left;
+}
+
+/* .full-screen-btn > .fullscreen-icon {
+  background: url(../images/full_screen.svg) no-repeat;
+}
+
+.full-screen-btn > .minimize-icon {
+  background: url(../images/minimize.svg) no-repeat;
+} */
+
+@media (max-width: 980px) {
+  .sidebar.left a.logo {
+    padding: 10px 0 10px 10px;
+  }
+
+  .sidebar a {
+    font-size: 20px;
+  }
+}
+
+.loading-screen {
+  height: 100vh;   /* [E3DS-IOS-VIEWPORT] fallback */
+  height: 100dvh;
+  width: 100%;
+  font-family: 'EurostileLTStd-BoldEx2', 'Roboto', sans-serif;
+  font-size: 20px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  background: #000000;
+  color: var(--color);
+  margin: 0 auto;
+  position: absolute;
+  z-index: 40;
+  top: 0;
+  left: 0;
+}
+
+.loading-screen > div {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.loading-screen > div:not(:last-child) {
+  /* Was 120px, tuned for the old layout where the text was one block. With the
+   * status and the note stacked it pushed everything far below the spinner. */
+  margin-bottom: 48px;
+}
+
+/* .loader > div:last-child {
+	height: 20%;
+} */
+
+.loading-screen__spinner {
+  height: auto;
+}
+
+.loading-screen__spinner > img {
+  height: 160px;
+  width: 280px;
+}
+
+.loader-content {
+  height: auto;
+}
+
+.loader-content > img {
+  height: 150px;
+  width: 200px;
+}
+
+.loader-content > .img-play {
+  height: 150px;
+  width: 150px;
+}
+
+.loader-content > img.lg {
+  height: 100px;
+  width: 200px;
+}
+
+.loader-content > img.md {
+  height: 75px;
+  width: 150px;
+}
+
+.loader-content > img.sm {
+  height: 60px;
+  width: 120px;
+}
+
+.loader-content > img.xs {
+  height: 40px;
+  width: 80px;
+}
+
+.loader-footer {
+  height: auto;
+  flex-direction: column;
+}
+
+.loader-footer > p.sm-msg {
+  font-size: 14px;
+}
+
+.loader-footer > p > span {
+  font-size: 18px;
+  font-family: 'EurostileLTStd', 'Roboto', sans-serif;
+}
+
+/* @media (orientation: landscape) and (max-width: 700px) {
+	#fullscreenButton {
+		display: none;
+	}
+} */
+/* @media screen and (max-width: 995px) , screen and (max-height: 700px) */
+@media screen and (max-width: 700px), screen and (max-height: 600px) {
+  .loader > div:not(:last-child) {
+    margin-bottom: 50px;
+  }
+
+  #fullscreenButton {
+    display: none;
+  }
+}
+
+@media screen and (max-width: 700px), screen and (max-height: 465px) {
+  .loader > div:not(:last-child) {
+    margin-bottom: 20px;
+  }
+
+  .loader-header > img {
+    height: 140px;
+    width: 250px;
+  }
+
+  .loader-content > img {
+    height: 130px;
+    width: 170px;
+  }
+
+  .loader-content > .img-play {
+    height: 130px;
+    width: 130px;
+  }
+
+  .loader-content > img.lg {
+    height: 90px;
+    width: 180px;
+  }
+
+  .loader-content > img.md {
+    height: 65px;
+    width: 130px;
+  }
+
+  .loader-content > img.sm {
+    height: 50px;
+    width: 100px;
+  }
+
+  .loader-content > img.xs {
+    height: 30px;
+    width: 60px;
+  }
+
+  #fullscreenButton {
+    display: none;
+  }
+}
+
+.iframeStyle {
+  position: absolute;
+  top: 0px;
+  left: 50%;
+}
+
+.closeButtonOfIframe {
+  position: absolute;
+  bottom: 0px;
+  left: 50%;
+}
+
+/** hour glass begin **/
+.icon__hourglass {
+  --size: 50px;
+  --color: hotpink;
+  --topfill: 30%;
+  transform-origin: bottom right;
+  box-sizing: border-box;
+  position: relative;
+  width: var(--size);
+  height: var(--size);
+  margin: -50px 25px 0px -25px;
+  transform: rotate(45deg) scale(0.5);
+  background: radial-gradient(#ffffff44, transparent 50%),
+    linear-gradient(
+      135deg,
+      transparent var(--topfill),
+      var(--color) calc(var(--topfill) + 20px)
+    ),
+    linear-gradient(135deg, transparent 40%, #00000033 0%);
+  animation: anim__hourglass-fill 2s linear infinite;
+}
+
+.icon__hourglass::after {
+  content: '';
+  position: absolute;
+  width: calc(var(--size) * 1.5);
+  height: var(--size);
+  border-top: 12.5px solid var(--color);
+  border-bottom: 12.5px solid var(--color);
+  border-radius: 5px;
+  transform: rotate(-45deg) scaleY(1.5) translate(-1.5px, 10px);
+}
+
+.icon__hourglass::before {
+  content: '';
+  --bottomfill: calc((var(--topfill) + 20%));
+  position: absolute;
+  width: var(--size);
+  height: var(--size);
+  transform: rotate(180deg) translateX(-45px) translateY(-45px);
+  background: radial-gradient(#ffffff88, transparent 50%),
+    linear-gradient(
+      135deg,
+      transparent 40%,
+      var(--color) 40%,
+      transparent var(--bottomfill)
+    ),
+    linear-gradient(135deg, transparent 40%, #00000033 0%),
+    linear-gradient(
+      45deg,
+      transparent 0%,
+      transparent 47%,
+      #00000022 47%,
+      #00000022 53%,
+      transparent 53%
+    );
+  background-repeat: no-repeat;
+  background-position-y: 0px, 0px, 0px, 25px;
+  background-position-x: 0px, 0px, 0px, 25px;
+}
+
+@keyframes anim__hourglass-fill {
+  0% {
+    --topfill: 30%;
+    transform: rotate(45deg) scale(0.5);
+  }
+
+  10% {
+    --topfill: 40%;
+    transform: rotate(45deg) scale(0.5);
+  }
+
+  20% {
+    --topfill: 50%;
+    transform: rotate(45deg) scale(0.5);
+  }
+
+  30% {
+    --topfill: 60%;
+    transform: rotate(45deg) scale(0.5);
+  }
+
+  40% {
+    --topfill: 70%;
+    transform: rotate(45deg) scale(0.5);
+  }
+
+  50% {
+    --topfill: 80%;
+    transform: rotate(45deg) scale(0.5);
+  }
+
+  85% {
+    --topfill: 90%;
+    transform: rotate(45deg) scale(0.5);
+  }
+
+  95% {
+    --topfill: 100%;
+    transform: rotate(160deg) scale(0.5);
+  }
+
+  100% {
+    --topfill: 100%;
+    transform: rotate(225deg) scale(0.5);
+  }
+}
+
+/** hour glass end  **/
+
+/* ==========================================================================
+   Demo layout
+   ==========================================================================
+
+   These rules replace styles that used to be written inline in the HTML.
+   Keeping them here means the markup stays readable and every visual choice
+   is in one place.
+   ========================================================================== */
+
+html,
+body {
+  margin: 0;
+  padding: 0;
+  height: 100%;
+  overflow: hidden;
+
+  /* [E3DS-IOS-VIEWPORT] The page itself is black.
+   *
+   * On an iPhone the browser toolbars slide in and out and the visible area
+   * changes height WHILE the page is up. Whenever the visible area was taller
+   * than whatever full-height element was covering it, the gap showed the
+   * default white page background - a bright bar under a black stream, on and
+   * off as the toolbars moved.
+   *
+   * Sizing alone cannot fix that, because there is always a frame or two during
+   * the toolbar animation where the element has not caught up. Painting the page
+   * the same colour as the stream makes those moments invisible instead of
+   * making them white. */
+  background-color: #000;
+}
+
+/* The stream and the demo's controls fill the window. */
+.stream-area {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 0;
+  bottom: 0;
+
+  /* Hidden until the stream is actually playing, so the visitor never sees an
+     empty frame. iframe-events.js reveals it. */
+  visibility: hidden;
+}
+
+.stream-area > iframe {
+  width: 100%;
+  height: 100%;
+  border: 0;
+}
+
+/* --- Loading screen ------------------------------------------------------ */
+
+.loading-screen {
+  position: relative;
+  top: 0;
+  left: 0;
+  width: 100%;
+  /* [E3DS-IOS-VIEWPORT] The height deliberately is NOT set here. It used to say
+     100%, which - being a later rule of equal specificity - quietly beat the
+     sized rule above and made the screen as tall as its PARENT rather than as
+     tall as the window. Two rules setting the same property on the same
+     selector is how the black area ended up the wrong height. */
+  visibility: visible;
+}
+
+/* The two lines have completely different jobs, so they are placed apart
+ * rather than styled as one paragraph.
+ *
+ * They used to render side by side on one line, reading as a single sentence:
+ * `display: block` here lost to `.loading-screen > div { display: flex }` above,
+ * which has higher specificity (two classes against one). Nobody could tell the
+ * fixed instruction from the live state.
+ *
+ * The container no longer positions anything itself - each line places itself,
+ * so neither can push the other around.
+ */
+.loading-screen__text {
+  position: static;
+  display: contents;
+}
+
+/* THE LIVE STATUS - bottom centre, on its own, the only thing on this screen
+ * that changes. Nothing else sits near it, so there is no question about what
+ * it refers to. */
+.loading-screen__status {
+  position: absolute;
+  left: 50%;
+  bottom: 10%;
+  transform: translateX(-50%);
+  margin: 0;
+  width: min(90%, 640px);
+  text-align: center;
+  font-size: 22px;
+  line-height: 1.45;
+  letter-spacing: 0.01em;
+  color: #ffffff;
+  min-height: 1.45em;   /* reserve the line so nothing jumps when text arrives */
+}
+
+/* THE INSTRUCTION TO THE INTEGRATOR - just under the spinner, quiet. Static
+ * text about the page, so it must not compete with the status. */
+.loading-screen__note {
+  position: absolute;
+  left: 50%;
+  top: 58%;
+  transform: translateX(-50%);
+  margin: 0;
+  max-width: 46ch;
+  text-align: center;
+  font-size: 13px;
+  line-height: 1.5;
+  font-weight: 400;
+  letter-spacing: 0.02em;
+  color: rgba(255, 255, 255, 0.5);
+}
+
+/* --- The demo's "response from your app" panel ---------------------------- */
+
+/* The demo's debug readout. It used to be a full-width centred block with a
+ * black title bar sitting above the stream, which pushed the stream down and
+ * left a wide empty white band either side of it - the loudest thing on a page
+ * whose subject is the stream.
+ *
+ * Now a compact panel in the corner: present and readable, but clearly a
+ * developer aid rather than the header of the page. */
+.app-response {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  z-index: 20;
+  margin: 0;
+  width: 300px;
+  max-width: 40vw;
+  padding: 8px 10px;
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  border-radius: 8px;
+  background: rgba(0, 0, 0, 0.62);
+  text-align: left;
+}
+
+.app-response__title {
+  margin: 0 0 6px;
+  background: none;
+  text-align: left;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.62);
+}
+
+.app-response__viewer {
+  display: block;
+  width: 100%;
+  min-width: 0;      /* was 400px, which forced the panel wider than its box */
+  min-height: 68px;
+  padding: 6px 8px;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 6px;
+  background: rgba(0, 0, 0, 0.5);
+  /* Was red on white - unreadable and alarming for what is ordinary output. */
+  color: #7ee2a8;
+  font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  font-size: 12px;
+  line-height: 1.45;
+  resize: vertical;
+}
+
+/* The stream area is the positioning context for the panel above. */
+.stream-area {
+  position: relative;
+}
+
+/* --- "The stream has ended" screen ---------------------------------------- */
+
+.session-end-overlay {
+  /* Hidden until iframe-events.js shows it. */
+  display: none;
+
+  /* Deliberately visible even though the element starts hidden: its PARENT
+     (.stream-area) is hidden until playback begins. Without this, a session
+     that ends before the stream ever started would show nothing at all. */
+  visibility: visible;
+
+  /* FIXED, not absolute, and above the floating panels.
+     Absolute positioned this against the nearest positioned ancestor, and
+     .stream-area sets no position at all - so which box it covered depended on
+     an ancestor further up that nothing here controls. The floating control and
+     response panels sit at z-index 100000, so an overlay at 10 was also below
+     them. Fixed at 100001 covers the window and everything on it, which is the
+     only thing "the stream has ended" can reasonably mean. */
+  position: fixed;
+  left: 0;
+  right: 0;
+  top: 0;
+  bottom: 0;
+  z-index: 100001;
+
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+
+  background: rgba(20, 20, 20, 0.96);
+  color: #fff;
+  font-family: sans-serif;
+}
+
+.session-end-overlay__icon {
+  font-size: 72px;
+  line-height: 1;
+}
+
+.session-end-overlay__message {
+  font-size: 20px;
+  margin-top: 16px;
+  max-width: 80%;
+}
+
+.session-end-overlay__button {
+  margin-top: 28px;
+  padding: 12px 26px;
+  border: 0;
+  border-radius: 6px;
+  cursor: pointer;
+  background: #f0f0f0;
+  color: #111;
+  font-family: inherit;
+  font-size: 15px;
+}
+.session-end-overlay__button:hover { background: #fff; }
+
+/* --- Demo sidebar and fullscreen button ---------------------------------- */
+
+/* Both start hidden and are revealed once the stream is playing. */
+#sidebar {
+  visibility: hidden;
+}
+
+#fullscreenButton {
+  visibility: hidden;
+}
+
+
+/* ── [E3DS-DEMO-SIDEBAR] Make the toggle actually collapse, and overlay ──────
+ *
+ * THE TOGGLE DID NOTHING VISIBLE. js/demo.js adds and removes the `show` class,
+ * and `.show` sets `display: block !important` - but #sidebar's display is
+ * ALREADY block, so removing the class changed nothing. Only the arrow rotated.
+ * Nothing in the stylesheet ever collapsed it.
+ *
+ * Stated explicitly here rather than by editing `.show`, because `.show` is a
+ * generic helper used elsewhere and narrowing it would reach further than this
+ * demo's sidebar.
+ */
+#sidebar:not(.show) {
+  display: none;
+}
+
+/* The menu was pushed 167px down its container, which is the empty block that
+ * showed above it. It is a sidebar, not a floating card - it starts at the top. */
+#sidebar {
+  top: 0;
+}
+
+/* ── Small screens ─────────────────────────────────────────────────────────
+ *
+ * The demo had no responsive rules for its layout, so on a phone the sidebar
+ * kept its 260px and took most of the viewport, leaving the stream as a narrow
+ * strip with the debug readout sitting on top of what was left.
+ *
+ * The sidebar becomes an OVERLAY: taken out of the flow so it no longer
+ * consumes layout width, the stream gets the whole viewport, and the menu
+ * floats above it when opened. CSS only - the existing toggle in js/demo.js
+ * keeps working unchanged, it still just adds and removes the same class.
+ */
+@media screen and (max-width: 820px) {
+  .left-container {
+    position: absolute;
+    top: 0;
+    left: 0;
+    height: 100%;
+    z-index: 25;
+    width: auto;
+    max-width: 78vw;
+    /* No border when collapsed - a 1px line down an empty column looks broken. */
+    border-right: none;
+    box-shadow: 2px 0 14px rgba(0, 0, 0, 0.5);
+  }
+
+  /* With the menu closed the container has no width, so the handle cannot
+   * straddle a border that is not there. It sits just outside the left edge
+   * instead, and is bigger, because it is being pressed with a thumb. */
+  .left-right-arrow {
+    right: -44px;
+    width: 42px;
+    height: 42px;
+  }
+
+  .menu-toggle {
+    right: -21px;
+  }
+
+  .sidebar a {
+    font-size: 17px;
+  }
+
+  /* The debug readout is a developer aid. On a phone it covered the stream it
+   * is meant to sit beside, so it is hidden rather than shrunk: a 300px panel
+   * on a 390px screen is not a smaller panel, it is the screen. */
+  .app-response {
+    display: none;
+  }
+
+  .loading-screen__status {
+    bottom: 8%;
+    font-size: 17px;
+    width: 88%;
+  }
+
+  .loading-screen__note {
+    top: 62%;
+    font-size: 12px;
+    max-width: 88%;
+  }
+}
