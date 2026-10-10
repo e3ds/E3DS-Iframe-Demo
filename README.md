@@ -99,9 +99,12 @@ Everything else is in one place, kept current:
 
 ### **[learn.eagle3dstreaming.com](https://learn.eagle3dstreaming.com/)**
 
-- [Embed a stream with an iframe](https://learn.eagle3dstreaming.com/wiki/embed-with-an-iframe.html) — the whole embedding story, including the two silent failures that account for most "data is not arriving" reports
-- [Sending and receiving data](https://learn.eagle3dstreaming.com/wiki/unreal-side-of-data.html) — what has to exist inside your Unreal application for a message to arrive
-- [Session end messages](https://learn.eagle3dstreaming.com/wiki/session-end-messages.html) — every reason a session can end, and what to show your viewer
+- [iframe demo manual](https://learn.eagle3dstreaming.com/wiki/iframe-demo-manual) — this repository, page by page: what each part does and how to run it
+- [Embed with an iframe](https://learn.eagle3dstreaming.com/wiki/embed-stream-using-iframe) — the whole embedding story, including the two silent failures that account for most "data is not arriving" reports
+- [Sending and receiving data](https://learn.eagle3dstreaming.com/wiki/sending-and-receiving-data) — messages between your page and your Unreal application, both ways
+- [The Unreal side of sending and receiving data](https://learn.eagle3dstreaming.com/wiki/unreal-side-of-data) — what has to exist inside your Unreal application for a message to arrive
+- [Typing does not reach the app: keyboard focus](https://learn.eagle3dstreaming.com/wiki/keyboard-focus) — the most common iframe surprise, and the fix
+- [Why a session ended](https://learn.eagle3dstreaming.com/wiki/session-end-messages) — every reason a session can end, and what to show your viewer
 
 ---
 
