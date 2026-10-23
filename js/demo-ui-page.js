@@ -284,6 +284,9 @@ function e3dsStreamSite() {
 /**
  * The stream URL this page should load.
  *
+ * [E3DS-DEMO-SRC] First the page's own address: ?src=<stream link> (the URL you would put in the iframe's src), so
+ * one link opens this demo on any app - e.g. index.html?src=https://connector.eagle3dstreaming.com/v5/<owner>/<app>/<config>.
+ *
  * [E3DS-DEMO-CONNECTION] A URL typed into the panel is remembered, so that
  * testing a second app survives the reload that testing it requires. The
  * configured one in iframe-config.js is the default and stays the answer for anyone
@@ -297,14 +300,27 @@ const E3DS_URL_STORAGE_KEY = "e3dsDemoStreamUrl";
 
 function e3dsCurrentStreamUrl() {
     try {
+        const fromPage = new URLSearchParams(location.search).get("src"); // [E3DS-DEMO-SRC]
+        if (fromPage) return fromPage;
+    } catch (e) { console.warn("[E3DS-DEMO-SRC] could not read ?src= from the page address:", e); }
+    try {
         const saved = localStorage.getItem(E3DS_URL_STORAGE_KEY);
         if (saved) return saved;
-    } catch (e) { }
+    } catch (e) { console.warn("[E3DS-DEMO-CONNECTION] could not read the remembered stream URL:", e); }
     return DEMO_CONFIG.streamUrl;
 }
 
 function e3dsRememberStreamUrl(url) {
-    try { localStorage.setItem(E3DS_URL_STORAGE_KEY, url); } catch (e) { }
+    try { localStorage.setItem(E3DS_URL_STORAGE_KEY, url); } catch (e) { console.warn("[E3DS-DEMO-CONNECTION] could not remember the stream URL:", e); }
+    /* [E3DS-DEMO-SRC] ?src= is read first, so keep it in step with the stream the visitor picked - otherwise the page
+     * would go on naming (and trusting messages from) the old one. The address stays shareable as well. */
+    try {
+        const page = new URL(location.href);
+        if (page.searchParams.has("src") && page.searchParams.get("src") !== url) {
+            page.searchParams.set("src", url);
+            history.replaceState(null, "", page.toString());
+        }
+    } catch (e) { console.warn("[E3DS-DEMO-SRC] could not update ?src= in the page address:", e); }
 }
 
 
