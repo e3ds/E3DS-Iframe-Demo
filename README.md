@@ -8,8 +8,9 @@ An NVIDIA Omniverse Kit app (USD Viewer) streamed by Eagle 3D Streaming, embedde
 | What | Link |
 |---|---|
 | The same Omniverse app in the Eagle 3D Streaming player (no web controls) | https://connector_binary.eagle3dstreaming.com/v5/demo/omniverseDemo/usdViewer |
-| This page with its web controls | open `index.html` from this branch (it shows the stream above by default) |
-| This page with a stream you choose | `index.html?src=https://connector_binary.eagle3dstreaming.com/v5/demo/omniverseDemo/usdViewer` |
+| This page with its web controls, live (GitHub Pages) | https://e3ds.github.io/E3DS-Iframe-Demo/omniverse/ |
+| Host your own copy for free | https://docs.eagle3dstreaming.com/wiki/host-your-page-on-github-pages |
+| This page with a stream you choose | `https://e3ds.github.io/E3DS-Iframe-Demo/omniverse/?src=https://connector_binary.eagle3dstreaming.com/v5/demo/omniverseDemo/usdViewer` |
 | Documentation: Omniverse streaming | https://docs.eagle3dstreaming.com/wiki/omniverse-streaming |
 
 ## Why an Omniverse demo needs its own page
