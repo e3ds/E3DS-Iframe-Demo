@@ -40,7 +40,7 @@ function App() {
       Teleport: val,
     };
     let obj = {
-      cmd: 'sendToUe4',
+      cmd: 'sendDataToUE', // current name (the older 'sendToUe4' is still accepted)
       value: descriptor,
     };
     sendToMainPage(obj);
