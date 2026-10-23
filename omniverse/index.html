@@ -1,0 +1,259 @@
+<!DOCTYPE html>
+<!-- Demo: NVIDIA's USD Viewer panel, rebuilt as an ordinary web page that embeds the
+     Eagle 3D player in an iframe. The dropdown, list and Reset send the SAME app messages NVIDIA's viewer sends
+     (openStageRequest, getChildrenRequest, makePrimsPickable, selectPrimsRequest, resetStage, loadingStateQuery) by
+     postMessage to the player iframe; the player passes them to the Omniverse app over the data channel and posts the
+     app's events back (omniverseEaglePlayerAppMessages.js). Logic follows NVIDIA's web-viewer-sample Window.tsx.
+
+     Loading: the page covers the iframe with its own progress list, driven by the stage messages every Eagle 3D
+     player posts to the page that embeds it (the same ones every iframe demo handles):
+       readyToReceiveMessageFromIframe            player page loaded
+       stage1_inqueued {positionInQueue}          waiting for a free machine (QueueNumberUpdated {queuePosition})
+       stage2_deQueued / stage3_slotOccupied      machine assigned
+       stage3_1_AppAcquiringProgress {percent}    app download
+       stage3_2_AppPreparationProgress {percent}  app start
+       stage4_playBtnShowedUp                     video connected - the iframe is shown (its play button, if any)
+       stage5_playBtnPressed                      video playing - the panel's controls are enabled
+     The controls are shown from the start but stay disabled until stage5.
+
+     ?src=<player URL> picks the stream; default: the Eagle 3D Streaming Omniverse demo (USD Viewer). -->
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Omniverse iframe demo</title>
+<style>
+  :root { --bar: #000; --panel: #fff; --ink: #222; --muted: #777; --accent: #76b900; --line: #e5e5e5;
+          --stage: #0d0f0b; --stage-ink: #e9eee3; --stage-muted: #8a9381; --stage-line: #2a3024; --bad: #e5484d; }
+  * { box-sizing: border-box; }
+  body { margin: 0; font: 15px/1.4 system-ui, -apple-system, "Segoe UI", sans-serif; color: var(--ink); background: var(--panel); }
+  header { background: var(--bar); color: #fff; height: 60px; display: flex; align-items: center; padding: 0 20px; font-weight: 600; font-size: 19px; gap: 10px; }
+  header small { font-weight: 400; color: #bbb; font-size: 13px; }
+  main { display: flex; height: calc(100vh - 60px); }
+  .view { position: relative; flex: 1; min-width: 0; background: #000; }
+  #stream { position: absolute; inset: 0; width: 100%; height: 100%; border: 0; background: #000; visibility: hidden; }
+  aside { width: 300px; padding: 16px 20px; overflow-y: auto; border-left: 1px solid var(--line); }
+  h2 { font-size: 24px; font-weight: 400; margin: 14px 0 12px; color: #444; }
+  select, button { width: 100%; height: 34px; border: 0; border-radius: 6px; background: var(--accent); color: #fff; font: inherit; padding: 0 8px; cursor: pointer; }
+  button { font-weight: 600; }
+  select:disabled, button:disabled { opacity: .4; cursor: not-allowed; }
+  select:focus-visible, button:focus-visible { outline: 2px solid #3a5a00; outline-offset: 2px; }
+  ul { list-style: none; margin: 4px 0 0; padding: 0; }
+  ul.off { opacity: .4; pointer-events: none; }
+  li { padding: 3px 6px; cursor: pointer; border-radius: 2px; }
+  li.sel { background: var(--accent); color: #fff; }
+  li.child { padding-left: 22px; }
+  #status { margin-top: 18px; font-size: 13px; color: var(--muted); }
+
+  /* the loading cover over the iframe */
+  #loading { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; padding: 24px;
+             background: var(--stage); color: var(--stage-ink); }
+  #loading[hidden] { display: none; }
+  .card { width: min(420px, 100%); }
+  .card h3 { margin: 0 0 4px; font-size: 20px; font-weight: 600; }
+  .card .sub { margin: 0 0 22px; color: var(--stage-muted); font-size: 13px; font-variant-numeric: tabular-nums; }
+  ol.steps { list-style: none; margin: 0; padding: 0; display: grid; gap: 14px; }
+  .step { display: grid; grid-template-columns: 22px 1fr; column-gap: 12px; align-items: start; color: var(--stage-muted); }
+  .dot { width: 22px; height: 22px; border-radius: 50%; border: 2px solid var(--stage-line); display: grid; place-items: center; font-size: 12px; }
+  .step .name { line-height: 22px; }
+  .step .detail { grid-column: 2; font-size: 12px; color: var(--stage-muted); font-variant-numeric: tabular-nums; min-height: 0; }
+  .bar { grid-column: 2; height: 4px; margin-top: 6px; border-radius: 2px; background: var(--stage-line); overflow: hidden; display: none; }
+  .bar i { display: block; height: 100%; width: 0; background: var(--accent); transition: width .3s; }
+  .step.active { color: var(--stage-ink); }
+  .step.active .dot { border-color: var(--accent); border-top-color: transparent; animation: spin .9s linear infinite; }
+  .step.active .bar.on { display: block; }
+  .step.done { color: var(--stage-ink); }
+  .step.done .dot { border-color: var(--accent); background: var(--accent); color: #0d0f0b; }
+  .step.done .dot::after { content: "\2713"; font-weight: 700; }
+  .step.skipped .dot { border-style: dashed; }
+  #ended { display: none; margin-top: 22px; padding: 12px 14px; border-left: 3px solid var(--bad); background: #1a1212; font-size: 14px; }
+  #ended button { margin-top: 10px; width: auto; padding: 0 16px; }
+  @keyframes spin { to { transform: rotate(360deg); } }
+  @media (prefers-reduced-motion: reduce) { .step.active .dot { animation: none; border-top-color: var(--accent); } .bar i { transition: none; } }
+  @media (max-width: 760px) { main { flex-direction: column; height: auto; } .view { height: 56vh; flex: none; } aside { width: 100%; border-left: 0; } }
+</style>
+</head>
+<body>
+<header>Omniverse viewer <small>embedded with Eagle 3D Streaming (iframe demo)</small></header>
+<main>
+  <div class="view">
+    <iframe id="stream" title="Omniverse stream" allow="autoplay; fullscreen; clipboard-read; clipboard-write" allowfullscreen></iframe>
+    <div id="loading" role="status" aria-live="polite">
+      <div class="card">
+        <h3 id="loadTitle">Starting the Omniverse app</h3>
+        <p class="sub" id="elapsed">0:00</p>
+        <ol class="steps">
+          <li class="step" data-step="page"><span class="dot"></span><span class="name">Opening the stream</span><span class="detail"></span></li>
+          <li class="step" data-step="machine"><span class="dot"></span><span class="name">Finding a machine</span><span class="detail"></span></li>
+          <li class="step" data-step="download"><span class="dot"></span><span class="name">Downloading the app</span><span class="detail"></span><span class="bar"><i></i></span></li>
+          <li class="step" data-step="start"><span class="dot"></span><span class="name">Starting the app</span><span class="detail"></span><span class="bar"><i></i></span></li>
+          <li class="step" data-step="video"><span class="dot"></span><span class="name">Connecting the video</span><span class="detail"></span></li>
+        </ol>
+        <div id="ended"><div id="endedText">The stream has ended.</div><button id="retry">Start again</button></div>
+      </div>
+    </div>
+  </div>
+  <aside>
+    <h2>USD Asset</h2>
+    <select id="asset" disabled></select>
+    <h2>USD Stage</h2>
+    <button id="reset" disabled>Reset</button>
+    <ul id="prims" class="off"></ul>
+    <div id="status">The controls unlock when the video starts</div>
+  </aside>
+</main>
+<script>
+(function () {
+  var DEFAULT_SRC = "https://connector_binary.eagle3dstreaming.com/v5/demo/omniverseDemo/usdViewer";
+  var src = new URLSearchParams(location.search).get("src") || DEFAULT_SRC;
+  var frame = document.getElementById("stream");
+
+  /* ---------- loading progress ---------- */
+  var STEPS = ["page", "machine", "download", "start", "video"];
+  var $loading = document.getElementById("loading"), $elapsed = document.getElementById("elapsed");
+  var startedAt = 0, timer = 0, reached = -1, playing = false;
+  function stepEl(name) { return document.querySelector('.step[data-step="' + name + '"]'); }
+  function detail(name, text) { stepEl(name).querySelector(".detail").textContent = text || ""; }
+  function percent(name, value) {
+    var n = parseFloat(value); if (isNaN(n)) return;
+    n = Math.max(0, Math.min(100, n));
+    var el = stepEl(name), bar = el.querySelector(".bar");
+    bar.classList.add("on"); bar.querySelector("i").style.width = n + "%";
+    detail(name, Math.round(n) + "%");
+  }
+  /* Step k becomes the active one; every earlier step is done (marked "skipped" if it never ran - e.g. no queue,
+   * or the app was already on the machine so there was nothing to download). Stages never go backwards. */
+  function reach(name) {
+    var k = STEPS.indexOf(name); if (k < reached) return;
+    STEPS.forEach(function (s, i) {
+      var el = stepEl(s);
+      if (i < k) { if (!el.classList.contains("done")) { el.classList.add("done"); if (i > reached) el.classList.add("skipped"); } el.classList.remove("active"); }
+      else if (i === k) el.classList.add("active");
+    });
+    reached = k;
+  }
+  function tick() { var s = Math.floor((Date.now() - startedAt) / 1000); $elapsed.textContent = Math.floor(s / 60) + ":" + ("0" + s % 60).slice(-2); }
+  function start() {
+    playing = false; reached = -1; setControls(false);
+    document.querySelectorAll(".step").forEach(function (el) { el.className = "step"; el.querySelector(".detail").textContent = ""; var b = el.querySelector(".bar"); if (b) { b.classList.remove("on"); b.querySelector("i").style.width = "0"; } });
+    document.getElementById("ended").style.display = "none";
+    document.getElementById("loadTitle").textContent = "Starting the Omniverse app";
+    frame.style.visibility = "hidden"; $loading.hidden = false;
+    startedAt = Date.now(); clearInterval(timer); timer = setInterval(tick, 1000); tick();
+    reach("page");
+    frame.src = src;
+  }
+  function videoConnected() { STEPS.forEach(function (s) { stepEl(s).classList.remove("active"); stepEl(s).classList.add("done"); }); frame.style.visibility = "visible"; $loading.hidden = true; clearInterval(timer); }
+  function ended(text) {
+    playing = false; setControls(false); clearInterval(timer);
+    document.getElementById("loadTitle").textContent = "The stream stopped";
+    document.getElementById("endedText").textContent = text || "The stream has ended.";
+    document.getElementById("ended").style.display = "block";
+    frame.style.visibility = "hidden"; $loading.hidden = false;
+    status("Stream stopped");
+  }
+  document.getElementById("retry").onclick = start;
+
+  /* ---------- the panel (NVIDIA's USD Viewer logic) ---------- */
+  /* the same asset list as NVIDIA's viewer (Kit resolves the ${...} token to the samples extension) */
+  var assets = [
+    { name: "Sample 1", url: "${omni.usd_viewer.samples}/samples_data/stage01.usd" },
+    { name: "Sample 2", url: "${omni.usd_viewer.samples}/samples_data/stage02.usd" }
+  ];
+  var state = { kitReady: false, selectedAsset: assets[0], prims: [], selected: {} };
+  var $asset = document.getElementById("asset"), $reset = document.getElementById("reset"), $prims = document.getElementById("prims"), $status = document.getElementById("status");
+  assets.forEach(function (a, i) { var o = document.createElement("option"); o.value = i; o.textContent = a.name; $asset.appendChild(o); });
+
+  function setControls(on) { $asset.disabled = !on; $reset.disabled = !on; $prims.classList.toggle("off", !on); if (!on) status("The controls unlock when the video starts"); }
+  function status(t) { $status.textContent = t; }
+  function send(event_type, payload) { frame.contentWindow.postMessage(JSON.stringify({ type: "omniverseMessage", event_type: event_type, payload: payload || {} }), "*"); }
+  var fileName = function (p) { return String(p || "").split(/[\\/]/).pop(); };
+  function assetFor(url) { var f = fileName(url); for (var i = 0; i < assets.length; i++) if (f && fileName(assets[i].url) === f) return assets[i]; return null; }
+
+  function queryLoadingState() { send("loadingStateQuery", {}); }
+  function pollKit() { if (state.kitReady) return; queryLoadingState(); setTimeout(pollKit, 3000); }
+  function openSelected() { status("Loading asset..."); state.prims = []; state.selected = {}; render(); send("openStageRequest", { url: state.selectedAsset.url }); }
+  function getChildren(path) { send("getChildrenRequest", { prim_path: path || "/World", filters: ["USDGeom"] }); }
+  function select(paths) { send("selectPrimsRequest", { paths: paths }); }
+
+  function render() {
+    $prims.innerHTML = "";
+    (function add(list, depth) {
+      (list || []).forEach(function (p) {
+        var li = document.createElement("li");
+        li.textContent = p.name; if (depth) li.className = "child";
+        if (state.selected[p.path]) li.classList.add("sel");
+        li.onclick = function () { if (state.selected[p.path]) delete state.selected[p.path]; else state.selected[p.path] = true; render(); select(Object.keys(state.selected)); };
+        $prims.appendChild(li);
+        if (p.children && p.children.length) add(p.children, depth + 1);
+      });
+    })(state.prims, 0);
+  }
+
+  $asset.onchange = function () { state.selectedAsset = assets[+$asset.value]; openSelected(); };
+  $reset.onclick = function () { state.selected = {}; render(); select([]); send("resetStage", {}); };
+
+  /* ---------- messages from the player ---------- */
+  function onStage(m) {
+    switch (m.type) {
+      case "readyToReceiveMessageFromIframe": case "mainWebPageReadyForMessagesFromIframe":
+        reach("machine"); return true;
+      case "stage1_inqueued":
+        reach("machine"); detail("machine", m.positionInQueue ? "Position " + m.positionInQueue + " in the queue" : "Waiting in the queue"); return true;
+      case "QueueNumberUpdated":
+        if (m.queuePosition) detail("machine", "Position " + m.queuePosition + " in the queue"); return true;
+      case "stage2_deQueued": case "stage3_slotOccupied":
+        reach("machine"); detail("machine", "Machine assigned"); reach("download"); return true;
+      case "stage3_1_AppAcquiringProgress":
+        reach("download"); percent("download", m.percent); return true;
+      case "stage3_2_AppPreparationProgress":
+        reach("start"); percent("start", m.percent); return true;
+      case "stage4_playBtnShowedUp":
+        reach("video"); videoConnected(); return true;
+      case "stage5_playBtnPressed":
+        videoConnected(); playing = true; setControls(true); status(state.kitReady ? "Ready" : "Video playing - connecting to the app"); return true;
+      case "redirectingWithMessage": case "sessionEnding":
+        ended(m.message); return true;
+      case "sessionExpired":
+        ended("The session time is over."); return true;
+      case "handleStreamerDisconnected":
+        ended("The app stopped running."); return true;
+    }
+    return false;
+  }
+
+  window.addEventListener("message", function (e) {
+    if (e.source !== frame.contentWindow) return;
+    var m; try { m = typeof e.data === "string" ? JSON.parse(e.data) : e.data; } catch (x) { return; }
+    if (!m || onStage(m)) return;
+    if (m.type === "omniverseReady") { status(playing ? "Connected - asking the app what is loaded" : "The controls unlock when the video starts"); pollKit(); return; }
+    if (m.type !== "omniverseEvent") return;
+    var p = m.payload || {};
+    switch (m.event_type) {
+      case "openedStageResult": if (p.result === "success") queryLoadingState(); else status("The app could not load " + p.url); break;
+      case "loadingStateResponse":
+        if (!state.kitReady) { state.kitReady = true; queryLoadingState(); break; }
+        var a = assetFor(p.url);
+        if (a && a !== state.selectedAsset) { state.selectedAsset = a; $asset.value = assets.indexOf(a); }
+        if (!p.url) openSelected();
+        else if (!a && p.loading_state === "idle") openSelected();
+        if (a && p.loading_state === "idle") { if (playing) status("Asset loaded: " + a.name); getChildren("/World"); }
+        break;
+      case "updateProgressActivity": if (playing) status("Loading asset..."); break;
+      case "getChildrenResponse":
+        var children = p.children || [];
+        if (p.prim_path === "/World" || !state.prims.length) state.prims = children;
+        else (function find(list) { (list || []).forEach(function (x) { if (x.path === p.prim_path) x.children = children; else find(x.children); }); })(state.prims);
+        render();
+        if (children.length) send("makePrimsPickable", { paths: children.map(function (c) { return c.path; }) });
+        break;
+      case "stageSelectionChanged":
+        state.selected = {}; (Array.isArray(p.prims) ? p.prims : []).forEach(function (path) { state.selected[path] = true; }); render(); break;
+    }
+  });
+
+  start();
+})();
+</script>
+</body>
+</html>
