@@ -3,6 +3,15 @@
 An NVIDIA Omniverse Kit app (USD Viewer) streamed by Eagle 3D Streaming, embedded in an ordinary web page with an
 `<iframe>`, and controlled from that page's own HTML panel.
 
+## Demo links
+
+| What | Link |
+|---|---|
+| The same Omniverse app in the Eagle 3D Streaming player (no web controls) | https://connector_binary.eagle3dstreaming.com/v5/demo/omniverseDemo/usdViewer |
+| This page with its web controls | open `index.html` from this branch (it shows the stream above by default) |
+| This page with a stream you choose | `index.html?src=https://connector_binary.eagle3dstreaming.com/v5/demo/omniverseDemo/usdViewer` |
+| Documentation: Omniverse streaming | https://docs.eagle3dstreaming.com/wiki/omniverse-streaming |
+
 ## Why an Omniverse demo needs its own page
 
 An Unreal Engine app usually builds its user interface inside the app, so the stream alone is already interactive.
