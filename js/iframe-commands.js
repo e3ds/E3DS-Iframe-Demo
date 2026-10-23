@@ -54,7 +54,7 @@ function getStreamFrame() {
  * This is the single place in the demo that actually calls postMessage, so
  * there is exactly one place to look if a command is not arriving.
  *
- * @param {string} commandName  Which command to run, e.g. "sendDataToUE".
+ * @param {string} commandName  Which command to run, e.g. "sendMessageToStreamingBuild".
  * @param {*}      commandValue The data that command expects. May be a plain
  *                              string, a number, or an object - it depends on
  *                              the command, and on what your Unreal app expects.
@@ -108,11 +108,12 @@ function sendCommandToStream(commandName, commandValue) {
  * @param {string|object} data Whatever your Unreal app expects to receive.
  */
 function sendToUnrealApp(data) {
-    /* "sendDataToUE" - the name production's player accepts today, and the one documented at
-     * learn.eagle3dstreaming.com/wiki/sending-and-receiving-data. It reaches the running build's own message handler
-     * (Pixel Streaming's emitUIInteraction). Not "sendCommandToUE": that goes to the plugin's own command channel
-     * (resolution, console, encoder) and never reaches your app. */
-    sendCommandToStream("sendDataToUE", data);
+    /* "sendMessageToStreamingBuild" - the current name, the same as the Web SDK's
+     * e3ds_controller.sendMessageToStreamingBuild(). It reaches the running build's own message handler
+     * (Pixel Streaming's emitUIInteraction). The older names "sendDataToUE" / "sendToUe4" still work.
+     * Not "sendCommandToUE": that goes to the plugin's own command channel (resolution, console, encoder) and never
+     * reaches your app. */
+    sendCommandToStream("sendMessageToStreamingBuild", data);
 }
 
 /**
