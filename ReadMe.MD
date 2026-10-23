@@ -6,7 +6,7 @@ A React page that embeds an Eagle 3D Streaming stream in an `<iframe>` and drive
 - **Manual (what every button does):** https://docs.eagle3dstreaming.com/wiki/iframe-demo
 - **The plain-HTML iframe demo:** branch `main` of this repository, live at https://e3ds.github.io/E3DS-Iframe-Demo/
 
-Each sidebar button sends `{ cmd: "sendDataToUE", value: { Teleport: <n> } }` into the iframe; the streamed app (the
+Each sidebar button sends `{ cmd: "sendMessageToStreamingBuild", value: { Teleport: <n> } }` into the iframe; the streamed app (the
 E3DS Features Template) walks the avatar to feature station <n>.
 
 ## How to run iframe react app.
