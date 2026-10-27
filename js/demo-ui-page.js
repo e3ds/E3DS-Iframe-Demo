@@ -22,12 +22,12 @@
  *
  * The sample app listens for a plain colour name and repaints its 3D model.
  * Your own app will expect whatever you built it to expect - see
- * sendToUnrealApp() in iframe-commands.js for the two common shapes.
+ * sendMessageToStreamingBuild() in iframe-commands.js for the two common shapes.
  *
  * @param {string} colourName e.g. "red"
  */
 function switchColour(colourName) {
-    sendToUnrealApp(colourName);
+    sendMessageToStreamingBuild(colourName);
 }
 
 /**
@@ -40,7 +40,7 @@ let isFullScreenOn = false;
 
 function toggleFullScreen() {
     isFullScreenOn = !isFullScreenOn;
-    sendToUnrealApp({ FullScreen: isFullScreenOn ? "On" : "Off" });
+    sendMessageToStreamingBuild({ FullScreen: isFullScreenOn ? "On" : "Off" });
 }
 
 /**

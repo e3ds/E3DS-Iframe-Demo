@@ -96,10 +96,10 @@ function sendCommandToStream(commandName, commandValue) {
  * WHAT TO SEND is entirely up to how your Unreal app was built:
  *
  *   - If it expects a plain piece of text:
- *         sendToUnrealApp("red");
+ *         sendMessageToStreamingBuild("red");
  *
  *   - If it expects structured data:
- *         sendToUnrealApp({ action: "setColour", colour: "red" });
+ *         sendMessageToStreamingBuild({ action: "setColour", colour: "red" });
  *
  * Neither is more correct than the other - match whichever your app is
  * listening for. If nothing happens when you call this, that mismatch is the
@@ -107,7 +107,7 @@ function sendCommandToStream(commandName, commandValue) {
  *
  * @param {string|object} data Whatever your Unreal app expects to receive.
  */
-function sendToUnrealApp(data) {
+function sendMessageToStreamingBuild(data) {
     /* "sendMessageToStreamingBuild" - the current name, the same as the Web SDK's
      * e3ds_controller.sendMessageToStreamingBuild(). It reaches the running build's own message handler
      * (Pixel Streaming's emitUIInteraction).

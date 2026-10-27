@@ -603,7 +603,7 @@ function e3dsBuildChannelControls() {
             let payload = value;
             try { payload = JSON.parse(value); }
             catch (e) { console.log("[E3DS demo] message box: not JSON (" + e.message + ") - sent as a plain string"); }
-            sendToUnrealApp(payload);
+            sendMessageToStreamingBuild(payload);
         },
         "Your app");
 
@@ -1150,7 +1150,7 @@ window.e3dsLogAppResponse = e3dsLogAppResponse;
  */
 /* [E3DS-APP-CONTROLS] Controls that only one app understands, per app name. An entry is either a button -
  * [label, message] - or a dropdown - { label, placeholder, options: [[label, message], ...] } - and the message is
- * what sendToUnrealApp() sends. Add an app here and its controls appear under "Your app" whenever it is streaming;
+ * what sendMessageToStreamingBuild() sends. Add an app here and its controls appear under "Your app" whenever it is streaming;
  * any app not listed gets a "No app controls available" line instead. */
 /* The "Message to your app" box. Every app control writes the message it sends into it, so the viewer sees that a
  * button is just a JSON object sent to the app - and can edit it and send a variation. */
@@ -1178,7 +1178,7 @@ function e3dsShowResultBox(title, obj) {
 }
 function e3dsSendAppMessage(message) {
     if (e3dsAppMessageBox) { e3dsAppMessageBox.value = JSON.stringify(message); e3dsAppMessageBox.e3dsRefresh(); }
-    sendToUnrealApp(message);
+    sendMessageToStreamingBuild(message);
 }
 
 const E3DS_APP_CONTROLS = {
