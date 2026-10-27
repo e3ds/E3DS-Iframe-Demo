@@ -110,7 +110,7 @@ function sendCommandToStream(commandName, commandValue) {
 function sendToUnrealApp(data) {
     /* "sendMessageToStreamingBuild" - the current name, the same as the Web SDK's
      * e3ds_controller.sendMessageToStreamingBuild(). It reaches the running build's own message handler
-     * (Pixel Streaming's emitUIInteraction). The older names "sendDataToUE" / "sendToUe4" still work.
+     * (Pixel Streaming's emitUIInteraction).
      * Not "sendCommandToUE": that goes to the plugin's own command channel (resolution, console, encoder) and never
      * reaches your app. */
     sendCommandToStream("sendMessageToStreamingBuild", data);
