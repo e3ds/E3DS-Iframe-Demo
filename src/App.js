@@ -40,7 +40,7 @@ function App() {
       Teleport: val,
     };
     let obj = {
-      cmd: 'sendMessageToStreamingBuild', // current name (the older 'sendDataToUE' / 'sendToUe4' still work)
+      cmd: 'sendMessageToStreamingBuild',
       value: descriptor,
     };
     sendToMainPage(obj);
