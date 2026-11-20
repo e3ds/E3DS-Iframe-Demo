@@ -1,0 +1,52 @@
+{
+  "name": "@eagle3dstreaming/iframe-embed",
+  "version": "1.0.0",
+  "description": "Embed an Eagle 3D Streaming (Unreal Engine pixel streaming) application in an iframe and talk to it both ways - commands, events and your app's own messages. No API key, no dependencies.",
+  "keywords": [
+    "eagle3dstreaming",
+    "e3ds",
+    "pixel-streaming",
+    "unreal-engine",
+    "iframe",
+    "postmessage",
+    "cloud-streaming"
+  ],
+  "homepage": "https://learn.eagle3dstreaming.com/wiki/embed-stream-using-iframe",
+  "bugs": {
+    "email": "support@eagle3dstreaming.com"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/e3ds/E3DS-Iframe-Demo.git",
+    "directory": "npm"
+  },
+  "license": "UNLICENSED",
+  "author": "Eagle 3D Streaming <support@eagle3dstreaming.com>",
+  "type": "module",
+  "main": "./dist/index.cjs",
+  "module": "./dist/index.mjs",
+  "types": "./dist/index.d.ts",
+  "unpkg": "./dist/index.umd.js",
+  "jsdelivr": "./dist/index.umd.js",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.mjs",
+      "require": "./dist/index.cjs"
+    },
+    "./umd": "./dist/index.umd.js",
+    "./package.json": "./package.json"
+  },
+  "sideEffects": false,
+  "files": [
+    "dist/index.mjs",
+    "dist/index.cjs",
+    "dist/index.umd.js",
+    "dist/index.d.ts",
+    "README.md"
+  ],
+  "scripts": {
+    "build": "node scripts/build.mjs",
+    "prepack": "node scripts/build.mjs"
+  }
+}

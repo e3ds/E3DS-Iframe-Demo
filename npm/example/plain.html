@@ -1,0 +1,19 @@
+<!doctype html>
+<!-- No bundler: the UMD build from node_modules defines window.E3dsIframe. -->
+<html lang="en">
+<head><meta charset="utf-8"><title>E3DS iframe embed - plain script</title></head>
+<body>
+  <div id="stream" style="width:640px;height:360px"></div>
+  <script src="./node_modules/@eagle3dstreaming/iframe-embed/dist/index.umd.js"></script>
+  <script>
+    var s = E3dsIframe.createE3dsIframe({ container: "#stream" });
+    window.__e3dsTest = {
+      ok: typeof E3dsIframe.createE3dsIframe === "function" && s.iframe.tagName === "IFRAME",
+      version: E3dsIframe.VERSION,
+      allow: s.iframe.getAttribute("allow"),
+      methods: Object.keys(s).filter(function (k) { return typeof s[k] === "function"; }).sort()
+    };
+    s.destroy();
+  </script>
+</body>
+</html>

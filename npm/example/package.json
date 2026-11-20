@@ -1,0 +1,16 @@
+{
+  "name": "e3ds-iframe-embed-npm-example",
+  "private": true,
+  "type": "module",
+  "description": "Installs @eagle3dstreaming/iframe-embed from the local tarball (npm pack) and checks it in a browser against the public demo stream.",
+  "scripts": {
+    "build": "vite build",
+    "test": "node test.cjs"
+  },
+  "dependencies": {
+    "@eagle3dstreaming/iframe-embed": "file:../eagle3dstreaming-iframe-embed-1.0.0.tgz"
+  },
+  "devDependencies": {
+    "vite": "5.4.11"
+  }
+}

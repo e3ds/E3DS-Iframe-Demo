@@ -1,0 +1,6 @@
+dist/
+node_modules/
+*.tgz
+example/node_modules/
+example/dist/
+example/package-lock.json

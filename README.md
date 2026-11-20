@@ -23,6 +23,10 @@ no API key.
 
 That is a working embed. The rest is optional.
 
+**Using a bundler?** `npm install @eagle3dstreaming/iframe-embed` gives you the
+commands and events of this demo as one small object, with TypeScript types;
+`npm update` brings in new releases. See [`npm/README.md`](npm/README.md).
+
 ---
 
 ## Two demos in here
