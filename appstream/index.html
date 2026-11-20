@@ -1,0 +1,348 @@
+<!DOCTYPE html>
+<!-- AppStream iframe demo - an ordinary web page that embeds an Eagle 3D Streaming AppStream stream in an <iframe>.
+
+     AppStream streams ANY Windows app (Godot, UNIGINE, a desktop tool, any .exe) with no plugin inside the app.
+     That has one big consequence for an embedding page: there is no message channel INTO or OUT OF the app.
+     The page can follow the session (events from the player), drive the player (quality), and control the
+     frame itself (fullscreen, end, restart) - but it cannot talk to the app's own code. Keyboard, mouse and
+     touch reach the app directly once the visitor clicks the picture.
+
+     Everything on this page was tested against stream.eagle3dstreaming.com (20 Nov 2026). Grep tag:
+     [E3DS-APPSTREAM-IFRAME-DEMO].
+
+     Events the AppStream player posts to this page (window "message" events, objects with a `type`):
+       readyToReceiveMessageFromIframe   player page loaded
+       QueueNumberUpdated {queuePosition} / stage1_inqueued {positionInQueue}   waiting for a machine
+       stage2_deQueued / stage3_slotOccupied   machine found (not every session sends them)
+       stage3_1_AppAcquiringProgress / stage3_2_AppPreparationProgress {percent}   (when the app is copied/prepared)
+       stage4_playBtnShowedUp            video connected
+       stage5_playBtnPressed             video playing
+       streamFocusGained / streamFocusLost {focused}   the visitor's keyboard is / is not on the stream
+       sessionEnding (+ redirectingWithMessage) {message}, sessionExpired, handleStreamerDisconnected
+     Newer players also send the same moments under dotted names (session.queued, session.hostFound, build.acquiring,
+     stream.ready, stream.playing, session.ending, build.stopped ...). This page understands both.
+
+     ?src=<stream link> picks the stream (any AppStream link from your Control Panel). -->
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex,nofollow">
+<title>AppStream iframe demo</title>
+<style>
+  :root { --bar: #0b1220; --panel: #fff; --ink: #1d2433; --muted: #6b7385; --accent: #2f6fed; --accent-ink: #fff; --line: #e3e6ee;
+          --stage: #0b1220; --stage-ink: #e8ecf5; --stage-muted: #8b93a7; --stage-line: #263047; --bad: #e5484d; --ok: #2fa36b; --soft: #f4f6fa; }
+  * { box-sizing: border-box; }
+  body { margin: 0; font: 15px/1.45 system-ui, -apple-system, "Segoe UI", sans-serif; color: var(--ink); background: var(--panel); }
+  header { background: var(--bar); color: #fff; min-height: 56px; display: flex; align-items: center; padding: 8px 20px; gap: 12px; flex-wrap: wrap; }
+  header b { font-size: 18px; }
+  header small { color: #aab3c8; font-size: 13px; }
+  main { display: flex; height: calc(100vh - 56px); }
+  .view { position: relative; flex: 1; min-width: 0; background: #000; }
+  .view:fullscreen { width: 100vw; height: 100vh; }
+  #stream { position: absolute; inset: 0; width: 100%; height: 100%; border: 0; background: #000; visibility: hidden; }
+  aside { width: 340px; padding: 14px 18px 24px; overflow-y: auto; border-left: 1px solid var(--line); }
+  h2 { font-size: 13px; font-weight: 700; letter-spacing: .04em; text-transform: uppercase; color: var(--muted); margin: 18px 0 8px; }
+  h2:first-child { margin-top: 4px; }
+  select, input[type=text], button { width: 100%; height: 34px; border-radius: 6px; font: inherit; }
+  select, input[type=text] { border: 1px solid var(--line); background: #fff; color: var(--ink); padding: 0 8px; }
+  button { border: 0; background: var(--accent); color: var(--accent-ink); font-weight: 600; cursor: pointer; padding: 0 10px; }
+  button.ghost { background: var(--soft); color: var(--ink); border: 1px solid var(--line); }
+  button.danger { background: var(--bad); }
+  button:disabled, select:disabled, input:disabled { opacity: .45; cursor: not-allowed; }
+  button:focus-visible, select:focus-visible, input:focus-visible { outline: 2px solid #9db8f7; outline-offset: 2px; }
+  .row { display: flex; gap: 8px; margin-top: 8px; }
+  .row > * { flex: 1; }
+  .seg { display: grid; grid-template-columns: repeat(4, 1fr); gap: 6px; }
+  .seg button { background: var(--soft); color: var(--ink); border: 1px solid var(--line); font-weight: 500; }
+  .seg button.on { background: var(--accent); color: #fff; border-color: var(--accent); }
+  .note { font-size: 13px; color: var(--muted); margin: 6px 0 0; }
+  .facts { display: grid; grid-template-columns: auto 1fr; gap: 2px 10px; font-size: 13px; }
+  .facts dt { color: var(--muted); } .facts dd { margin: 0; font-variant-numeric: tabular-nums; }
+  .cannot { margin-top: 18px; padding: 10px 12px; background: var(--soft); border-left: 3px solid var(--muted); font-size: 13px; }
+  .cannot ul { margin: 6px 0 0; padding-left: 18px; } .cannot li { margin: 2px 0; }
+  #log { height: 180px; overflow-y: auto; background: #0f1524; color: #cfd6e6; font: 12px/1.45 ui-monospace, Consolas, monospace; padding: 8px; border-radius: 6px; white-space: pre-wrap; word-break: break-word; }
+  #log .t { color: #6f7a93; }
+
+  /* loading cover over the iframe */
+  #loading { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; padding: 24px; background: var(--stage); color: var(--stage-ink); }
+  #loading[hidden] { display: none; }
+  .card { width: min(420px, 100%); }
+  .card h3 { margin: 0 0 4px; font-size: 20px; font-weight: 600; }
+  .card .sub { margin: 0 0 22px; color: var(--stage-muted); font-size: 13px; font-variant-numeric: tabular-nums; }
+  ol.steps { list-style: none; margin: 0; padding: 0; display: grid; gap: 14px; }
+  .step { display: grid; grid-template-columns: 22px 1fr; column-gap: 12px; color: var(--stage-muted); }
+  .dot { width: 22px; height: 22px; border-radius: 50%; border: 2px solid var(--stage-line); display: grid; place-items: center; font-size: 12px; }
+  .step .name { line-height: 22px; }
+  .step .detail { grid-column: 2; font-size: 12px; color: var(--stage-muted); font-variant-numeric: tabular-nums; }
+  .bar { grid-column: 2; height: 4px; margin-top: 6px; border-radius: 2px; background: var(--stage-line); overflow: hidden; display: none; }
+  .bar i { display: block; height: 100%; width: 0; background: var(--accent); transition: width .3s; }
+  .step.active { color: var(--stage-ink); }
+  .step.active .dot { border-color: var(--accent); border-top-color: transparent; animation: spin .9s linear infinite; }
+  .step.active .bar.on { display: block; }
+  .step.done { color: var(--stage-ink); }
+  .step.done .dot { border-color: var(--accent); background: var(--accent); color: #fff; }
+  .step.done .dot::after { content: "\2713"; font-weight: 700; }
+  .step.skipped .dot { border-style: dashed; }
+  #ended { display: none; margin-top: 22px; padding: 12px 14px; border-left: 3px solid var(--bad); background: #1a1420; font-size: 14px; }
+  #ended button { margin-top: 10px; width: auto; padding: 0 16px; }
+
+  /* "click to control" hint, shown while the keyboard is not on the stream */
+  #focusHint { position: absolute; left: 50%; bottom: 18px; transform: translateX(-50%); background: rgba(11,18,32,.88); color: #fff;
+               padding: 8px 14px; border-radius: 999px; font-size: 13px; pointer-events: none; display: none; }
+  @keyframes spin { to { transform: rotate(360deg); } }
+  @media (prefers-reduced-motion: reduce) { .step.active .dot { animation: none; border-top-color: var(--accent); } .bar i { transition: none; } }
+  @media (max-width: 820px) { main { flex-direction: column; height: auto; } .view { height: 56vh; flex: none; } aside { width: 100%; border-left: 0; padding: 12px 16px 24px; } }
+</style>
+</head>
+<body>
+<header><b>AppStream iframe demo</b><small>any Windows app - Godot, UNIGINE, any .exe - inside your own web page</small></header>
+<main>
+  <div class="view" id="view">
+    <iframe id="stream" title="Streamed application" allow="autoplay; fullscreen; clipboard-read; clipboard-write" allowfullscreen></iframe>
+    <div id="focusHint">Click the picture to control the app with your keyboard and mouse</div>
+    <div id="loading" role="status" aria-live="polite">
+      <div class="card">
+        <h3 id="loadTitle">Starting the app</h3>
+        <p class="sub" id="elapsed">0:00</p>
+        <ol class="steps">
+          <li class="step" data-step="page"><span class="dot"></span><span class="name">Opening the stream</span><span class="detail"></span></li>
+          <li class="step" data-step="machine"><span class="dot"></span><span class="name">Finding a machine</span><span class="detail"></span></li>
+          <li class="step" data-step="start"><span class="dot"></span><span class="name">Starting the app</span><span class="detail"></span><span class="bar"><i></i></span></li>
+          <li class="step" data-step="video"><span class="dot"></span><span class="name">Connecting the video</span><span class="detail"></span></li>
+        </ol>
+        <div id="ended"><div id="endedText">The stream has ended.</div><button id="retry">Start again</button></div>
+      </div>
+    </div>
+  </div>
+  <aside>
+    <h2>App</h2>
+    <select id="app" aria-label="Demo app"></select>
+    <div class="row"><input type="text" id="url" placeholder="or paste your AppStream link" aria-label="Stream link"></div>
+    <div class="row"><button id="load" class="ghost">Load</button></div>
+
+    <h2>Session</h2>
+    <dl class="facts">
+      <dt>State</dt><dd id="state">-</dd>
+      <dt>Started in</dt><dd id="startedIn">-</dd>
+      <dt>Keyboard</dt><dd id="focus">-</dd>
+    </dl>
+    <div class="row">
+      <button id="fullscreen" disabled>Fullscreen</button>
+      <button id="restart" class="ghost">Restart</button>
+    </div>
+    <div class="row"><button id="end" class="danger" disabled>End session</button></div>
+
+    <h2>Picture quality</h2>
+    <div class="seg" id="quality">
+      <button data-q="low" disabled>Low</button><button data-q="medium" disabled>Medium</button><button data-q="high" disabled>High</button><button data-q="ultra" disabled>Ultra</button>
+    </div>
+    <p class="note">Sent to the player; the streaming machine changes its encoder.</p>
+
+    <h2>Keyboard and mouse</h2>
+    <button id="giveKeys" class="ghost" disabled>Send my keyboard to the app</button>
+    <p class="note">Keyboard, mouse, wheel and touch go straight to the app once the stream has focus - click the picture, or press this button. The page is told when focus moves (see Keyboard above).</p>
+
+    <h2>Events from the player</h2>
+    <div id="log" aria-live="off"></div>
+
+    <div class="cannot">
+      <b>What AppStream does not do</b> (Pixel Streaming apps can):
+      <ul>
+        <li>No messages between the page and the app's own code - the app has no plugin, so <code>sendMessageToStreamingBuild</code> and replies from the app do not exist.</li>
+        <li>The page cannot press keys in the app for the visitor (<code>emulateKeyboardKey*</code>): only the visitor's own keyboard, mouse and touch reach it.</li>
+        <li>No console commands, device / app info, screenshot, volume or "end session" commands from the page - this page ends a session by closing the stream frame.</li>
+        <li>Resolution follows the streaming machine, not the size of this frame.</li>
+      </ul>
+    </div>
+  </aside>
+</main>
+<script>
+/* [E3DS-APPSTREAM-IFRAME-DEMO] */
+(function () {
+  "use strict";
+  /* Public demo apps on the demo account (AppStream). */
+  var APPS = [
+    { name: "Godot - Platformer 3D", url: "https://stream.eagle3dstreaming.com/v5/demo/Platformer3DFullscreen/GodotFullscreen" },
+    { name: "UNIGINE - Platformer", url: "https://stream.eagle3dstreaming.com/v5/demo/unigine_platformer_3/unigine_platformer_3" }
+  ];
+  var frame = document.getElementById("stream");
+  var $ = function (id) { return document.getElementById(id); };
+
+  /* ---------- event log ---------- */
+  var t0 = Date.now();
+  function log(text) {
+    var s = ((Date.now() - t0) / 1000).toFixed(1);
+    var line = document.createElement("div");
+    line.innerHTML = '<span class="t">' + s + "s</span> ";
+    line.appendChild(document.createTextNode(text));
+    $("log").appendChild(line); $("log").scrollTop = $("log").scrollHeight;
+  }
+
+  /* ---------- talking to the player ---------- */
+  /* Commands are a STRING: the player reads them with JSON.parse. */
+  function send(cmd, value) {
+    if (!frame.contentWindow) { console.error("[E3DS-APPSTREAM-IFRAME-DEMO] no frame window - not sent:", cmd); return; }
+    frame.contentWindow.postMessage(JSON.stringify({ cmd: cmd, value: value }), "*");
+    log("page -> player: " + cmd + (value === undefined ? "" : " " + JSON.stringify(value)));
+  }
+
+  /* ---------- loading progress ---------- */
+  var STEPS = ["page", "machine", "start", "video"];
+  var startedAt = 0, timer = 0, reached = -1, playing = false;
+  function stepEl(n) { return document.querySelector('.step[data-step="' + n + '"]'); }
+  function detail(n, text) { stepEl(n).querySelector(".detail").textContent = text || ""; }
+  function percent(n, value) {
+    var p = parseFloat(value); if (isNaN(p)) return;
+    p = Math.max(0, Math.min(100, p));
+    var bar = stepEl(n).querySelector(".bar"); if (!bar) return;
+    bar.classList.add("on"); bar.querySelector("i").style.width = p + "%"; detail(n, Math.round(p) + "%");
+  }
+  function reach(n) {
+    var k = STEPS.indexOf(n); if (k < reached) return;
+    STEPS.forEach(function (s, i) {
+      var el = stepEl(s);
+      if (i < k) { if (!el.classList.contains("done")) { el.classList.add("done"); if (i > reached) el.classList.add("skipped"); } el.classList.remove("active"); }
+      else if (i === k) el.classList.add("active");
+    });
+    reached = k;
+  }
+  function elapsed() { var s = Math.floor((Date.now() - startedAt) / 1000); return Math.floor(s / 60) + ":" + ("0" + s % 60).slice(-2); }
+  function tick() { $("elapsed").textContent = elapsed(); }
+  function setState(t) { $("state").textContent = t; }
+  function setControls(on) {
+    document.querySelectorAll("#quality button").forEach(function (b) { b.disabled = !on; });
+    $("giveKeys").disabled = !on;
+    $("fullscreen").disabled = !on; $("end").disabled = !on;
+  }
+
+  var src = new URLSearchParams(location.search).get("src") || APPS[0].url;
+  function start() {
+    playing = false; reached = -1; setControls(false);
+    document.querySelectorAll(".step").forEach(function (el) { el.className = "step"; el.querySelector(".detail").textContent = ""; var b = el.querySelector(".bar"); if (b) { b.classList.remove("on"); b.querySelector("i").style.width = "0"; } });
+    document.querySelectorAll("#quality button").forEach(function (b) { b.classList.remove("on"); });
+    $("ended").style.display = "none"; $("loadTitle").textContent = "Starting the app";
+    frame.style.visibility = "hidden"; $("loading").hidden = false; $("focusHint").style.display = "none";
+    startedAt = Date.now(); clearInterval(timer); timer = setInterval(tick, 1000); tick();
+    $("startedIn").textContent = "-"; $("focus").textContent = "-"; setState("starting");
+    reach("page");
+    log("loading " + src);
+    frame.src = src;
+  }
+  function videoConnected() {
+    STEPS.forEach(function (s) { stepEl(s).classList.remove("active"); stepEl(s).classList.add("done"); });
+    frame.style.visibility = "visible"; $("loading").hidden = true; clearInterval(timer);
+  }
+  function ended(text) {
+    if (!playing && $("ended").style.display === "block") return;
+    playing = false; setControls(false); clearInterval(timer);
+    $("loadTitle").textContent = "The stream stopped";
+    $("endedText").textContent = text || "The stream has ended.";
+    $("ended").style.display = "block";
+    frame.style.visibility = "hidden"; $("loading").hidden = false; $("focusHint").style.display = "none";
+    setState("ended"); $("focus").textContent = "-";
+  }
+
+  /* ---------- events from the player ---------- */
+  /* Old and new names for the same moment; the page acts once per moment. */
+  var NAME = {
+    "session.queued": "stage1_inqueued", "session.queuePositionChanged": "QueueNumberUpdated",
+    "session.hostFound": "stage2_deQueued", "session.hostReserved": "stage3_slotOccupied",
+    "build.acquiring": "stage3_1_AppAcquiringProgress", "build.preparing": "stage3_2_AppPreparationProgress",
+    "stream.ready": "stage4_playBtnShowedUp", "stream.playing": "stage5_playBtnPressed",
+    "session.ending": "sessionEnding", "redirectingWithMessage": "sessionEnding",
+    "build.stopped": "handleStreamerDisconnected", "session.expired": "sessionExpired",
+    "stream.failed": "videoStreamFailed", "session.error": "Error_Redirect"
+  };
+  var last = {};
+  function onPlayerEvent(m) {
+    var type = NAME[m.type] || m.type;
+    var repeats = type === "QueueNumberUpdated" || type === "stage3_1_AppAcquiringProgress" || type === "stage3_2_AppPreparationProgress" || type === "streamFocusGained" || type === "streamFocusLost";
+    if (!repeats) { var now = Date.now(); if (now - (last[type] || 0) < 3000) return; last[type] = now; }
+    log("player -> page: " + JSON.stringify(m));
+    switch (type) {
+      case "readyToReceiveMessageFromIframe": case "mainWebPageReadyForMessagesFromIframe":
+        reach("machine"); setState("waiting for a machine"); break;
+      case "stage1_inqueued":
+        reach("machine"); setState("in the queue");
+        detail("machine", m.positionInQueue ? "Position " + m.positionInQueue + " in the queue" : "Waiting in the queue"); break;
+      case "QueueNumberUpdated":
+        if (m.queuePosition) detail("machine", "Position " + m.queuePosition + " in the queue"); break;
+      case "stage2_deQueued": case "stage3_slotOccupied":
+        reach("start"); detail("machine", "Machine found"); setState("starting the app"); break;
+      case "stage3_1_AppAcquiringProgress": case "stage3_2_AppPreparationProgress":
+        reach("start"); percent("start", m.percent); break;
+      case "stage4_playBtnShowedUp":
+        reach("video"); setState("connecting video"); break;
+      case "stage5_playBtnPressed":
+        if (playing) break;
+        videoConnected(); playing = true; setControls(true);
+        $("startedIn").textContent = elapsed(); setState("playing");
+        focusStream(); break;
+      case "streamFocusGained": case "streamFocusLost":
+        var on = type === "streamFocusGained";
+        $("focus").textContent = on ? "on the stream" : "on the page";
+        $("focusHint").style.display = playing && !on ? "block" : "none"; break;
+      case "sessionEnding": ended(m.message || "The session has ended."); break;
+      case "sessionExpired": ended("The session time is over."); break;
+      case "handleStreamerDisconnected": ended("The app stopped running."); break;
+      case "videoStreamFailed": ended("The video could not be connected."); break;
+      case "Error_Redirect": ended(m.message || "The stream could not start."); break;
+    }
+  }
+  window.addEventListener("message", function (e) {
+    if (e.source !== frame.contentWindow) return;   /* only our player */
+    var m = e.data;
+    if (typeof m === "string") {
+      try { m = JSON.parse(m); } catch (x) { console.warn("[E3DS-APPSTREAM-IFRAME-DEMO] not JSON, ignored:", x && x.message); return; }
+    }
+    if (m && m.type) onPlayerEvent(m);
+  });
+
+  /* ---------- controls ---------- */
+  APPS.forEach(function (a, i) { var o = document.createElement("option"); o.value = a.url; o.textContent = a.name; $("app").appendChild(o); });
+  if (!APPS.some(function (a) { return a.url === src; })) { var o = document.createElement("option"); o.value = src; o.textContent = "Your link"; $("app").appendChild(o); }
+  $("app").value = src;
+  $("app").onchange = function () { src = $("app").value; $("url").value = ""; start(); };
+  $("load").onclick = function () {
+    var v = $("url").value.trim();
+    if (!/^https:\/\/[a-z0-9_.-]+\.eagle3dstreaming\.com\//i.test(v)) { log("not an Eagle 3D Streaming link: " + v); return; }
+    src = v; start();
+  };
+  $("retry").onclick = start;
+  $("restart").onclick = start;
+
+  /* End: leaving the player page closes its connection, and the platform ends the session and frees the machine. */
+  $("end").onclick = function () {
+    log("page: ending the session (frame -> about:blank)");
+    frame.src = "about:blank";
+    ended("You ended the session.");
+  };
+
+  /* Fullscreen: the page puts its own stream area in fullscreen - works for any app. */
+  $("fullscreen").onclick = function () {
+    var v = $("view");
+    var p = v.requestFullscreen ? v.requestFullscreen() : (v.webkitRequestFullscreen && v.webkitRequestFullscreen());
+    if (p && p.catch) p.catch(function (e) { console.error("[E3DS-APPSTREAM-IFRAME-DEMO] fullscreen refused:", e); log("fullscreen refused: " + e.message); });
+    frame.focus();
+  };
+
+  document.querySelectorAll("#quality button").forEach(function (b) {
+    b.onclick = function () {
+      document.querySelectorAll("#quality button").forEach(function (x) { x.classList.toggle("on", x === b); });
+      send("setVideoDetailLevel", b.getAttribute("data-q"));
+    };
+  });
+
+  /* Keyboard focus: the browser sends keys to whichever frame has focus. Focusing the iframe hands the visitor's
+   * keyboard to the app; the player then reports streamFocusGained. */
+  function focusStream() {
+    try { frame.focus(); } catch (e) { console.error("[E3DS-APPSTREAM-IFRAME-DEMO] focus failed:", e); }
+  }
+  $("giveKeys").onclick = focusStream;
+
+  start();
+})();
+</script>
+</body>
+</html>
