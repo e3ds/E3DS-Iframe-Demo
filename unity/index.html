@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Unity iframe demo - Eagle 3D Streaming</title>
+    <meta name="description" content="Embed a Unity app streamed by Eagle 3D Streaming in your web page and talk to it in both directions.">
+    <link rel="stylesheet" href="unity-demo.css?v=1.0.0">
+</head>
+<body>
+<header class="top">
+    <div class="brand">
+        <span class="logo" aria-hidden="true">E3DS</span>
+        <div>
+            <h1>Unity iframe demo</h1>
+            <p class="sub">A Unity app, streamed by Eagle 3D Streaming, inside an <code>&lt;iframe&gt;</code> - and this page talking to it both ways.</p>
+        </div>
+    </div>
+    <span id="status" class="pill" data-state="idle">Not started</span>
+</header>
+
+<main class="layout">
+    <section class="stage">
+        <div id="frameWrap" class="frame-wrap">
+            <!-- The one line that embeds the stream. Everything else on this page is optional. -->
+            <iframe id="stream" title="Unity app stream" allow="fullscreen; autoplay; clipboard-read; clipboard-write" allowfullscreen></iframe>
+            <div id="startOverlay" class="overlay">
+                <button id="startBtn" class="btn primary big" type="button">Start the Unity stream</button>
+                <p class="hint">A cloud machine starts the app for you - usually about 10-20 seconds.</p>
+            </div>
+        </div>
+
+        <div class="cards" aria-live="polite">
+            <div class="card"><span class="k">Object clicks in the stream</span><span id="cClicks" class="v">0</span><span id="cClicksSub" class="s">click the object</span></div>
+            <div class="card"><span class="k">"Say hello" presses in the app</span><span id="cButton" class="v">0</span><span class="s">the yellow Unity button</span></div>
+            <div class="card"><span class="k">App frame rate</span><span id="cFps" class="v">-</span><span class="s">reported by the app every 5 s</span></div>
+            <div class="card"><span class="k">Round trip</span><span id="cRtt" class="v">-</span><span class="s">page &rarr; app &rarr; page</span></div>
+        </div>
+    </section>
+
+    <aside class="panel">
+        <section class="group">
+            <h2>Session</h2>
+            <label class="field">Stream address
+                <input id="urlInput" type="url" spellcheck="false" autocomplete="off">
+            </label>
+            <div class="row">
+                <button id="startBtn2" class="btn primary" type="button">Start</button>
+                <button id="endBtn" class="btn" type="button" disabled>End session</button>
+                <button id="fullBtn" class="btn" type="button" disabled>Fullscreen</button>
+            </div>
+            <p class="note">"End session" closes the stream on this page, which frees the machine.</p>
+        </section>
+
+        <section class="group" id="appControls" aria-disabled="true">
+            <h2>Talk to the Unity app <span id="appState" class="tag">waiting for the app</span></h2>
+
+            <div class="sub-h">Colour of the object</div>
+            <div class="row swatches">
+                <button class="swatch" data-color="#3fa9f5" style="--c:#3fa9f5" title="Blue" type="button"></button>
+                <button class="swatch" data-color="#ff5a36" style="--c:#ff5a36" title="Orange" type="button"></button>
+                <button class="swatch" data-color="#2ecc71" style="--c:#2ecc71" title="Green" type="button"></button>
+                <button class="swatch" data-color="#f1c40f" style="--c:#f1c40f" title="Yellow" type="button"></button>
+                <button class="swatch" data-color="#9b59b6" style="--c:#9b59b6" title="Purple" type="button"></button>
+                <input id="colorPick" type="color" value="#ffffff" title="Any colour">
+            </div>
+
+            <div class="sub-h">Shape</div>
+            <div class="row seg">
+                <button class="btn small" data-shape="cube" type="button">Cube</button>
+                <button class="btn small" data-shape="sphere" type="button">Sphere</button>
+                <button class="btn small" data-shape="capsule" type="button">Capsule</button>
+                <button class="btn small" data-shape="cylinder" type="button">Cylinder</button>
+            </div>
+
+            <label class="field">Spin speed <output id="spinOut">45</output>&deg;/s
+                <input id="spin" type="range" min="0" max="360" step="5" value="45">
+            </label>
+
+            <div class="row seg">
+                <button class="btn small" data-light="day" type="button">Day</button>
+                <button class="btn small" data-light="night" type="button">Night</button>
+            </div>
+
+            <label class="field">Text on the app's banner
+                <span class="row nogap">
+                    <input id="bannerText" type="text" maxlength="60" placeholder="Hello from my website">
+                    <button id="bannerBtn" class="btn small" type="button">Send</button>
+                </span>
+            </label>
+
+            <div class="row">
+                <button id="pingBtn" class="btn small" type="button">Ping</button>
+                <button id="stateBtn" class="btn small" type="button">Ask for its state</button>
+                <button id="appEndBtn" class="btn small danger" type="button" title="The app asks the player to end the session">End from inside the app</button>
+            </div>
+        </section>
+
+        <section class="group grow">
+            <h2>Messages <button id="clearLog" class="btn tiny" type="button">Clear</button></h2>
+            <ol id="log" class="log"></ol>
+        </section>
+    </aside>
+</main>
+
+<section class="how">
+    <h2>How it works</h2>
+    <div class="how-grid">
+        <div>
+            <h3>1. Embed</h3>
+            <pre><code>&lt;iframe src="https://stream.eagle3dstreaming.com/v5/&lt;owner&gt;/&lt;App&gt;/&lt;config&gt;"
+        allow="fullscreen; autoplay" allowfullscreen&gt;&lt;/iframe&gt;</code></pre>
+        </div>
+        <div>
+            <h3>2. Page &rarr; Unity</h3>
+            <pre><code>iframe.contentWindow.postMessage(JSON.stringify({
+  cmd: "sendDataToUE",
+  value: { action: "setColor", value: "#ff5a36" }
+}), "*");</code></pre>
+        </div>
+        <div>
+            <h3>3. Unity &rarr; page</h3>
+            <pre><code>// C#, in the Unity app (E3dsPageChannel.cs)
+channel.SendToPage("{\"cmd\":\"unity.objectClicked\"}");
+
+// JavaScript, on this page
+window.addEventListener("message", e =&gt; { /* e.data */ });</code></pre>
+        </div>
+    </div>
+    <p class="note">The Unity side is one C# file, <code>E3dsPageChannel.cs</code>, in <code>unity/unity-project</code> of this repository. Source of this page: <code>unity/unity-demo.js</code>.</p>
+</section>
+
+<script src="unity-demo.js?v=1.0.0"></script>
+</body>
+</html>

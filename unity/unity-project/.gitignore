@@ -1,0 +1,12 @@
+Library/
+Temp/
+Logs/
+Build/
+UserSettings/
+obj/
+*.csproj
+*.sln
+*.zip
+build.log
+Assets/Eagle3DStreaming/
+Assets/Eagle3DStreaming.meta
