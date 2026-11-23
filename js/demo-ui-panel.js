@@ -737,16 +737,6 @@ function e3dsBuildVideoControls() {
     keyButtons.push(addDemoButton("Release key", () => demoReleaseKey(keySelect.value), "Input", E3DS_STAGE_VIDEO));
     keyButtons.forEach((b) => { b.disabled = true; });
 
-    /* [E3DS-DEMO-PARITY] Touch input off is what you want when your own buttons
-     * sit over the stream on a phone: a tap on your control should not also
-     * reach the app underneath it. */
-    let e3dsTouchOn = true;
-    const e3dsTouchButton = addDemoButton("Touch input: on", () => {
-        e3dsTouchOn = !e3dsTouchOn;
-        demoTouchInput(e3dsTouchOn);
-        e3dsTouchButton.textContent = "Touch input: " + (e3dsTouchOn ? "on" : "off");
-    }, "Input", E3DS_STAGE_VIDEO);
-
     /* The play button the player shows when the app is ready. A page with its
      * own start screen presses it from there rather than asking the viewer to
      * click twice. */
